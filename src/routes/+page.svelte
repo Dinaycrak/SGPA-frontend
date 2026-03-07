@@ -4,34 +4,40 @@
       title: 'Gestión de proyectos',
       description:
         'Consulta, registra y organiza los proyectos académicos dentro del sistema SGPA.',
-      action: 'Ver más'
+      action: 'Ver más',
+      image: '/img/gestion-proyectos.jpg'
     },
     {
       title: 'Convocatorias',
       description:
         'Accede a convocatorias activas, procesos de inscripción y seguimiento académico.',
-      action: 'Explorar'
+      action: 'Explorar',
+      image: '/img/convocatorias.jpg'
     },
     {
       title: 'Seguimiento académico',
       description:
         'Visualiza el estado general de los procesos, entregas, avances y responsables.',
-      action: 'Consultar'
+      action: 'Consultar',
+      image: '/img/seguimiento.jpg'
     }
   ];
 
   const teamCards = [
     {
       role: 'Coordinador',
-      text: 'Administrador principal del sistema, encargado de la supervisión general y la validación de procesos.'
+      text: 'Administrador principal del sistema, encargado de la supervisión general y la validación de procesos.',
+      image: '/images/coordinador.png'
     },
     {
       role: 'Equipo académico',
-      text: 'Grupo de apoyo responsable del seguimiento, revisión y acompañamiento de la gestión de proyectos.'
+      text: 'Grupo de apoyo responsable del seguimiento, revisión y acompañamiento de la gestión de proyectos.',
+      image: '/images/equipo-academico.png'
     },
     {
       role: 'Docentes',
-      text: 'Participan en la orientación, evaluación y acompañamiento de iniciativas académicas.'
+      text: 'Participan en la orientación, evaluación y acompañamiento de iniciativas académicas.',
+      image: '/images/docentes.png'
     }
   ];
 
@@ -54,14 +60,13 @@
 </svelte:head>
 
 <div class="page">
-  <!-- HEADER -->
   <header class="site-header">
     <div class="top-bar"></div>
 
     <div class="header-container">
       <div class="brand">
-        <div class="logo-slot" aria-label="Espacio para logo universitario">
-          LOGO
+        <div class="logo-slot" aria-label="Logo universitario">
+          <img src="/images/logo.png" alt="Logo de la universidad" />
         </div>
 
         <div class="brand-text">
@@ -80,7 +85,6 @@
     </div>
   </header>
 
-  <!-- HERO / PRESENTACIÓN -->
   <main id="inicio">
     <section class="hero">
       <div class="hero-overlay">
@@ -101,12 +105,11 @@
         </div>
 
         <div class="hero-image-slot">
-          <span>ESPACIO PARA IMAGEN PRINCIPAL / BANNER</span>
+          <img src="/img/banner-principal.jpg" alt="Banner principal del sistema SGPA" />
         </div>
       </div>
     </section>
 
-    <!-- INFORMACIÓN GENERAL -->
     <section id="funcionamiento" class="info-section">
       <div class="section-header">
         <h3>¿Cómo funciona SGPA?</h3>
@@ -143,7 +146,6 @@
       </div>
     </section>
 
-    <!-- APARTADOS TIPO CUL -->
     <section class="cards-section">
       <div class="section-header">
         <h3>Áreas principales del sistema</h3>
@@ -153,7 +155,7 @@
         {#each quickAccess as item}
           <article class="feature-card">
             <div class="feature-image-slot">
-              <span>ESPACIO PARA IMAGEN</span>
+              <img src={item.image} alt={item.title} />
             </div>
 
             <div class="feature-content">
@@ -166,7 +168,6 @@
       </div>
     </section>
 
-    <!-- COORDINADOR Y EQUIPO -->
     <section id="equipo" class="team-section">
       <div class="section-header">
         <h3>Coordinador y equipo principal</h3>
@@ -180,7 +181,7 @@
         {#each teamCards as person}
           <article class="team-card">
             <div class="team-image-slot">
-              <span>FOTO 4:3</span>
+              <img src={person.image} alt={person.role} />
             </div>
             <div class="team-content">
               <h4>{person.role}</h4>
@@ -191,7 +192,6 @@
       </div>
     </section>
 
-    <!-- MÓDULOS -->
     <section id="modulos" class="modules-section">
       <div class="section-header">
         <h3>Módulos del sistema</h3>
@@ -202,7 +202,7 @@
 
       <div class="modules-wrapper">
         <div class="modules-image-slot">
-          <span>ESPACIO PARA IMAGEN SECUNDARIA / ILUSTRACIÓN</span>
+          <img src="/img/modulos-sgpa.jpg" alt="Imagen representativa de módulos SGPA" />
         </div>
 
         <div class="modules-list">
@@ -217,7 +217,6 @@
     </section>
   </main>
 
-  <!-- FOOTER -->
   <footer class="site-footer">
     <div class="footer-divider"></div>
 
@@ -318,15 +317,20 @@
   .logo-slot {
     width: 78px;
     height: 78px;
-    border: 2px dashed #0b2d69;
     border-radius: 12px;
-    display: grid;
-    place-items: center;
-    color: #0b2d69;
-    font-weight: 700;
-    font-size: 0.9rem;
+    overflow: hidden;
     background: #f8fbff;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
   }
 
   .brand-text h1 {
@@ -477,17 +481,15 @@
   .hero-image-slot {
     min-height: 420px;
     border-radius: 24px;
-    border: 2px dashed rgba(11, 45, 105, 0.45);
-    background:
-      linear-gradient(rgba(11, 45, 105, 0.72), rgba(11, 45, 105, 0.5)),
-      linear-gradient(135deg, #5b79ae, #12356f);
-    display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 24px;
-    color: white;
-    font-size: 1rem;
-    font-weight: 600;
+    overflow: hidden;
+    background: #dbe6f7;
+  }
+
+  .hero-image-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .info-section,
@@ -573,16 +575,15 @@
 
   .feature-image-slot {
     aspect-ratio: 9 / 8;
-    background:
-      linear-gradient(rgba(8, 31, 73, 0.18), rgba(8, 31, 73, 0.18)),
-      linear-gradient(135deg, #dbe6f7, #b9cceb);
-    border-bottom: 2px dashed rgba(11, 45, 105, 0.45);
-    display: grid;
-    place-items: center;
-    color: #0b2d69;
-    font-weight: 700;
-    text-align: center;
-    padding: 18px;
+    background: #dbe6f7;
+    overflow: hidden;
+  }
+
+  .feature-image-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .feature-content {
@@ -616,16 +617,15 @@
 
   .team-image-slot {
     aspect-ratio: 4 / 3;
-    background:
-      linear-gradient(rgba(11, 45, 105, 0.12), rgba(11, 45, 105, 0.12)),
-      linear-gradient(135deg, #e4ebf7, #c7d7ef);
-    border-bottom: 2px dashed rgba(11, 45, 105, 0.45);
-    display: grid;
-    place-items: center;
-    color: #0b2d69;
-    font-weight: 700;
-    text-align: center;
-    padding: 18px;
+    background: #dbe6f7;
+    overflow: hidden;
+  }
+
+  .team-image-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .team-content {
@@ -642,16 +642,15 @@
   .modules-image-slot {
     min-height: 380px;
     border-radius: 24px;
-    background:
-      linear-gradient(rgba(8, 31, 73, 0.16), rgba(8, 31, 73, 0.16)),
-      linear-gradient(135deg, #dbe5f5, #bfd0ea);
-    border: 2px dashed rgba(11, 45, 105, 0.45);
-    display: grid;
-    place-items: center;
-    text-align: center;
-    padding: 20px;
-    color: #0b2d69;
-    font-weight: 700;
+    background: #dbe6f7;
+    overflow: hidden;
+  }
+
+  .modules-image-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
   .modules-list {
@@ -822,4 +821,3 @@
     }
   }
 </style>
-
