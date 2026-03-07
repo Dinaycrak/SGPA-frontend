@@ -5,21 +5,21 @@
       description:
         'Consulta, registra y organiza los proyectos académicos dentro del sistema SGPA.',
       action: 'Ver más',
-      image: '/img/gestion-proyectos.jpg'
+      image: '/images/gestion-proyectos.png'
     },
     {
       title: 'Convocatorias',
       description:
         'Accede a convocatorias activas, procesos de inscripción y seguimiento académico.',
       action: 'Explorar',
-      image: '/img/convocatorias.jpg'
+      image: '/images/convocatorias.png'
     },
     {
       title: 'Seguimiento académico',
       description:
         'Visualiza el estado general de los procesos, entregas, avances y responsables.',
       action: 'Consultar',
-      image: '/img/seguimiento.jpg'
+      image: '/images/seguimiento.png'
     }
   ];
 
@@ -66,7 +66,7 @@
     <div class="header-container">
       <div class="brand">
         <div class="logo-slot" aria-label="Logo universitario">
-          <img src="/images/logo.png" alt="Logo de la universidad" />
+          <img src="/images/logo-cul.png" alt="Logo de la universidad" />
         </div>
 
         <div class="brand-text">
@@ -105,7 +105,7 @@
         </div>
 
         <div class="hero-image-slot">
-          <img src="/img/banner-principal.jpg" alt="Banner principal del sistema SGPA" />
+          <img src="/images/login-banner.png" alt="Banner principal del sistema SGPA" />
         </div>
       </div>
     </section>
@@ -202,7 +202,7 @@
 
       <div class="modules-wrapper">
         <div class="modules-image-slot">
-          <img src="/img/modulos-sgpa.jpg" alt="Imagen representativa de módulos SGPA" />
+          <img src="/images/modulos-sgpa.png" alt="Imagen representativa de módulos SGPA" />
         </div>
 
         <div class="modules-list">
