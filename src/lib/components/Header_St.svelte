@@ -26,11 +26,8 @@
     </div>
 
     <nav class="main-nav" aria-label="Navegación principal">
-      <a href="#inicio" class="active">Inicio</a>
-      <a href="#funcionamiento">Funcionamiento</a>
-      <a href="#equipo">Equipo</a>
-      <a href="#modulos">Módulos</a>
-      <a href="/login" class="login-btn">Login</a>
+      <a href="/" class="nav-btn">Inicio</a>
+      <a href="/login" class="nav-btn">Login</a>
     </nav>
   </div>
 </header>
@@ -121,56 +118,24 @@
   .main-nav {
     display: flex;
     align-items: center;
-    gap: 18px;
-    flex-wrap: wrap;
+    gap: 12px;
   }
 
-  .main-nav a {
+  .nav-btn {
     text-decoration: none;
-    color: #666;
+    padding: 10px 18px;
+    background: #0b2d69;
+    color: #fff;
+    border-radius: 999px;
     font-size: 0.96rem;
-    font-weight: 500;
-    position: relative;
+    font-weight: 600;
     transition: 0.25s ease;
-    padding: 8px 0;
+    box-shadow: 0 8px 20px rgba(11, 45, 105, 0.12);
   }
 
-  .main-nav a:hover {
-    color: #0b2d69;
-  }
-
-  .main-nav a.active {
-    color: #0b2d69;
-  }
-
-  .main-nav a.active::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -2px;
-    width: 100%;
-    height: 2px;
-    background: #0b2d69;
-    border-radius: 999px;
-  }
-
-  .login-btn {
-    padding: 10px 18px !important;
-    background: #0b2d69;
-    color: #fff !important;
-    border-radius: 999px;
-    font-weight: 600 !important;
-  }
-
-  .login-btn:hover {
+  .nav-btn:hover {
     background: #08214d;
     transform: translateY(-1px);
-  }
-
-  @media (max-width: 1080px) {
-    .main-nav {
-      justify-content: flex-end;
-    }
   }
 
   @media (max-width: 720px) {
@@ -187,6 +152,7 @@
     .main-nav {
       width: 100%;
       justify-content: flex-start;
+      gap: 10px;
     }
 
     .brand-title {
