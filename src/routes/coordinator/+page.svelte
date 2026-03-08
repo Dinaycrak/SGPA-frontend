@@ -1,5 +1,5 @@
 <script>
-  import Header from "../../lib/components/Header.svelte";
+  import Header from "../../lib/components/Header_St.svelte";
   import Footer from "../../lib/components/Footer.svelte";
   import CoordinatorProjectCard from "../../lib/components/ProjectCardCoordinator.svelte";
 
