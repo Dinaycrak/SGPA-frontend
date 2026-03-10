@@ -1,4 +1,5 @@
 <script>
+  import { base } from '$app/paths';
   import Header from "$lib/components/Header.svelte";
   import Footer from "$lib/components/Footer.svelte";
   const quickAccess = [
@@ -80,7 +81,7 @@
           </p>
 
           <div class="hero-actions">
-            <a href="/login" class="primary-btn">Ingresar al sistema</a>
+            <a href="{base}/login" class="primary-btn">Ingresar al sistema</a>
             <a href="#funcionamiento" class="secondary-btn">Conocer más</a>
           </div>
         </div>
