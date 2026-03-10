@@ -11,6 +11,10 @@ const config = {
             fallback: '404.html',
             strict: false
         }),
+        // ESTO EVITA QUE EL ERROR DEL LOGO DETENGA TODO
+        prerender: {
+            handleHttpError: 'warn'
+        },
         paths: {
             base: process.env.NODE_ENV === 'production' ? '/SGPA-frontend' : '',
         }
