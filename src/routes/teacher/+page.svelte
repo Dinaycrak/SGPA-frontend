@@ -1,7 +1,7 @@
 <script>
     import Header from "../../lib/components/Header_St.svelte";
     import Footer from "../../lib/components/Footer.svelte";
-    import DashboardStats from "../../lib/components/DashboardStats.svelte";
+    import DashboardStats from "../../lib/components/Projects.svelte";
 
     // Recibimos los datos del servidor (evita el error 500 y CORS)
     export let data;
@@ -57,7 +57,7 @@
 
         <section class="list-section">
             <div class="section-title">
-                <h2>Mis Proyectos</h2>
+                <h2>Proyectos Disponibles</h2>
                 <span class="badge">{projects.length}</span>
             </div>
 

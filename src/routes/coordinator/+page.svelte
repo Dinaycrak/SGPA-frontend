@@ -1,7 +1,7 @@
 <script>
     import Header from "$lib/components/Header_St.svelte";
     import Footer from "$lib/components/Footer.svelte";
-    import DashboardStats from "$lib/components/DashboardStats.svelte";
+    import DashboardStats from "$lib/components/Projects.svelte";
     
     // Recibimos los datos del servidor para evitar CORS
     export let data;

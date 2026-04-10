@@ -4,16 +4,16 @@
   import 'bootstrap/dist/css/bootstrap.min.css';
   import { goto } from '$app/navigation';
 
-  function StudentLogin() {
-    goto('/students');
-  }
+  let selectedRole = $state('student'); 
 
-  function TeacherLogin() {
-    goto('/teacher');
-  }
-
-  function CoordinatorLogin() {
-    goto('/coordinator');
+  function handleLogin() {
+    if (selectedRole === 'student') {
+      goto('/students');
+    } else if (selectedRole === 'teacher') {
+      goto('/teacher');
+    } else if (selectedRole === 'coordinator') {
+      goto('/coordinator');
+    }
   }
 </script>
 
@@ -69,28 +69,34 @@
       <div class="login-card">
         <div class="card-top-line"></div>
 
-        <h2 class="login-card-title">Accede a tu cuenta</h2>
+        <h2 class="login-card-title">Accede a tu cuenta</h2> <br>
         <p class="login-card-subtitle">
           Ingresa tus datos y selecciona el tipo de acceso correspondiente.
         </p>
 
-        <div class="login-container">
-          <input type="text" placeholder="Usuario" />
-          <input type="password" placeholder="Contraseña" />
+          <input class= "login-formulary" type="text" placeholder="Usuario" />
+          <input class= "login-formulary" type="password" placeholder="Contraseña" /> <br>
 
-          <button class="button student-btn" on:click={StudentLogin}>
-            Ingresar como Estudiante
-          </button>
+      <div class="radio-group-horizontal">
+        <label class="radio-option-vertical">
+          <span class= "student-span">Estudiante</span>
+          <input type="radio" bind:group={selectedRole} value="student" />
+        </label>
 
-          <button class="button teacher-btn" on:click={TeacherLogin}>
-            Ingresar como Docente
-          </button>
+        <label class="radio-option-vertical">
+          <span class= "teacher-span">Docente</span>
+          <input type="radio" bind:group={selectedRole} value="teacher" />
+        </label>
 
-          <button class="button coordinator-btn" on:click={CoordinatorLogin}>
-            Ingresar como Coordinador
-          </button>
-        </div>
+        <label class="radio-option-vertical">
+          <span class= "coordinator-span"> Coordinador</span>
+          <input type="radio" bind:group={selectedRole} value="coordinator" />
+        </label>
       </div>
+      <button class="btn-primary" on:click={handleLogin}>
+        Ingresar
+      </button>
+    </div>
     </section>
   </main>
 
@@ -232,6 +238,9 @@
   }
 
   .login-card {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
     max-width: 560px;
     margin: 0 auto;
     background: rgba(255, 255, 255, 0.96);
@@ -263,17 +272,11 @@
   .login-card-subtitle {
     margin: 12px 0 28px;
     text-align: center;
-    color: #666;
+    color: #00b7ff;
     line-height: 1.7;
   }
 
-  .login-container {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .login-container input {
+   .login-formulary input{
     width: 100%;
     padding: 14px 16px;
     border-radius: 14px;
@@ -285,45 +288,71 @@
     transition: 0.25s ease;
   }
 
-  .login-container input:focus {
+  .login-formulary input:focus {
     border-color: #1d73d4;
     box-shadow: 0 0 0 4px rgba(29, 115, 212, 0.12);
     background: #fff;
   }
+ 
 
-  .button {
-    border: none;
-    border-radius: 14px;
-    padding: 14px 18px;
-    font-weight: 700;
-    color: white;
+ 
+  .radio-group-horizontal {
+    display: flex;
+    justify-content: space-around; 
+    align-items: center;
+    gap: 20px;
+    margin: 25px 0;
+    width: 100%;
+  }
+
+  .radio-option-vertical {
+    display: flex;
+    flex-direction: column; 
+    align-items: center;    
+    gap: 8px;               
     cursor: pointer;
-    transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: #333;
   }
 
-  .button:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.02);
-  }
+  .btn-primary {
+      padding: 10px 30px; 
+      cursor: pointer;
+      background-color: #1e90ff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
 
-  .button:active {
-    transform: translateY(0);
-  }
-
-  .student-btn {
+  .student-span {
+    color: white;
     background: linear-gradient(135deg, #0b2d69 0%, #1f5efe 100%);
+    border-radius: 4px;
     box-shadow: 0 12px 24px rgba(31, 94, 254, 0.22);
   }
 
-  .teacher-btn {
+  .teacher-span {
+    color: white;
     background: linear-gradient(135deg, #163d87 0%, #2e7edb 100%);
+    border-radius: 4px;
     box-shadow: 0 12px 24px rgba(46, 126, 219, 0.22);
   }
 
-  .coordinator-btn {
+  .coordinator-span {
+    color: white;
     background: linear-gradient(135deg, #0b2d69 0%, #f2b705 180%);
+    border-radius: 4px;
     box-shadow: 0 12px 24px rgba(242, 183, 5, 0.18);
   }
+
+  input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  
 
   @keyframes fadeUp {
     from {
