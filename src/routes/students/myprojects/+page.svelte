@@ -9,7 +9,7 @@
     $: projects = data.projects || [];
     $: error = data.error;
 
-
+    // Solo mantenemos la estadística de proyectos disponibles
     $: stats = [
         {
             label: "Proyectos Bajo Dirección",
@@ -24,12 +24,6 @@
         // Función deshabilitada por falta de login
         alert("La función de matriculación requiere inicio de sesión (No disponible actualmente).");
     }
-
-{    function uploadDocument(projectName) {
-        // Funcionalidad futura
-        alert(`Módulo de carga para: ${projectName}\n(Esta función estará disponible al activar el inicio de sesión).`);
-    }}
-
 </script>
 
 <Header />
@@ -66,10 +60,14 @@
                             </div>
                         </div>
 
-                            <div>
-                                <h3>{project.project_name}</h3>
-                                <p>Estado: <strong>{project.status}</strong></p>
+                        <div class="card-actions">
+                            <div class="status-info">
+                                <span class="status-tag">Estado ID: {project.id_status}</span>
                             </div>
+                            <button class="enroll-btn" on:click={handleEnrollment}>
+                                Matricularse al proyecto
+                            </button>
+                        </div>
                     </div>
                 {/each}
 

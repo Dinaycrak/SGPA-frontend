@@ -5,11 +5,10 @@
   let isOpen = $state(false); 
 
   const menuItems = [
-    { name: 'Dashboard', href: '/students' },
-    { name: 'Available Projects', href: '/students/projects' },
-    { name: 'My Projects', href: '/students/myprojects' },
-    { name: 'schedules', href: '/students/schedules' },
-    { name: 'profile', href: '/students/profile' },
+    { name: 'Dashboard', href: '/coordinator' },
+    { name: 'Available Projects', href: '/coordinator/projects' },
+    { name: 'Teachers', href: '/coordinator/teachers' },
+    { name: 'Students', href: '/coordinator/students' },
   ];
 
   function toggleMenu() {

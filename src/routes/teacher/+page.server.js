@@ -1,7 +1,7 @@
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
-    const PROJECTS_API = "https://academic-project-management-api.onrender.com/api/projects";
-    const USERS_API = "https://academic-project-management-api.onrender.com/api/users";
+    const PROJECTS_API = "";
+    const USERS_API = "https://academic-project-management-api-rizs.onrender.com/api/projects";
     
     try {
         // Ejecutamos ambas peticiones en paralelo
@@ -30,7 +30,7 @@ export async function load() {
             start_date: p[3],
             end_date: p[4],
             id_status: p[5],
-            progress: Math.floor(Math.random() * 100) // Simulación para el docente
+            progress: p[6] // Simulación para el docente
         })) : [];
 
         // 2. Mapeo de Estudiantes (Filtramos por id_rol: 1)

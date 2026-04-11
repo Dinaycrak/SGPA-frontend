@@ -74,9 +74,9 @@
                         </div>
 
                         <div class="card-actions">
-                            <div class="progress-mini">
-                                <span>Progreso</span>
-                                <div class="bar-bg"><div class="bar" style="width: {project.progress || 0}%"></div></div>
+                            <div class="status">
+                                <span>Status</span>
+                                <div class="bar-bg"><div class="bar" style="width: {project.id_status}%"></div></div>
                             </div>
                             
                             <div class="button-group">
