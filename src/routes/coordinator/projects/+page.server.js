@@ -10,7 +10,7 @@ export async function load({ fetch }) {
     };
 
     // Pegamos el token de Alejandro (Coordinador) directamente como texto
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzU4OTMxNDB9.pcquIbESwP0bNpopGXBDC-h1mt8fFpzpKF1ZNxLCp4k";
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzYwOTQ5Mzd9.w0K_HggutG8wKzrFEPZFYM38pVyI_YO7sWreIXgSUqw";
 
     try {
         const response = await fetch(API_URL, {
