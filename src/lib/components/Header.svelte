@@ -29,7 +29,6 @@
       <a href="#inicio" class="active">Inicio</a>
       <a href="#funcionamiento">Funcionamiento</a>
       <a href="#equipo">Equipo</a>
-      <a href="#modulos">Módulos</a>
       <a href="/login" class="login-btn">Login</a>
     </nav>
   </div>

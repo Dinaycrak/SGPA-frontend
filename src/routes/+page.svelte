@@ -173,30 +173,6 @@
         {/each}
       </div>
     </section>
-
-    <section id="modulos" class="modules-section">
-      <div class="section-header">
-        <h3>Módulos del sistema</h3>
-        <p>
-          Estructura base pensada para presentar los componentes funcionales principales de SGPA.
-        </p>
-      </div>
-
-      <div class="modules-wrapper">
-        <div class="modules-image-slot">
-          <img src="/images/modulos-sgpa.png" alt="Imagen representativa de módulos SGPA" />
-        </div>
-
-        <div class="modules-list">
-          {#each modules as module}
-            <div class="module-item">
-              <span class="module-dot"></span>
-              <p>{module}</p>
-            </div>
-          {/each}
-        </div>
-      </div>
-    </section>
   </main>
   <Footer />
 </div>
