@@ -298,8 +298,7 @@
 
   .info-section,
   .cards-section,
-  .team-section,
-  .modules-section {
+  .team-section {
     max-width: 1280px;
     margin: 0 auto;
     padding: 78px 24px;
@@ -434,60 +433,5 @@
 
   .team-content {
     padding: 24px;
-  }
-
-  .modules-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 28px;
-    align-items: stretch;
-  }
-
-  .modules-image-slot {
-    min-height: 380px;
-    border-radius: 24px;
-    background: #dbe6f7;
-    overflow: hidden;
-  }
-
-  .modules-image-slot img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .modules-list {
-    background: white;
-    border-radius: 24px;
-    padding: 26px;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
-  }
-
-  .module-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px 0;
-    border-bottom: 1px solid #ececec;
-  }
-
-  .module-item:last-child {
-    border-bottom: none;
-  }
-
-  .module-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #f2b705;
-    box-shadow: 0 0 0 5px rgba(242, 183, 5, 0.16);
-    flex-shrink: 0;
-  }
-
-  .module-item p {
-    margin: 0;
-    color: #2d2d2d;
-    font-weight: 500;
   }
 </style>
