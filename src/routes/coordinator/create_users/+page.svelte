@@ -180,12 +180,10 @@
 	}
 
 	.header-badge {
-		background: #0b2d69;
-		color: white;
-		padding: 12px 20px;
-		border-radius: 10px;
+		color: rgb(0, 132, 255);
+		padding: 10px 20px;
 		font-weight: 700;
-		box-shadow: 0 4px 12px rgba(11, 45, 105, 0.15);
+		font-size: 30px; 
 	}
 
 	.section-title {
