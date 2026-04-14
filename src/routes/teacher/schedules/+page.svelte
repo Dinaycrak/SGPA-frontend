@@ -2,7 +2,7 @@
     import Header from "../../../lib/components/Header_St.svelte";
     import Footer from "../../../lib/components/Footer.svelte";
     import DashboardStats from "../../../lib/components/Projects.svelte";
-    import SideBar from "../../../lib/components/StudentSideBar.svelte";
+    import SideBar from "../../../lib/components/TeacherSideBar.svelte";
 
     export let data;
 
@@ -32,7 +32,7 @@
 <main>
     <div class="content-wrapper">
         <header class="main-header">
-            <h1>MODULO ESTUDIANTE</h1>
+            <h1>MODULO DOCENTE</h1>
             <p>Visualizacion de proyectos disponibles para participar</p>
         </header>
 
