@@ -1,52 +1,42 @@
 <script>
-    import Header from "../../../lib/components/Header_St.svelte";
-    import Footer from "../../../lib/components/Footer.svelte";
-    import DashboardStats from "../../../lib/components/Projects.svelte";
+    import Header from "$lib/components/Header_St.svelte";
+    import Footer from "$lib/components/Footer.svelte";
+    import DashboardStats from "$lib/components/Projects.svelte";
+    import SideBar from "../../../lib/components/TeacherSideBar.svelte";
 
-    // Recibimos los datos del servidor (evita el error 500 y CORS)
     export let data;
 
     $: projects = data.projects || [];
     $: error = data.error;
 
-    // Estadísticas dinámicas
-    $: avgProgress = projects.length > 0
-        ? Math.round(projects.reduce((sum, p) => sum + (p.progress || 0), 0) / projects.length)
-        : 0;
-
     $: stats = [
         {
-            label: "Proyectos Asignados",
+            label: 'Proyectos Disponibles',
             value: projects.length,
             icon: `<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>`,
-            color: "#2563eb"
-        },
-        {
-            label: "Progreso Promedio",
-            value: `${avgProgress}%`,
-            icon: `<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
-            bgColor: "#fef3c7",
-            color: "#d97706"
+            bgColor: '#dbeafe',
+            color: '#2563eb'
         }
     ];
 
-    function viewStudents(name) {
-        alert("Mostrando equipo del proyecto: " + name);
-    }
-
-    function uploadDocument(projectName) {
-        // Funcionalidad futura
-        alert(`Módulo de carga para: ${projectName}\n(Esta función estará disponible al activar el inicio de sesión).`);
+    function joinProject(projectName) {
+        alert(`La funcionalidad para ingresar al proyecto "${projectName}" estará disponible cuando se defina completamente con el profesor.`);
     }
 </script>
 
 <Header />
 
+<SideBar />
+
 <main>
     <div class="content-wrapper">
         <header class="main-header">
-            <h1>MÓDULO DOCENTE</h1>
-            <p>Gestión de proyectos asignados y seguimiento de estudiantes participando.</p>
+            <div class="header-top">
+                <div>
+                    <h1>MÓDULO ESTUDIANTE</h1>
+                    <p>Consulta de proyectos disponibles para participación estudiantil.</p>
+                </div>
+            </div>
         </header>
 
         {#if error}
@@ -58,43 +48,40 @@
         <section class="list-section">
             <div class="section-title">
                 <h2>Proyectos Disponibles</h2>
-                <span class="badge">{projects.length}</span>
+                <span class="badge">{projects.length} Disponibles</span>
             </div>
 
             <div class="projects-grid">
                 {#each projects as project}
                     <div class="project-card">
                         <div class="card-body">
-                            <div class="icon-box">📁</div>
+                            <div class="icon-box">📂</div>
                             <div class="info">
                                 <h3>{project.project_name}</h3>
-                                <p class="date">Iniciado: {project.start_date}</p>
-                                <p class="desc">{project.description || 'Sin descripción'}</p>
+                                <p class="description">
+                                    {project.description || 'Sin descripción disponible.'}
+                                </p>
+                                <p class="date">Fecha de inicio: {project.start_date || 'No definida'}</p>
+                                <p class="status">
+                                    Estado:
+                                    <span class="highlight">{project.status}</span>
+                                </p>
                             </div>
                         </div>
 
                         <div class="card-actions">
-                            <div class="status">
-                                <span>Status</span>
-                                <div class="bar-bg"><div class="bar" style="width: {project.id_status}%"></div></div>
-                            </div>
-                            
-                            <div class="button-group">
-                                <button class="upload-btn" on:click={() => uploadDocument(project.project_name)} title="Subir material para estudiantes">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                    Documento
-                                </button>
-
-                                <button class="students-btn" on:click={() => viewStudents(project.project_name)}>
-                                    Ver estudiantes
-                                </button>
-                            </div>
+                            <button
+                                class="join-btn"
+                                on:click={() => joinProject(project.project_name)}
+                            >
+                                Ingresar al proyecto
+                            </button>
                         </div>
                     </div>
                 {/each}
 
                 {#if projects.length === 0 && !error}
-                    <div class="empty">No tienes proyectos asignados actualmente.</div>
+                    <div class="empty">No hay proyectos disponibles en este momento.</div>
                 {/if}
             </div>
         </section>
@@ -105,7 +92,7 @@
 
 <style>
     main {
-        background-color: #f3f4f6;
+        background-color: #f1f5f9;
         min-height: 80vh;
         padding: 2rem 1rem;
     }
@@ -115,95 +102,134 @@
         margin: 0 auto;
     }
 
-    .main-header { margin-bottom: 2rem; }
-    h1 { color: #0b2d69; margin: 0; font-size: 1.8rem; }
-    p { color: #6b7280; }
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    h1 {
+        color: #0b2d69;
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 800;
+    }
+
+    p {
+        color: #64748b;
+        margin-top: 5px;
+    }
 
     .section-title {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         margin-bottom: 1.5rem;
     }
 
     .badge {
-        background: #0b2d69;
+        background: #ff9500;
         color: white;
-        padding: 2px 10px;
+        padding: 4px 12px;
         border-radius: 20px;
         font-size: 0.8rem;
+        font-weight: bold;
     }
 
     .project-card {
         background: white;
         border-radius: 12px;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         border-left: 6px solid #ff9500;
         display: flex;
         flex-direction: column;
-        gap: 1rem;
+        gap: 1.2rem;
     }
 
-    .card-body { display: flex; gap: 1rem; align-items: flex-start; }
-    .icon-box { font-size: 1.5rem; }
-    
-    h3 { margin: 0; color: #ff9500; font-size: 1.2rem; }
-    .date { font-size: 0.85rem; color: #9ca3af; margin: 2px 0; }
-    .desc { font-size: 0.9rem; color: #4b5563; }
+    .card-body {
+        display: flex;
+        gap: 1.2rem;
+        align-items: flex-start;
+    }
+
+    .icon-box {
+        font-size: 1.8rem;
+        background: #fff7ed;
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    h3 {
+        margin: 0;
+        color: #0b2d69;
+        font-size: 1.25rem;
+    }
+
+    .description {
+        font-size: 0.95rem;
+        color: #475569;
+        margin: 6px 0;
+    }
+
+    .date {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin: 4px 0;
+    }
+
+    .status {
+        font-size: 0.95rem;
+        color: #475569;
+        margin: 4px 0;
+    }
+
+    .highlight {
+        color: #ff9500;
+        font-weight: 600;
+    }
 
     .card-actions {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-top: 1px solid #f3f4f6;
-        padding-top: 1rem;
-        flex-wrap: wrap;
-        gap: 1rem;
+        justify-content: flex-end;
+        gap: 12px;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 1.2rem;
     }
 
-    .progress-mini { width: 35%; min-width: 150px; }
-    .progress-mini span { font-size: 0.75rem; color: #6b7280; }
-    .bar-bg { background: #e5e7eb; height: 6px; border-radius: 10px; margin-top: 4px; }
-    .bar { background: #ff9500; height: 100%; border-radius: 10px; }
-
-    .button-group {
-        display: flex;
-        gap: 8px;
-    }
-
-    /* ESTILOS DE BOTONES */
-    .students-btn, .upload-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: 0.3s;
-        font-size: 0.9rem;
-    }
-
-    .students-btn {
+    .join-btn {
         background: #0b2d69;
         color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.2s;
     }
 
-    .students-btn:hover { background: #1540a5; }
-
-    .upload-btn {
-        background: #e2e8f0;
-        color: #475569;
+    .join-btn:hover {
+        background: #1540a5;
     }
 
-    .upload-btn:hover {
-        background: #cbd5e1;
-        color: #1e293b;
+    .error-msg {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
     }
 
-    .error-msg { background: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
-    .empty { text-align: center; padding: 2rem; color: #9ca3af; }
+    .empty {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        color: #64748b;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
 </style>
