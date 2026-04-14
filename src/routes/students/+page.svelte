@@ -10,6 +10,8 @@
 <Header />
 <SideBar />
 
+<Dashboard />
+
 
 <Footer />
 
