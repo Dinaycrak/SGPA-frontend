@@ -9,7 +9,7 @@
     { name: 'Available Projects', href: '/coordinator/projects' },
     { name: 'Teachers', href: '/coordinator/teachers' },
     { name: 'Students', href: '/coordinator/students' },
-    { name: 'Create Users', href: '/create_users' },
+    { name: 'Create Users', href: '/coordinator/create_users' },
   ];
 
   function toggleMenu() {
