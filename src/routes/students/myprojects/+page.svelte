@@ -9,7 +9,6 @@
     $: projects = data.projects || [];
     $: error = data.error;
 
-    // Solo mantenemos la estadística de proyectos disponibles
     $: stats = [
         {
             label: "Proyectos Bajo Dirección",
@@ -21,7 +20,6 @@
     ];
 
     function handleEnrollment() {
-        // Función deshabilitada por falta de login
         alert("La función de matriculación requiere inicio de sesión (No disponible actualmente).");
     }
 </script>
@@ -32,8 +30,8 @@
 <main>
     <div class="content-wrapper">
         <header class="main-header">
-            <h1>MODULO ESTUDIANTE</h1>
-            <p>Visualizacion de proyectos disponibles para participar</p>
+            <h1>MÓDULO ESTUDIANTE</h1>
+            <p>Visualización de proyectos disponibles para participar.</p>
         </header>
 
         {#if error}
@@ -93,15 +91,34 @@
         margin: 0 auto;
     }
 
-    .main-header { margin-bottom: 2rem; }
-    h1 { color: #0b2d69; margin: 0; font-size: 1.8rem; }
-    p { color: #6b7280; }
+    .main-header {
+        margin-bottom: 2rem;
+    }
+
+    .main-header h1 {
+        color: #0b2d69;
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 800;
+    }
+
+    .main-header p {
+        color: #64748b;
+        margin-top: 5px;
+    }
 
     .section-title {
         display: flex;
         align-items: center;
         gap: 10px;
         margin-bottom: 1.5rem;
+    }
+
+    .section-title h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #0b2d69;
     }
 
     .badge {
@@ -118,18 +135,38 @@
         padding: 1.25rem;
         margin-bottom: 1rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        border-left: 6px solid #ff9500; /* Color distintivo */
+        border-left: 6px solid #ff9500;
         display: flex;
         flex-direction: column;
         gap: 1rem;
     }
 
-    .card-body { display: flex; gap: 1rem; align-items: flex-start; }
-    .icon-box { font-size: 1.5rem; }
-    
-    h3 { margin: 0; color: #ff9500; font-size: 1.2rem; }
-    .date { font-size: 0.85rem; color: #9ca3af; margin: 2px 0; }
-    .desc { font-size: 0.9rem; color: #4b5563; }
+    .card-body {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .icon-box {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        margin: 0;
+        color: #ff9500;
+        font-size: 1.2rem;
+    }
+
+    .date {
+        font-size: 0.85rem;
+        color: #9ca3af;
+        margin: 2px 0;
+    }
+
+    .desc {
+        font-size: 0.9rem;
+        color: #4b5563;
+    }
 
     .card-actions {
         display: flex;
@@ -163,6 +200,19 @@
         background: #1540a5;
     }
 
-    .error-msg { background: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
-    .empty { text-align: center; padding: 3rem; background: white; border-radius: 12px; color: #94a3b8; }
+    .error-msg {
+        background: #fee2e2;
+        color: #b91c1c;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 3rem;
+        background: white;
+        border-radius: 12px;
+        color: #94a3b8;
+    }
 </style>
