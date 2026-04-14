@@ -2,7 +2,7 @@
     import Header from "../../../lib/components/Header_St.svelte";
     import Footer from "../../../lib/components/Footer.svelte";
     import DashboardStats from "../../../lib/components/Projects.svelte";
-    import SideBar from "../../../lib/components/TeacherSideBar.svelte;
+    import SideBar from "../../../lib/components/TeacherSideBar.svelte";
 
     export let data;
 
