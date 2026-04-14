@@ -1,40 +1,38 @@
 /** @type {import('./$types').PageServerLoad} */
+import { API_BASE_URL, getAuthHeaders } from "../../../lib/components/Tokens";
+
 export async function load({ fetch }) {
-    const API_URL = "https://academic-project-management-api-rizs.onrender.com/api/projects";
-    
-    // Mapeo de estados para que el frontend los entienda
+    const API_URL = `${API_BASE_URL}/projects`;
+
     const statusMap = {
         1: "Activo",
         2: "Completado",
         3: "Pendiente"
     };
 
-    // Pegamos el token de Alejandro (Coordinador) directamente como texto
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzYxODYxODJ9.ktVSoEz1JpRsq_mMYaoFEdJV4RkTkfYQK_qRAw89X8w";
-
     try {
         const response = await fetch(API_URL, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
+            headers: getAuthHeaders("coordinator")
         });
 
         if (response.status === 401) {
-            return { projects: [], error: "Sesión expirada o no autorizada. Por favor inicia sesión." };
+            return {
+                projects: [],
+                error: "Sesión expirada o no autorizada."
+            };
         }
 
         if (!response.ok) {
-            return { projects: [], error: `Error de API: ${response.status}` };
+            return {
+                projects: [],
+                error: `Error de API: ${response.status}`
+            };
         }
 
         const data = await response.json();
-        
-        // Validamos si la data es un array
         const projectsData = Array.isArray(data) ? data : [];
 
-        // Mapeamos los datos según el formato que recibe tu frontend
-        const projects = projectsData.map(p => ({
+        const projects = projectsData.map((p) => ({
             id_project: p[0],
             project_name: p[1],
             description: p[2],
@@ -43,8 +41,10 @@ export async function load({ fetch }) {
         }));
 
         return { projects };
-
-    } catch (e) {
-        return { projects: [], error: "Error de conexión con el servidor." };
+    } catch (error) {
+        return {
+            projects: [],
+            error: "Error de conexión con el servidor."
+        };
     }
 }

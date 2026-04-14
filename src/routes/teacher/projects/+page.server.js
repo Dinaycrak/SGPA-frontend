@@ -1,9 +1,8 @@
 /** @type {import('./$types').PageServerLoad} */
-
-import { token_teacher } from "../../../lib/components/Tokens";
+import { API_BASE_URL, getAuthHeaders } from "../../../lib/components/Tokens";
 
 export async function load({ fetch }) {
-    const PROJECTS_API_URL = "https://academic-project-management-api-rizs.onrender.com/api/projects";
+    const PROJECTS_API_URL = `${API_BASE_URL}/projects`;
 
     const statusMap = {
         1: "Activo",
@@ -11,21 +10,15 @@ export async function load({ fetch }) {
         3: "Pendiente"
     };
 
-    // Token temporal del docente mientras se implementa el login real
-    const token = token_teacher
-
     try {
         const response = await fetch(PROJECTS_API_URL, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
+            headers: getAuthHeaders("teacher")
         });
 
         if (response.status === 401) {
             return {
                 projects: [],
-                error: "Sesión expirada o no autorizada. Por favor inicia sesión."
+                error: "Sesión expirada o no autorizada."
             };
         }
 
@@ -48,7 +41,7 @@ export async function load({ fetch }) {
         }));
 
         return { projects };
-    } catch (e) {
+    } catch (error) {
         return {
             projects: [],
             error: "Error de conexión con el servidor."

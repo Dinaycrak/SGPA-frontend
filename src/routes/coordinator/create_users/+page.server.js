@@ -1,9 +1,7 @@
 import { fail } from '@sveltejs/kit';
-const API_BASE_URL = 'https://academic-project-management-api-rizs.onrender.com';
-const USERS_ENDPOINT = `${API_BASE_URL}/api/users`;
+import { API_BASE_URL, getAuthHeaders } from "../../../lib/components/Tokens";
 
-const COORDINATOR_TOKEN =
-	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzYxODYxODJ9.ktVSoEz1JpRsq_mMYaoFEdJV4RkTkfYQK_qRAw89X8w';
+const USERS_ENDPOINT = `${API_BASE_URL}/users`;
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
@@ -59,23 +57,13 @@ export const actions = {
 		};
 
 		try {
-			console.log('=== CREAR USUARIO ===');
-			console.log('Payload enviado:', payload);
-
 			const response = await fetch(USERS_ENDPOINT, {
 				method: 'POST',
-				headers: {
-					Authorization: `Bearer ${COORDINATOR_TOKEN}`,
-					'Content-Type': 'application/json',
-					Accept: 'application/json'
-				},
+				headers: getAuthHeaders("coordinator"),
 				body: JSON.stringify(payload)
 			});
 
 			const rawText = await response.text();
-
-			console.log('Status API:', response.status);
-			console.log('Respuesta cruda API:', rawText);
 
 			let result = null;
 
@@ -112,8 +100,6 @@ export const actions = {
 				createdUser: result
 			};
 		} catch (error) {
-			console.error('Error real al crear usuario:', error);
-
 			return fail(400, {
 				success: false,
 				error: 'Falló la conexión o el procesamiento del servidor.',

@@ -4,7 +4,7 @@
   import 'bootstrap/dist/css/bootstrap.min.css';
   import { goto } from '$app/navigation';
 
-  let selectedRole = $state('student'); 
+  let selectedRole = $state('student');
 
   function handleLogin() {
     if (selectedRole === 'student') {
@@ -109,7 +109,7 @@
             </div>
           </div>
 
-          <button class="btn-primary" on:click={handleLogin}>
+          <button class="btn-primary" onclick={handleLogin}>
             Ingresar
           </button>
         </div>
@@ -218,7 +218,7 @@
   .info-card h3 {
     margin: 0 0 10px;
     color: #0b2d69;
-    font-size: 1.1rem;
+    font-size: 1.08rem;
   }
 
   .info-card p {
@@ -228,31 +228,19 @@
   }
 
   .login-image-slot {
-    min-height: 420px;
-    border-radius: 30px;
-    overflow: hidden;
-    box-shadow: 0 20px 50px rgba(11, 45, 105, 0.16);
-    animation: fadeRight 0.95s ease;
-    position: relative;
-  }
-
-  .login-image-slot::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(11, 45, 105, 0.12) 0%,
-      rgba(11, 45, 105, 0.24) 100%
-    );
-    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeRight 1s ease;
   }
 
   .login-image-slot img {
     width: 100%;
-    height: 100%;
+    max-width: 560px;
+    border-radius: 28px;
     object-fit: cover;
-    display: block;
+    box-shadow: 0 24px 52px rgba(11, 45, 105, 0.18);
+    border: 4px solid rgba(255, 255, 255, 0.85);
   }
 
   .login-section {
@@ -260,231 +248,168 @@
   }
 
   .login-card {
-    max-width: 560px;
+    max-width: 620px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.78);
-    backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    border-radius: 30px;
-    padding: 0 34px 36px;
-    box-shadow:
-      0 24px 60px rgba(11, 45, 105, 0.12),
-      0 10px 24px rgba(0, 0, 0, 0.05);
-    animation: fadeUp 0.9s ease;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(14px);
+    border-radius: 28px;
+    box-shadow: 0 22px 46px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    position: relative;
-  }
-
-  .login-card-header {
-    text-align: center;
-    margin-bottom: 24px;
+    border: 1px solid rgba(11, 45, 105, 0.08);
   }
 
   .card-top-line {
     height: 8px;
     background: linear-gradient(90deg, #0b2d69 0%, #1d73d4 55%, #f2b705 100%);
-    margin: 0 -34px 28px;
-    width: calc(100% + 68px);
+  }
+
+  .login-card-header {
+    padding: 28px 34px 10px;
+    text-align: center;
   }
 
   .login-mini-badge {
     display: inline-block;
-    padding: 7px 14px;
-    border-radius: 999px;
+    margin-bottom: 10px;
     background: rgba(11, 45, 105, 0.08);
     color: #0b2d69;
-    font-size: 0.8rem;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
     font-weight: 700;
-    margin-bottom: 12px;
   }
 
   .login-card-title {
     margin: 0;
     color: #0b2d69;
-    text-align: center;
     font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
   }
 
   .login-card-subtitle {
-    margin: 12px 0 0;
-    text-align: center;
-    color: #5c6b82;
+    margin: 10px 0 0;
+    color: #5b5b5b;
     line-height: 1.7;
-    font-size: 0.98rem;
   }
 
   .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+    padding: 20px 34px 34px;
   }
 
   .input-group-custom {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    margin-bottom: 18px;
   }
 
   .input-group-custom label {
-    font-size: 0.92rem;
     font-weight: 700;
     color: #0b2d69;
-    padding-left: 2px;
+    margin-bottom: 8px;
   }
 
   .login-formulary {
     width: 100%;
-    padding: 15px 16px;
-    border-radius: 16px;
-    border: 1.5px solid #d7dfef;
-    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-    color: #1d1d1d;
-    font-size: 1rem;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid #d4dceb;
+    background: #f8fbff;
     outline: none;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
-  }
-
-  .login-formulary::placeholder {
-    color: #8b98ad;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .login-formulary:focus {
     border-color: #1d73d4;
-    box-shadow: 0 0 0 5px rgba(29, 115, 212, 0.12);
-    background: #fff;
-    transform: translateY(-1px);
+    box-shadow: 0 0 0 4px rgba(29, 115, 212, 0.12);
   }
 
   .role-selector {
-    margin-top: 4px;
-    padding: 18px;
-    border-radius: 22px;
-    background: linear-gradient(180deg, rgba(241, 246, 255, 0.9), rgba(255, 255, 255, 0.95));
-    border: 1px solid rgba(11, 45, 105, 0.08);
+    margin: 24px 0 26px;
   }
 
   .role-title {
-    margin: 0 0 14px;
+    margin: 0 0 12px;
+    font-weight: 800;
     color: #0b2d69;
-    font-size: 0.95rem;
-    font-weight: 700;
-    text-align: center;
   }
 
   .radio-group-horizontal {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 14px;
-    width: 100%;
   }
 
   .radio-option-vertical {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 12px;
-    cursor: pointer;
-    padding: 18px 12px;
+    align-items: center;
+    min-height: 82px;
     border-radius: 18px;
-    background: #ffffff;
-    border: 1.5px solid #dde6f3;
-    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-    min-height: 108px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    user-select: none;
+  }
+
+  .radio-option-vertical input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .student-card {
+    background: rgba(29, 115, 212, 0.08);
+    color: #0b2d69;
+  }
+
+  .teacher-card {
+    background: rgba(242, 183, 5, 0.12);
+    color: #7b5a00;
+  }
+
+  .coordinator-card {
+    background: rgba(11, 45, 105, 0.1);
+    color: #0b2d69;
   }
 
   .radio-option-vertical:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 28px rgba(11, 45, 105, 0.08);
+    transform: translateY(-3px);
   }
 
   .radio-option-vertical.selected {
     border-color: #1d73d4;
-    box-shadow: 0 16px 28px rgba(29, 115, 212, 0.14);
-    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(29, 115, 212, 0.15);
   }
 
   .role-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-height: 38px;
-    padding: 8px 12px;
-    border-radius: 12px;
-    font-weight: 700;
-    width: 100%;
-    font-size: 0.92rem;
-  }
-
-  .student-card .role-pill {
-    color: white;
-    background: linear-gradient(135deg, #0b2d69 0%, #1f5efe 100%);
-    box-shadow: 0 12px 24px rgba(31, 94, 254, 0.18);
-  }
-
-  .teacher-card .role-pill {
-    color: white;
-    background: linear-gradient(135deg, #163d87 0%, #2e7edb 100%);
-    box-shadow: 0 12px 24px rgba(46, 126, 219, 0.18);
-  }
-
-  .coordinator-card .role-pill {
-    color: white;
-    background: linear-gradient(135deg, #0b2d69 0%, #f2b705 180%);
-    box-shadow: 0 12px 24px rgba(242, 183, 5, 0.18);
-  }
-
-  input[type="radio"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    accent-color: #0b2d69;
+    font-size: 0.98rem;
   }
 
   .btn-primary {
     width: 100%;
-    margin-top: 4px;
-    padding: 15px 24px;
-    cursor: pointer;
-    background: linear-gradient(135deg, #0b2d69 0%, #1d73d4 100%);
-    color: white;
     border: none;
     border-radius: 16px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #0b2d69 0%, #1d73d4 100%);
+    color: white;
+    font-weight: 800;
     font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    box-shadow: 0 16px 28px rgba(11, 45, 105, 0.18);
-    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+    cursor: pointer;
+    box-shadow: 0 14px 28px rgba(11, 45, 105, 0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
   }
 
   .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 20px 34px rgba(11, 45, 105, 0.22);
+    transform: translateY(-2px);
     filter: brightness(1.03);
-  }
-
-  .btn-primary:active {
-    transform: translateY(-1px);
-  }
-
-  @keyframes fadeUp {
-    from {
-      opacity: 0;
-      transform: translateY(24px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    box-shadow: 0 18px 34px rgba(11, 45, 105, 0.25);
   }
 
   @keyframes fadeLeft {
     from {
       opacity: 0;
-      transform: translateX(-28px);
+      transform: translateX(-24px);
     }
     to {
       opacity: 1;
@@ -495,7 +420,7 @@
   @keyframes fadeRight {
     from {
       opacity: 0;
-      transform: translateX(28px);
+      transform: translateX(24px);
     }
     to {
       opacity: 1;
@@ -503,44 +428,39 @@
     }
   }
 
-  @media (max-width: 1080px) {
+  @media (max-width: 980px) {
     .login-hero-overlay {
       grid-template-columns: 1fr;
+    }
+
+    .login-image-slot {
+      order: -1;
     }
 
     .info-boxes {
       grid-template-columns: 1fr;
     }
-
-    .login-image-slot {
-      min-height: 320px;
-    }
   }
 
-  @media (max-width: 720px) {
-    .login-card {
-      padding: 0 22px 24px;
-    }
-
-    .card-top-line {
-      margin: 0 -22px 24px;
-      width: calc(100% + 44px);
-    }
-
-    .title {
-      font-size: 2.2rem;
-    }
-
-    .login-card-title {
-      font-size: 1.6rem;
-    }
-
+  @media (max-width: 700px) {
     .radio-group-horizontal {
       grid-template-columns: 1fr;
     }
 
-    .role-selector {
-      padding: 16px;
+    .login-card-header,
+    .login-form {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .login-hero {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .login-section {
+      padding-left: 16px;
+      padding-right: 16px;
     }
   }
 </style>
