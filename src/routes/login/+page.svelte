@@ -69,34 +69,51 @@
       <div class="login-card">
         <div class="card-top-line"></div>
 
-        <h2 class="login-card-title">Accede a tu cuenta</h2> <br>
-        <p class="login-card-subtitle">
-          Ingresa tus datos y selecciona el tipo de acceso correspondiente.
-        </p>
+        <div class="login-card-header">
+          <span class="login-mini-badge">SGPA</span>
+          <h2 class="login-card-title">Accede a tu cuenta</h2>
+          <p class="login-card-subtitle">
+            Ingresa tus datos y selecciona el tipo de acceso correspondiente.
+          </p>
+        </div>
 
-          <input class= "login-formulary" type="text" placeholder="Usuario" />
-          <input class= "login-formulary" type="password" placeholder="Contraseña" /> <br>
+        <div class="login-form">
+          <div class="input-group-custom">
+            <label for="usuario">Usuario</label>
+            <input id="usuario" class="login-formulary" type="text" placeholder="Ingresa tu usuario" />
+          </div>
 
-      <div class="radio-group-horizontal">
-        <label class="radio-option-vertical">
-          <span class= "student-span">Estudiante</span>
-          <input type="radio" bind:group={selectedRole} value="student" />
-        </label>
+          <div class="input-group-custom">
+            <label for="password">Contraseña</label>
+            <input id="password" class="login-formulary" type="password" placeholder="Ingresa tu contraseña" />
+          </div>
 
-        <label class="radio-option-vertical">
-          <span class= "teacher-span">Docente</span>
-          <input type="radio" bind:group={selectedRole} value="teacher" />
-        </label>
+          <div class="role-selector">
+            <p class="role-title">Selecciona tu rol</p>
 
-        <label class="radio-option-vertical">
-          <span class= "coordinator-span"> Coordinador</span>
-          <input type="radio" bind:group={selectedRole} value="coordinator" />
-        </label>
+            <div class="radio-group-horizontal">
+              <label class:selected={selectedRole === 'student'} class="radio-option-vertical student-card">
+                <input type="radio" bind:group={selectedRole} value="student" />
+                <span class="role-pill">Estudiante</span>
+              </label>
+
+              <label class:selected={selectedRole === 'teacher'} class="radio-option-vertical teacher-card">
+                <input type="radio" bind:group={selectedRole} value="teacher" />
+                <span class="role-pill">Docente</span>
+              </label>
+
+              <label class:selected={selectedRole === 'coordinator'} class="radio-option-vertical coordinator-card">
+                <input type="radio" bind:group={selectedRole} value="coordinator" />
+                <span class="role-pill">Coordinador</span>
+              </label>
+            </div>
+          </div>
+
+          <button class="btn-primary" on:click={handleLogin}>
+            Ingresar
+          </button>
+        </div>
       </div>
-      <button class="btn-primary" on:click={handleLogin}>
-        Ingresar
-      </button>
-    </div>
     </section>
   </main>
 
@@ -121,15 +138,18 @@
 
   .page-wrapper {
     min-height: 100vh;
-    background: linear-gradient(180deg, #f8f9fc 0%, #eef2f8 35%, #f3f3f3 100%);
+    background:
+      radial-gradient(circle at top left, rgba(29, 115, 212, 0.08), transparent 28%),
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.08), transparent 22%),
+      linear-gradient(180deg, #f8faff 0%, #eef3fb 35%, #f4f6fa 100%);
   }
 
   .login-page {
-    padding-bottom: 60px;
+    padding-bottom: 70px;
   }
 
   .login-hero {
-    padding: 42px 24px 28px;
+    padding: 42px 24px 20px;
   }
 
   .login-hero-overlay {
@@ -147,14 +167,14 @@
 
   .hero-badge {
     display: inline-block;
-    background: #f2b705;
+    background: linear-gradient(135deg, #f2b705 0%, #ffd450 100%);
     color: #0b2d69;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.85rem;
-    padding: 8px 14px;
+    padding: 8px 16px;
     border-radius: 999px;
     margin-bottom: 18px;
-    box-shadow: 0 8px 20px rgba(242, 183, 5, 0.2);
+    box-shadow: 0 10px 24px rgba(242, 183, 5, 0.25);
   }
 
   .title {
@@ -180,9 +200,11 @@
   }
 
   .info-card {
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
     border-radius: 20px;
     padding: 22px;
+    border: 1px solid rgba(11, 45, 105, 0.08);
     border-top: 4px solid #0b2d69;
     box-shadow: 0 14px 30px rgba(0, 0, 0, 0.06);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -207,9 +229,9 @@
 
   .login-image-slot {
     min-height: 420px;
-    border-radius: 28px;
+    border-radius: 30px;
     overflow: hidden;
-    box-shadow: 0 18px 40px rgba(11, 45, 105, 0.16);
+    box-shadow: 0 20px 50px rgba(11, 45, 105, 0.16);
     animation: fadeRight 0.95s ease;
     position: relative;
   }
@@ -220,8 +242,8 @@
     inset: 0;
     background: linear-gradient(
       135deg,
-      rgba(11, 45, 105, 0.08) 0%,
-      rgba(11, 45, 105, 0.2) 100%
+      rgba(11, 45, 105, 0.12) 0%,
+      rgba(11, 45, 105, 0.24) 100%
     );
     pointer-events: none;
   }
@@ -234,31 +256,46 @@
   }
 
   .login-section {
-    padding: 24px;
+    padding: 20px 24px 0;
   }
 
   .login-card {
-    display: flex;
-    flex-direction: column; 
-    align-items: center;
     max-width: 560px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.96);
-    border-radius: 28px;
-    padding: 0 34px 34px;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    border-radius: 30px;
+    padding: 0 34px 36px;
     box-shadow:
-      0 20px 50px rgba(11, 45, 105, 0.1),
-      0 4px 12px rgba(0, 0, 0, 0.05);
+      0 24px 60px rgba(11, 45, 105, 0.12),
+      0 10px 24px rgba(0, 0, 0, 0.05);
     animation: fadeUp 0.9s ease;
     overflow: hidden;
+    position: relative;
+  }
+
+  .login-card-header {
+    text-align: center;
+    margin-bottom: 24px;
   }
 
   .card-top-line {
     height: 8px;
-    width: 100%;
-    background: linear-gradient(90deg, #0b2d69 0%, #1d73d4 60%, #f2b705 100%);
+    background: linear-gradient(90deg, #0b2d69 0%, #1d73d4 55%, #f2b705 100%);
     margin: 0 -34px 28px;
     width: calc(100% + 68px);
+  }
+
+  .login-mini-badge {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: rgba(11, 45, 105, 0.08);
+    color: #0b2d69;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 12px;
   }
 
   .login-card-title {
@@ -266,83 +303,137 @@
     color: #0b2d69;
     text-align: center;
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 
   .login-card-subtitle {
-    margin: 12px 0 28px;
+    margin: 12px 0 0;
     text-align: center;
-    color: #00b7ff;
+    color: #5c6b82;
     line-height: 1.7;
+    font-size: 0.98rem;
   }
 
-   .login-formulary input{
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .input-group-custom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input-group-custom label {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #0b2d69;
+    padding-left: 2px;
+  }
+
+  .login-formulary {
     width: 100%;
-    padding: 14px 16px;
-    border-radius: 14px;
-    border: 1.5px solid #d9e1f0;
-    background: #f9fbff;
+    padding: 15px 16px;
+    border-radius: 16px;
+    border: 1.5px solid #d7dfef;
+    background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
     color: #1d1d1d;
     font-size: 1rem;
     outline: none;
-    transition: 0.25s ease;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
   }
 
-  .login-formulary input:focus {
+  .login-formulary::placeholder {
+    color: #8b98ad;
+  }
+
+  .login-formulary:focus {
     border-color: #1d73d4;
-    box-shadow: 0 0 0 4px rgba(29, 115, 212, 0.12);
+    box-shadow: 0 0 0 5px rgba(29, 115, 212, 0.12);
     background: #fff;
+    transform: translateY(-1px);
   }
- 
 
- 
+  .role-selector {
+    margin-top: 4px;
+    padding: 18px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(241, 246, 255, 0.9), rgba(255, 255, 255, 0.95));
+    border: 1px solid rgba(11, 45, 105, 0.08);
+  }
+
+  .role-title {
+    margin: 0 0 14px;
+    color: #0b2d69;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
   .radio-group-horizontal {
-    display: flex;
-    justify-content: space-around; 
-    align-items: center;
-    gap: 20px;
-    margin: 25px 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
     width: 100%;
   }
 
   .radio-option-vertical {
     display: flex;
-    flex-direction: column; 
-    align-items: center;    
-    gap: 8px;               
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
     cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
-    color: #333;
+    padding: 18px 12px;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1.5px solid #dde6f3;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    min-height: 108px;
   }
 
-  .btn-primary {
-      padding: 10px 30px; 
-      cursor: pointer;
-      background-color: #1e90ff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-    }
+  .radio-option-vertical:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(11, 45, 105, 0.08);
+  }
 
-  .student-span {
+  .radio-option-vertical.selected {
+    border-color: #1d73d4;
+    box-shadow: 0 16px 28px rgba(29, 115, 212, 0.14);
+    transform: translateY(-2px);
+  }
+
+  .role-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 38px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-weight: 700;
+    width: 100%;
+    font-size: 0.92rem;
+  }
+
+  .student-card .role-pill {
     color: white;
     background: linear-gradient(135deg, #0b2d69 0%, #1f5efe 100%);
-    border-radius: 4px;
-    box-shadow: 0 12px 24px rgba(31, 94, 254, 0.22);
+    box-shadow: 0 12px 24px rgba(31, 94, 254, 0.18);
   }
 
-  .teacher-span {
+  .teacher-card .role-pill {
     color: white;
     background: linear-gradient(135deg, #163d87 0%, #2e7edb 100%);
-    border-radius: 4px;
-    box-shadow: 0 12px 24px rgba(46, 126, 219, 0.22);
+    box-shadow: 0 12px 24px rgba(46, 126, 219, 0.18);
   }
 
-  .coordinator-span {
+  .coordinator-card .role-pill {
     color: white;
     background: linear-gradient(135deg, #0b2d69 0%, #f2b705 180%);
-    border-radius: 4px;
     box-shadow: 0 12px 24px rgba(242, 183, 5, 0.18);
   }
 
@@ -350,9 +441,34 @@
     width: 18px;
     height: 18px;
     cursor: pointer;
+    accent-color: #0b2d69;
   }
 
-  
+  .btn-primary {
+    width: 100%;
+    margin-top: 4px;
+    padding: 15px 24px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #0b2d69 0%, #1d73d4 100%);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: 0 16px 28px rgba(11, 45, 105, 0.18);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 34px rgba(11, 45, 105, 0.22);
+    filter: brightness(1.03);
+  }
+
+  .btn-primary:active {
+    transform: translateY(-1px);
+  }
 
   @keyframes fadeUp {
     from {
@@ -417,6 +533,14 @@
 
     .login-card-title {
       font-size: 1.6rem;
+    }
+
+    .radio-group-horizontal {
+      grid-template-columns: 1fr;
+    }
+
+    .role-selector {
+      padding: 16px;
     }
   }
 </style>
