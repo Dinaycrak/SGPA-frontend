@@ -33,7 +33,7 @@
         <header class="main-header">
             <div class="header-top">
                 <div>
-                    <h1>MÓDULO ESTUDIANTE</h1>
+                    <h1>MÓDULO DOCENTE</h1>
                     <p>Consulta de proyectos disponibles para participación estudiantil.</p>
                 </div>
             </div>

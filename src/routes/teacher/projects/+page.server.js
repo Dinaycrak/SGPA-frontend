@@ -1,4 +1,7 @@
 /** @type {import('./$types').PageServerLoad} */
+
+import { token_teacher } from "../../../lib/components/Tokens";
+
 export async function load({ fetch }) {
     const PROJECTS_API_URL = "https://academic-project-management-api-rizs.onrender.com/api/projects";
 
@@ -9,7 +12,7 @@ export async function load({ fetch }) {
     };
 
     // Token temporal del docente mientras se implementa el login real
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozOSwicm9sZSI6IlByb2Zlc3NvciIsImV4cCI6MTc3NjE1MTIzN30.FwzFnEoi-mj5Pro0V6O7P16P6XgQHz0CDwY76xd97VY";
+    const token = token_teacher
 
     try {
         const response = await fetch(PROJECTS_API_URL, {

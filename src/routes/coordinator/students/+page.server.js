@@ -2,7 +2,7 @@
 export async function load({ fetch }) {
     const API_BASE = "https://academic-project-management-api-rizs.onrender.com/api";
     // Token de Alejandro (Coordinador)
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzYxNDkzODd9.mBeu8YPFA5SokmHwg2_ftgVNnfUtvSQbIP0Ft4gIeE4";
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzYxODYxODJ9.ktVSoEz1JpRsq_mMYaoFEdJV4RkTkfYQK_qRAw89X8w";
 
     const headers = { 'Authorization': `Bearer ${token}` };
 
