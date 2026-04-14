@@ -9,7 +9,7 @@ export async function load({ fetch }) {
     };
 
     // Token temporal del estudiante mientras se implementa el login real
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozNywicm9sZSI6IlN0dWRlbnQiLCJleHAiOjE3NzYxNTA3Njd9.rSwft5Bv3TM7F7rDN3IScF-ImdlFtdWJ2KK73KVaZzI";
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozOSwicm9sZSI6IlByb2Zlc3NvciIsImV4cCI6MTc3NjE4NjQ1N30.E32siH-CLQmWAKCK_48mIyzWpnA4k-evqu-DcaAAhOk";
 
     try {
         const response = await fetch(API_URL, {

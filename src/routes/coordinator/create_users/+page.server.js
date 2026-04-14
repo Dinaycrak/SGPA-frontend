@@ -3,7 +3,7 @@ const API_BASE_URL = 'https://academic-project-management-api-rizs.onrender.com'
 const USERS_ENDPOINT = `${API_BASE_URL}/api/users`;
 
 const COORDINATOR_TOKEN =
-	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzYxNDkzODd9.mBeu8YPFA5SokmHwg2_ftgVNnfUtvSQbIP0Ft4gIeE4';
+	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzYxODYxODJ9.ktVSoEz1JpRsq_mMYaoFEdJV4RkTkfYQK_qRAw89X8w';
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
