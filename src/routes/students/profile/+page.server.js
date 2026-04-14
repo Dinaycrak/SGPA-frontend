@@ -1,22 +1,18 @@
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch }) {
-    const USER_API_URL = "https://academic-project-management-api-rizs.onrender.com/api/users/37";
+import { getAuthHeaders, getUserEndpoint } from "../../../lib/components/Tokens";
 
-    // Token temporal del estudiante mientras se implementa el login real
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozOSwicm9sZSI6IlByb2Zlc3NvciIsImV4cCI6MTc3NjE4NjQ1N30.E32siH-CLQmWAKCK_48mIyzWpnA4k-evqu-DcaAAhOk";
+export async function load({ fetch }) {
+    const USER_API_URL = getUserEndpoint("students");
 
     try {
         const response = await fetch(USER_API_URL, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
+            headers: getAuthHeaders("students")
         });
 
         if (response.status === 401) {
             return {
                 user: {},
-                error: "Sesión expirada o no autorizada. Por favor inicia sesión."
+                error: "Sesión expirada o no autorizada."
             };
         }
 
@@ -40,7 +36,7 @@ export async function load({ fetch }) {
         };
 
         return { user };
-    } catch (e) {
+    } catch (error) {
         return {
             user: {},
             error: "Error de conexión con el servidor."

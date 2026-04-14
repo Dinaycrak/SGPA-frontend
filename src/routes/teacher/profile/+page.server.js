@@ -1,25 +1,18 @@
 /** @type {import('./$types').PageServerLoad} */
-
-import { token_teacher } from "../../../lib/components/Tokens";
+import { getAuthHeaders, getUserEndpoint } from "../../../lib/components/Tokens";
 
 export async function load({ fetch }) {
-    const USER_API_URL = "https://academic-project-management-api-2.onrender.com/docs";
-
-    const token = token_teacher
-    // Token temporal del docente mientras se implementa el login real
+    const USER_API_URL = getUserEndpoint("teacher");
 
     try {
         const response = await fetch(USER_API_URL, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json"
-            }
+            headers: getAuthHeaders("teacher")
         });
 
         if (response.status === 401) {
             return {
                 user: {},
-                error: "Sesión expirada o no autorizada. Por favor inicia sesión."
+                error: "Sesión expirada o no autorizada."
             };
         }
 
@@ -43,7 +36,7 @@ export async function load({ fetch }) {
         };
 
         return { user };
-    } catch (e) {
+    } catch (error) {
         return {
             user: {},
             error: "Error de conexión con el servidor."
