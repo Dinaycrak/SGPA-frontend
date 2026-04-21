@@ -1,30 +1,26 @@
+import { getUsers, ROLE_IDS } from '$lib/server/project-helpers.js';
+
 /** @type {import('./$types').PageServerLoad} */
-import { API_BASE_URL, getAuthHeaders } from "../../../lib/components/Tokens";
-
 export async function load({ fetch }) {
-    const headers = getAuthHeaders("coordinator");
+  try {
+    const users = await getUsers(fetch, 'coordinator');
+    const students = users.filter((user) => Number(user.id_role) === ROLE_IDS.student);
 
-    try {
-        const [resProjects, resUsers] = await Promise.all([
-            fetch(`${API_BASE_URL}/projects`, { headers }),
-            fetch(`${API_BASE_URL}/users`, { headers })
-        ]);
+    const rows = students.map((student) => ({
+      nombre: `${student.first_name} ${student.last_name}`.trim(),
+      correo: student.email,
+      estado: student.is_active ? 'Activo' : 'Inactivo'
+    }));
 
-        const projectsData = resProjects.ok ? await resProjects.json() : [];
-        const usersData = resUsers.ok ? await resUsers.json() : [];
-
-        return {
-            projects: projectsData.map((p) => ({
-                id_project: p[0],
-                project_name: p[1]
-            })),
-            allStudents: usersData.filter((u) => u.id_role === 1)
-        };
-    } catch (error) {
-        return {
-            projects: [],
-            allStudents: [],
-            error: "Error de conexión"
-        };
-    }
+    return {
+      rows,
+      totalStudents: students.length
+    };
+  } catch (error) {
+    return {
+      rows: [],
+      totalStudents: 0,
+      error: error.message || 'Error al cargar los estudiantes'
+    };
+  }
 }
