@@ -4,9 +4,9 @@ export const API_BASE_URL = "https://academic-project-management-api-2.onrender.
   Reemplaza estos 3 tokens cada vez que expiren.
   Como ahora todo sale de este archivo, ya no tendrás que ir archivo por archivo.
 */
-export const token_coordinator = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzY3ODcwMjR9.0V9AJaeYqc46R3iLHpqAJnyW_tGt9X0gj4qCNzQ4VQw";
-export const token_student = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozNywicm9sZSI6IlN0dWRlbnQiLCJleHAiOjE3NzY3ODcxNjB9.Z4R_-AE2XrERfKPrS5OAALRvlZLRv0Pyh6UjMG1E7rQ";
-export const token_teacher = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozOSwicm9sZSI6IlByb2Zlc3NvciIsImV4cCI6MTc3Njc4NzExNn0.0BnntGlHuNX1HcZk55ajWt7tByb1a2kIprb17fSMh1c";
+export const token_coordinator = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3NzY3NDg5MjJ9.Dup6HSFPPEBfNTjHseFl9s5-NqDa1bOrJ0rshj5sXAk";
+export const token_student = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozNywicm9sZSI6IlN0dWRlbnQiLCJleHAiOjE3NzY3NDg4ODh9.OzL4yDraVlUm6fByeJcjjqaWEEpWYbCvQovAfVnmcTk";
+export const token_teacher = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozOSwicm9sZSI6IlByb2Zlc3NvciIsImV4cCI6MTc3Njc0ODg1NX0.nkmBZTSnxf2NdEZuojfGrRiLj8XyGMXdSjpgb8dEU3c";
 
 /*
   Estos IDs son temporales para los perfiles.
