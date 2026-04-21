@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { getProjects, getStatusLabel } from '$lib/server/project-helpers.js';
 import { API_BASE_URL, getAuthHeaders, PROFILE_USER_IDS } from '$lib/components/Tokens.js';
 
@@ -39,13 +38,8 @@ async function getProjectUsersDirect(fetch) {
   return Array.isArray(data) ? data.map(normalizeProjectUser) : [];
 }
 
-=======
->>>>>>> main
 /** @type {import('./$types').PageServerLoad} */
-import { API_BASE_URL, getAuthHeaders } from "../../../lib/components/Tokens";
-
 export async function load({ fetch }) {
-<<<<<<< HEAD
   try {
     const [projects, relations] = await Promise.all([
       getProjects(fetch, 'teacher'),
@@ -61,45 +55,39 @@ export async function load({ fetch }) {
         )
         .map((relation) => Number(relation.id_project))
     );
-=======
-    const API_URL = `${API_BASE_URL}/projects`;
 
-    try {
-        const response = await fetch(API_URL, {
-            headers: getAuthHeaders("teacher")
-        });
+    const rows = projects
+      .filter((project) => myProjectIds.has(Number(project.id_project)))
+      .map((project) => ({
+        proyecto_card: `
+          <div class="project-card">
+            <div class="project-card__left">
+              <div class="project-card__icon">📁</div>
+              <div class="project-card__content">
+                <h3>${project.project_name ?? 'Sin nombre'}</h3>
+                <p>${project.description ?? 'Sin descripción'}</p>
+                <div class="project-card__meta">
+                  <span><strong>Fecha de inicio:</strong> ${project.start_date ?? 'No definida'}</span>
+                  <span><strong>Estado:</strong> ${getStatusLabel(project.id_status)}</span>
+                </div>
+              </div>
+            </div>
+            <div class="project-card__right">
+              <span class="joined-badge">Mi proyecto</span>
+            </div>
+          </div>
+        `
+      }));
 
-        if (response.status === 401) {
-            return {
-                projects: [],
-                error: "Sesión expirada o no autorizada."
-            };
-        }
->>>>>>> main
-
-        if (!response.ok) {
-            return {
-                projects: [],
-                error: `Error de API: ${response.status}`
-            };
-        }
-
-        const data = await response.json();
-        const projectsData = Array.isArray(data) ? data : [];
-
-        const projects = projectsData.map((p) => ({
-            id_project: p[0],
-            project_name: p[1],
-            description: p[2],
-            start_date: p[3],
-            id_status: p[5]
-        }));
-
-        return { projects };
-    } catch (error) {
-        return {
-            projects: [],
-            error: "No se pudo conectar con el servidor de proyectos."
-        };
-    }
+    return {
+      rows,
+      totalProjects: rows.length
+    };
+  } catch (error) {
+    return {
+      rows: [],
+      totalProjects: 0,
+      error: error.message || 'No se pudieron cargar los proyectos del profesor'
+    };
+  }
 }
