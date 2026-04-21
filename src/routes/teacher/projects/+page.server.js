@@ -1,50 +1,69 @@
+import {
+  getProjects,
+  getProjectUsers,
+  ROLE_IDS,
+  getModuleUserId,
+  getStatusLabel
+} from '$lib/server/project-helpers.js';
+
 /** @type {import('./$types').PageServerLoad} */
-import { API_BASE_URL, getAuthHeaders } from "../../../lib/components/Tokens";
-
 export async function load({ fetch }) {
-    const PROJECTS_API_URL = `${API_BASE_URL}/projects`;
+  try {
+    const [projects, relations] = await Promise.all([
+      getProjects(fetch, 'teacher'),
+      getProjectUsers(fetch, 'teacher').catch(() => [])
+    ]);
 
-    const statusMap = {
-        1: "Activo",
-        2: "Completado",
-        3: "Pendiente"
+    const currentTeacherId = Number(getModuleUserId('teacher'));
+
+    const myProjectIds = new Set(
+      relations
+        .filter(
+          (relation) =>
+            Number(relation.id_user) === currentTeacherId &&
+            Number(relation.id_role) === ROLE_IDS.teacher
+        )
+        .map((relation) => Number(relation.id_project))
+    );
+
+    const rows = projects.map((project) => {
+      const isMine = myProjectIds.has(Number(project.id_project));
+
+      return {
+        proyecto_card: `
+          <div class="project-card">
+            <div class="project-card__left">
+              <div class="project-card__icon">📁</div>
+              <div class="project-card__content">
+                <h3>${project.project_name ?? 'Sin nombre'}</h3>
+                <p>${project.description ?? 'Sin descripción'}</p>
+                <div class="project-card__meta">
+                  <span><strong>Fecha de inicio:</strong> ${project.start_date ?? 'No definida'}</span>
+                  <span><strong>Estado:</strong> ${getStatusLabel(project.id_status)}</span>
+                </div>
+              </div>
+            </div>
+            <div class="project-card__right">
+              ${
+                isMine
+                  ? '<span class="joined-badge">Asignado a mí</span>'
+                  : '<span class="neutral-badge">Disponible</span>'
+              }
+            </div>
+          </div>
+        `
+      };
+    });
+
+    return {
+      rows,
+      totalProjects: projects.length
     };
-
-    try {
-        const response = await fetch(PROJECTS_API_URL, {
-            headers: getAuthHeaders("teacher")
-        });
-
-        if (response.status === 401) {
-            return {
-                projects: [],
-                error: "Sesión expirada o no autorizada."
-            };
-        }
-
-        if (!response.ok) {
-            return {
-                projects: [],
-                error: `Error de API: ${response.status}`
-            };
-        }
-
-        const data = await response.json();
-        const projectsData = Array.isArray(data) ? data : [];
-
-        const projects = projectsData.map((p) => ({
-            id_project: p[0],
-            project_name: p[1],
-            description: p[2],
-            start_date: p[3],
-            status: statusMap[p[5]] || "Desconocido"
-        }));
-
-        return { projects };
-    } catch (error) {
-        return {
-            projects: [],
-            error: "Error de conexión con el servidor."
-        };
-    }
+  } catch (error) {
+    return {
+      rows: [],
+      totalProjects: 0,
+      error: error.message || 'Error al cargar los proyectos'
+    };
+  }
 }
