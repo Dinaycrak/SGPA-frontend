@@ -1,8 +1,16 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { API_BASE_URL, getAuthHeaders } from '$lib/components/Tokens.js';
+import { API_BASE_URL, getAuthHeaders, PROFILE_USER_IDS } from '$lib/components/Tokens.js';
 
-const PROJECT_USER_TEACHER_ROLE_ID = 1;
+const PROJECT_USER_TEACHER_ROLE_ID = 3;
 const COORDINATOR_USER_ID = 5;
+const DEFAULT_TEACHER_ID = Number(PROFILE_USER_IDS.teacher || 39);
+const DEFAULT_RESEARCH_GROUP_ID = 1;
+
+const DEFAULT_STATUSES = [
+  { id: 1, name: 'Activo' },
+  { id: 2, name: 'Completado' },
+  { id: 3, name: 'Pendiente' }
+];
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch }) {
@@ -23,28 +31,42 @@ export async function load({ fetch }) {
             email: user?.email ?? '',
             id_role: user?.id_role ?? null
           }))
-          .filter((user) => Number(user.id_role) === 3)
+          .filter((user) => Number(user.id_role) === PROJECT_USER_TEACHER_ROLE_ID)
       : [];
 
     return {
       teachers,
-      statuses: [
-        { id: 1, name: 'Activo' },
-        { id: 2, name: 'Completado' },
-        { id: 3, name: 'Pendiente' }
-      ]
+      defaultTeacherId: DEFAULT_TEACHER_ID,
+      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
+      statuses: DEFAULT_STATUSES
     };
   } catch (error) {
     return {
       teachers: [],
-      statuses: [
-        { id: 1, name: 'Activo' },
-        { id: 2, name: 'Completado' },
-        { id: 3, name: 'Pendiente' }
-      ],
+      defaultTeacherId: DEFAULT_TEACHER_ID,
+      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
+      statuses: DEFAULT_STATUSES,
       error: error.message || 'No se pudo cargar la información del formulario'
     };
   }
+}
+
+function normalizeDate(dateValue) {
+  if (!dateValue) return '';
+
+  const value = String(dateValue).trim();
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+    const [day, month, year] = value.split('/');
+    return `${year}-${month}-${day}`;
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+
+  return parsed.toISOString().split('T')[0];
 }
 
 function normalizeProject(project) {
@@ -53,8 +75,8 @@ function normalizeProject(project) {
       id_project: project[0] ?? null,
       project_name: project[1] ?? '',
       description: project[2] ?? '',
-      start_date: project[3] ?? '',
-      end_date: project[4] ?? '',
+      start_date: normalizeDate(project[3]),
+      end_date: normalizeDate(project[4]),
       id_status: project[5] ?? null,
       id_research_group: project[6] ?? null,
       created_by: project[7] ?? null
@@ -65,11 +87,31 @@ function normalizeProject(project) {
     id_project: project?.id_project ?? project?.id ?? null,
     project_name: project?.project_name ?? '',
     description: project?.description ?? '',
-    start_date: project?.start_date ?? '',
-    end_date: project?.end_date ?? '',
+    start_date: normalizeDate(project?.start_date),
+    end_date: normalizeDate(project?.end_date),
     id_status: project?.id_status ?? null,
     id_research_group: project?.id_research_group ?? null,
     created_by: project?.created_by ?? null
+  };
+}
+
+function normalizeProjectUser(item) {
+  if (Array.isArray(item)) {
+    return {
+      id_project_user: item[0] ?? null,
+      id_project: item[1] ?? null,
+      id_user: item[2] ?? null,
+      id_role: item[3] ?? null,
+      assigned_date: normalizeDate(item[4] ?? '')
+    };
+  }
+
+  return {
+    id_project_user: item?.id_project_user ?? item?.id ?? null,
+    id_project: item?.id_project ?? null,
+    id_user: item?.id_user ?? null,
+    id_role: item?.id_role ?? null,
+    assigned_date: normalizeDate(item?.assigned_date ?? '')
   };
 }
 
@@ -84,59 +126,7 @@ async function getAllProjects(fetch) {
   return Array.isArray(data) ? data.map(normalizeProject) : [];
 }
 
-function findExistingExactProject(projects, payload) {
-  return (
-    projects
-      .filter(
-        (project) =>
-          String(project.project_name).trim() === String(payload.project_name).trim() &&
-          String(project.description || '') === String(payload.description || '') &&
-          String(project.start_date) === String(payload.start_date) &&
-          String(project.end_date || '') === String(payload.end_date || '') &&
-          Number(project.id_status) === Number(payload.id_status) &&
-          Number(project.created_by) === Number(payload.created_by)
-      )
-      .sort((a, b) => Number(b.id_project) - Number(a.id_project))[0] ?? null
-  );
-}
-
-async function assignTeacher(fetch, { id_project, id_user, assigned_date }) {
-  const payloadCandidates = [
-    {
-      id_project,
-      id_user,
-      id_role: PROJECT_USER_TEACHER_ROLE_ID,
-      assigned_date
-    },
-    {
-      id_project,
-      id_user,
-      id_role: PROJECT_USER_TEACHER_ROLE_ID
-    }
-  ];
-
-  let lastErrorMessage = '';
-
-  for (const payload of payloadCandidates) {
-    const response = await fetch(`${API_BASE_URL}/project-users`, {
-      method: 'POST',
-      headers: getAuthHeaders('coordinator'),
-      body: JSON.stringify(payload)
-    });
-
-    const text = await response.text();
-
-    if (response.ok) {
-      return true;
-    }
-
-    lastErrorMessage = `Endpoint project-users respondió ${response.status}. ${text}`;
-  }
-
-  throw new Error(lastErrorMessage || 'No se pudo registrar en project-users');
-}
-
-async function teacherAlreadyAssigned(fetch, { id_project, id_user }) {
+async function getAllProjectUsers(fetch) {
   const response = await fetch(`${API_BASE_URL}/project-users`, {
     headers: getAuthHeaders('coordinator')
   });
@@ -144,32 +134,86 @@ async function teacherAlreadyAssigned(fetch, { id_project, id_user }) {
   const text = await response.text();
   const data = text ? JSON.parse(text) : [];
 
-  if (!Array.isArray(data)) return false;
+  if (!response.ok) {
+    throw new Error(`No se pudo consultar project-users. Estado ${response.status}. ${text}`);
+  }
 
-  return data.some((item) => {
-    if (Array.isArray(item)) {
-      return Number(item[1]) === Number(id_project) && Number(item[2]) === Number(id_user);
-    }
+  return Array.isArray(data) ? data.map(normalizeProjectUser) : [];
+}
 
-    return (
-      Number(item?.id_project) === Number(id_project) &&
-      Number(item?.id_user) === Number(id_user)
-    );
+function findExistingExactProject(projects, payload) {
+  return (
+    projects
+      .filter(
+        (project) =>
+          String(project.project_name).trim() === String(payload.project_name).trim() &&
+          String(project.description || '').trim() === String(payload.description || '').trim() &&
+          String(normalizeDate(project.start_date)) === String(normalizeDate(payload.start_date)) &&
+          String(normalizeDate(project.end_date || '')) ===
+            String(normalizeDate(payload.end_date || '')) &&
+          Number(project.id_status) === Number(payload.id_status) &&
+          Number(project.created_by) === Number(payload.created_by)
+      )
+      .sort((a, b) => Number(b.id_project) - Number(a.id_project))[0] ?? null
+  );
+}
+
+async function ensureTeacherAssigned(fetch, { id_project, id_user, assigned_date }) {
+  const payload = {
+    id_project: Number(id_project),
+    id_user: Number(id_user),
+    id_role: PROJECT_USER_TEACHER_ROLE_ID,
+    assigned_date
+  };
+
+  const createResponse = await fetch(`${API_BASE_URL}/project-users`, {
+    method: 'POST',
+    headers: getAuthHeaders('coordinator'),
+    body: JSON.stringify(payload)
   });
+
+  const createText = await createResponse.text();
+
+  if (!createResponse.ok) {
+    throw new Error(
+      `No se pudo registrar el profesor en project-users. Estado ${createResponse.status}. Respuesta: ${createText}`
+    );
+  }
+
+  const relations = await getAllProjectUsers(fetch);
+
+  const exists = relations.some(
+    (relation) =>
+      Number(relation.id_project) === Number(id_project) &&
+      Number(relation.id_user) === Number(id_user) &&
+      Number(relation.id_role) === PROJECT_USER_TEACHER_ROLE_ID
+  );
+
+  if (!exists) {
+    throw new Error(
+      `La API respondió OK al registrar el profesor, pero la relación no aparece en /project-users.`
+    );
+  }
+
+  return true;
 }
 
 export const actions = {
   default: async ({ request, fetch }) => {
     const formData = await request.formData();
+    const teacherRaw = formData.get('teacher_id');
+    const researchGroupRaw = formData.get('id_research_group');
 
     const values = {
       project_name: String(formData.get('project_name') || '').trim(),
       description: String(formData.get('description') || '').trim(),
-      start_date: String(formData.get('start_date') || '').trim(),
-      end_date: String(formData.get('end_date') || '').trim(),
+      start_date: normalizeDate(formData.get('start_date')),
+      end_date: normalizeDate(formData.get('end_date')),
       id_status: Number(formData.get('id_status') || 1),
-      id_research_group: String(formData.get('id_research_group') || '').trim(),
-      teacher_id: Number(formData.get('teacher_id') || 0)
+      id_research_group: researchGroupRaw
+        ? Number(researchGroupRaw)
+        : DEFAULT_RESEARCH_GROUP_ID,
+      teacher_id: teacherRaw ? Number(teacherRaw) : DEFAULT_TEACHER_ID
     };
 
     if (!values.project_name || !values.start_date || !values.teacher_id) {
@@ -185,62 +229,53 @@ export const actions = {
       start_date: values.start_date,
       end_date: values.end_date || null,
       id_status: Number(values.id_status),
-      id_research_group: values.id_research_group
-        ? Number(values.id_research_group)
-        : null,
+      id_research_group: Number(values.id_research_group),
       created_by: COORDINATOR_USER_ID
     };
 
     try {
       let createdProjectId = null;
 
-      const existingProjects = await getAllProjects(fetch);
-      const existingExact = findExistingExactProject(existingProjects, projectPayload);
+      const createResponse = await fetch(`${API_BASE_URL}/projects`, {
+        method: 'POST',
+        headers: getAuthHeaders('coordinator'),
+        body: JSON.stringify(projectPayload)
+      });
 
-      if (existingExact?.id_project) {
-        createdProjectId = Number(existingExact.id_project);
-      } else {
-        const createResponse = await fetch(`${API_BASE_URL}/projects`, {
-          method: 'POST',
-          headers: getAuthHeaders('coordinator'),
-          body: JSON.stringify(projectPayload)
-        });
+      const createText = await createResponse.text();
 
-        const createText = await createResponse.text();
-
-        if (!createResponse.ok) {
-          let backendMessage = createText;
-
-          try {
-            const parsed = JSON.parse(createText);
-            backendMessage = parsed?.detail || createText;
-          } catch (_) {}
-
-          return fail(400, {
-            error: `No se pudo crear el proyecto. Estado ${createResponse.status}. ${backendMessage}`,
-            values
-          });
-        }
-
-        let createdProjectResponse = null;
+      if (!createResponse.ok) {
+        let backendMessage = createText;
 
         try {
-          createdProjectResponse = createText ? JSON.parse(createText) : null;
-        } catch (_) {
-          createdProjectResponse = null;
-        }
+          const parsed = JSON.parse(createText);
+          backendMessage = parsed?.detail || parsed?.message || createText;
+        } catch (_) {}
 
-        const normalized = normalizeProject(
-          createdProjectResponse?.data ?? createdProjectResponse ?? {}
-        );
+        return fail(400, {
+          error: `No se pudo crear el proyecto. Estado ${createResponse.status}. ${backendMessage}`,
+          values
+        });
+      }
 
-        if (normalized?.id_project) {
-          createdProjectId = Number(normalized.id_project);
-        } else {
-          const refreshedProjects = await getAllProjects(fetch);
-          const latestMatch = findExistingExactProject(refreshedProjects, projectPayload);
-          createdProjectId = latestMatch?.id_project ? Number(latestMatch.id_project) : null;
-        }
+      let createdProjectResponse = null;
+
+      try {
+        createdProjectResponse = createText ? JSON.parse(createText) : null;
+      } catch (_) {
+        createdProjectResponse = null;
+      }
+
+      const normalized = normalizeProject(
+        createdProjectResponse?.data ?? createdProjectResponse ?? {}
+      );
+
+      if (normalized?.id_project) {
+        createdProjectId = Number(normalized.id_project);
+      } else {
+        const refreshedProjects = await getAllProjects(fetch);
+        const latestMatch = findExistingExactProject(refreshedProjects, projectPayload);
+        createdProjectId = latestMatch?.id_project ? Number(latestMatch.id_project) : null;
       }
 
       if (!createdProjectId) {
@@ -250,24 +285,15 @@ export const actions = {
         });
       }
 
-      const alreadyAssigned = await teacherAlreadyAssigned(fetch, {
+      await ensureTeacherAssigned(fetch, {
         id_project: createdProjectId,
-        id_user: Number(values.teacher_id)
+        id_user: Number(values.teacher_id),
+        assigned_date: values.start_date
       });
-
-      if (!alreadyAssigned) {
-        await assignTeacher(fetch, {
-          id_project: createdProjectId,
-          id_user: Number(values.teacher_id),
-          assigned_date: values.start_date
-        });
-      }
 
       throw redirect(303, '/coordinator/projects');
     } catch (error) {
-      if (error?.status === 303) {
-        throw error;
-      }
+      if (error?.status === 303) throw error;
 
       return fail(500, {
         error: error.message || 'Error interno al crear el proyecto o asignar el docente',

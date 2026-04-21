@@ -10,10 +10,17 @@
 
   $: teachers = data?.teachers || [];
   $: statuses = data?.statuses || [];
-  $: error = form?.error || data?.error;
+  $: defaultTeacherId = data?.defaultTeacherId || 39;
+  $: error = form?.error || data?.error || '';
   $: values = form?.values || {};
 
+  $: selectedTeacherId =
+    values.teacher_id != null && values.teacher_id !== ''
+      ? String(values.teacher_id)
+      : String(defaultTeacherId);
+
   function handleSubmit() {
+    if (submitting) return;
     submitting = true;
   }
 </script>
@@ -41,8 +48,8 @@
               id="project_name"
               name="project_name"
               type="text"
-              value={values.project_name || ''}
               placeholder="Ej: Sistema de seguimiento académico"
+              value={values.project_name || ''}
               required
             />
           </div>
@@ -82,10 +89,7 @@
             <label for="id_status">Estado</label>
             <select id="id_status" name="id_status">
               {#each statuses as status}
-                <option
-                  value={status.id}
-                  selected={String(values.id_status || '1') === String(status.id)}
-                >
+                <option value={status.id} selected={String(values.id_status || '1') === String(status.id)}>
                   {status.name}
                 </option>
               {/each}
@@ -99,29 +103,32 @@
               name="id_research_group"
               type="number"
               min="1"
-              value={values.id_research_group || ''}
               placeholder="Opcional"
+              value={values.id_research_group || ''}
             />
           </div>
 
           <div class="field full">
             <label for="teacher_id">Profesor asignado *</label>
             <select id="teacher_id" name="teacher_id" required>
-              <option value="">Selecciona un profesor</option>
               {#each teachers as teacher}
                 <option
                   value={teacher.id_user}
-                  selected={String(values.teacher_id || '') === String(teacher.id_user)}
+                  selected={selectedTeacherId === String(teacher.id_user)}
                 >
                   {teacher.first_name} {teacher.last_name} - {teacher.email}
                 </option>
               {/each}
             </select>
+            <small class="hint">
+              Se asignará por defecto el profesor del módulo docente actual.
+            </small>
           </div>
         </div>
 
         <div class="actions">
           <a href="/coordinator/projects" class="secondary-btn">Volver</a>
+
           <button type="submit" class="primary-btn" disabled={submitting}>
             {#if submitting}
               Creando...
@@ -208,6 +215,11 @@
   textarea {
     resize: vertical;
     min-height: 140px;
+  }
+
+  .hint {
+    color: #64748b;
+    font-size: 0.9rem;
   }
 
   .actions {
