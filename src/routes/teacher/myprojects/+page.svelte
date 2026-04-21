@@ -1,168 +1,192 @@
 <script>
-    import Header from "../../../lib/components/Header_St.svelte";
-    import Footer from "../../../lib/components/Footer.svelte";
-    import DashboardStats from "../../../lib/components/Projects.svelte";
-    import SideBar from "../../../lib/components/TeacherSideBar.svelte";
+  import Header from '$lib/components/Header_St.svelte';
+  import Footer from '$lib/components/Footer.svelte';
+  import DashboardStats from '$lib/components/Projects.svelte';
+  import SideBar from '$lib/components/TeacherSideBar.svelte';
+  import DataTableWrapper from '$lib/components/DataTableWrapper.svelte';
 
-    export let data;
+  export let data;
 
-    $: projects = data.projects || [];
-    $: error = data.error;
+  const columns = [
+    { key: 'proyecto_card', label: 'Mis Proyectos', html: true }
+  ];
 
-    // Solo mantenemos la estadística de proyectos disponibles
-    $: stats = [
-        {
-            label: "Proyectos Bajo Dirección",
-            value: projects.length,
-            icon: `<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>`,
-            bgColor: "#dbeafe",
-            color: "#2563eb"
-        }
-    ];
+  $: rows = data.rows || [];
+  $: error = data.error;
 
-    function handleEnrollment() {
-        // Función deshabilitada por falta de login
-        alert("La función de matriculación requiere inicio de sesión (No disponible actualmente).");
+  $: stats = [
+    {
+      label: 'Mis Proyectos',
+      value: data.totalProjects || 0,
+      icon: `<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>`,
+      bgColor: '#dbeafe',
+      color: '#2563eb'
     }
+  ];
 </script>
 
 <Header />
 <SideBar />
 
 <main>
-    <div class="content-wrapper">
-        <header class="main-header">
-            <h1>MODULO DOCENTE</h1>
-            <p>Visualizacion de proyectos disponibles para participar</p>
-        </header>
+  <div class="content-wrapper">
+    <header class="main-header">
+      <h1>MÓDULO DOCENTE</h1>
+      <p>Proyectos asignados directamente a tu perfil.</p>
+    </header>
 
-        {#if error}
-            <div class="error-msg">⚠️ {error}</div>
-        {/if}
+    {#if error}
+      <div class="error-msg">⚠️ {error}</div>
+    {/if}
 
-        <DashboardStats {stats} />
+    <DashboardStats {stats} />
 
-        <section class="list-section">
-            <div class="section-title">
-                <h2>Proyectos Disponibles</h2>
-                <span class="badge">{projects.length}</span>
-            </div>
+    <section class="list-section">
+      <div class="section-title">
+        <h2>Mis Proyectos</h2>
+        <span class="badge">{rows.length} registros</span>
+      </div>
 
-            <div class="projects-grid">
-                {#each projects as project}
-                    <div class="project-card">
-                        <div class="card-body">
-                            <div class="icon-box">📁</div>
-                            <div class="info">
-                                <h3>{project.project_name}</h3>
-                                <p class="date">Fecha de creación: {project.start_date}</p>
-                                <p class="desc">{project.description || 'Sin descripción disponible'}</p>
-                            </div>
-                        </div>
-
-                        <div class="card-actions">
-                            <div class="status-info">
-                                <span class="status-tag">Estado ID: {project.id_status}</span>
-                            </div>
-                            <button class="enroll-btn" on:click={handleEnrollment}>
-                                Matricularse al proyecto
-                            </button>
-                        </div>
-                    </div>
-                {/each}
-
-                {#if projects.length === 0 && !error}
-                    <div class="empty">No hay proyectos registrados en la base de datos.</div>
-                {/if}
-            </div>
-        </section>
-    </div>
+      <DataTableWrapper
+        tableId="teacher-myprojects-table"
+        {columns}
+        {rows}
+        emptyMessage="No tienes proyectos asignados todavía."
+      />
+    </section>
+  </div>
 </main>
 
 <Footer />
 
 <style>
-    main {
-        background-color: #f3f4f6;
-        min-height: 80vh;
-        padding: 2rem 1rem;
-    }
+  main {
+    background-color: #f1f5f9;
+    min-height: 80vh;
+    padding: 2rem 1rem;
+  }
 
-    .content-wrapper {
-        max-width: 1100px;
-        margin: 0 auto;
-    }
+  .content-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
 
-    .main-header { margin-bottom: 2rem; }
-    h1 { color: #0b2d69; margin: 0; font-size: 1.8rem; }
-    p { color: #6b7280; }
+  .main-header h1 {
+    color: #0b2d69;
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+  }
 
-    .section-title {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 1.5rem;
-    }
+  .main-header p {
+    color: #64748b;
+  }
 
-    .badge {
-        background: #0b2d69;
-        color: white;
-        padding: 2px 10px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-    }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 1.5rem 0;
+  }
 
-    .project-card {
-        background: white;
-        border-radius: 12px;
-        padding: 1.25rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        border-left: 6px solid #ff9500; /* Color distintivo */
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
+  .badge {
+    background: #0b2d69;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+  }
 
-    .card-body { display: flex; gap: 1rem; align-items: flex-start; }
-    .icon-box { font-size: 1.5rem; }
-    
-    h3 { margin: 0; color: #ff9500; font-size: 1.2rem; }
-    .date { font-size: 0.85rem; color: #9ca3af; margin: 2px 0; }
-    .desc { font-size: 0.9rem; color: #4b5563; }
+  .error-msg {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
 
-    .card-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-top: 1px solid #f3f4f6;
-        padding-top: 1rem;
-    }
+  :global(.datatable-table th) {
+    display: none;
+  }
 
-    .status-tag {
-        font-size: 0.8rem;
-        background: #f1f5f9;
-        padding: 4px 10px;
-        border-radius: 6px;
-        color: #64748b;
-        font-weight: 600;
-    }
+  :global(.datatable-table td) {
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
 
-    .enroll-btn {
-        background: #0b2d69;
-        color: white;
-        border: none;
-        padding: 10px 16px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 500;
-        transition: background 0.2s;
-    }
+  :global(.datatable-table tr) {
+    display: block;
+    margin-bottom: 1.5rem;
+  }
 
-    .enroll-btn:hover {
-        background: #1540a5;
-    }
+  :global(.project-card) {
+    background: white;
+    border-radius: 20px;
+    border-left: 6px solid #0b2d69;
+    padding: 1.8rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1.5rem;
+    align-items: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+  }
 
-    .error-msg { background: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
-    .empty { text-align: center; padding: 3rem; background: white; border-radius: 12px; color: #94a3b8; }
+  :global(.project-card__left) {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+    flex: 1;
+  }
+
+  :global(.project-card__icon) {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    background: #f8f1e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  :global(.project-card__content h3) {
+    margin: 0 0 0.6rem;
+    color: #0b2d69;
+    font-size: 1.9rem;
+    font-weight: 800;
+  }
+
+  :global(.project-card__content p) {
+    margin: 0 0 0.8rem;
+    color: #4b5563;
+    font-size: 1rem;
+  }
+
+  :global(.project-card__meta) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    color: #475569;
+    font-size: 1rem;
+  }
+
+  :global(.project-card__right) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.joined-badge) {
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-block;
+  }
 </style>
