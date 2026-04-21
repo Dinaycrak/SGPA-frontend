@@ -1,1 +1,0 @@
-<iframe title="dashboard gestor de proyectos" width="1140" height="541.25" src="https://app.powerbi.com/reportEmbed?reportId=b94b4a99-28d8-4866-826f-0f59ec21f874&autoAuth=true&ctid=740be6bd-fd36-470e-94d9-0f0c777fadb9" frameborder="0" allowFullScreen="true"></iframe>
