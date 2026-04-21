@@ -7,10 +7,9 @@
   const menuItems = [
     { name: 'Dashboard', href: '/coordinator' },
     { name: 'Available Projects', href: '/coordinator/projects' },
-    { name: 'Create Project', href: '/coordinator/projects/create' },
     { name: 'Teachers', href: '/coordinator/teachers' },
     { name: 'Students', href: '/coordinator/students' },
-    { name: 'Create Users', href: '/coordinator/create_users' }
+    { name: 'Create Users', href: '/coordinator/create_users' },
   ];
 
   function toggleMenu() {
