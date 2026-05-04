@@ -6,6 +6,10 @@
   export let rows = [];
   export let emptyMessage = 'No hay datos para mostrar.';
   export let tableId = 'sgpa-table';
+  export let searchable = true;
+  export let perPage = 10;
+  export let perPageSelect = [10, 20, 30, 50];
+  export let searchPlaceholder = 'Buscar por nombre...';
 
   let tableElement;
   let datatable;
@@ -23,14 +27,14 @@
       datatable = null;
     }
 
-    if (tableElement) {
+    if (tableElement && rows.length > 0) {
       datatable = new DataTable(tableElement, {
-        searchable: true,
-        perPage: 10,
-        perPageSelect: [10, 20, 30, 50],
+        searchable,
+        perPage,
+        perPageSelect,
         fixedHeight: false,
         labels: {
-          placeholder: 'Buscar...',
+          placeholder: searchPlaceholder,
           perPage: '{select} registros por página',
           noRows: 'No se encontraron registros',
           info: 'Mostrando {start} a {end} de {rows} registros'
@@ -65,6 +69,7 @@
           {/each}
         </tr>
       </thead>
+
       <tbody>
         {#each rows as row}
           <tr>
@@ -89,8 +94,8 @@
 <style>
   .datatable-card {
     background: white;
-    border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
     overflow: hidden;
     padding: 1rem;
   }
@@ -118,11 +123,21 @@
     margin: 0;
   }
 
-  :global(.datatable-input),
+  :global(.datatable-input) {
+    width: 100%;
+    min-width: 280px;
+    max-width: 420px;
+    padding: 0.85rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    outline: none;
+    font-size: 0.98rem;
+  }
+
   :global(.datatable-selector) {
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 0.55rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 0.65rem 0.8rem;
     font-size: 0.95rem;
   }
 
@@ -136,7 +151,7 @@
   }
 
   :global(.datatable-info) {
-    color: #64748b;
+    color: #111827;
     font-size: 0.95rem;
   }
 
@@ -152,21 +167,26 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 36px;
-    height: 36px;
-    padding: 0 10px;
-    border-radius: 8px;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 10px;
     border: 1px solid #cbd5e1;
     text-decoration: none;
     color: #0b2d69;
     background: white;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   :global(.datatable-pagination li.active a) {
     background: #0b2d69;
     color: white;
     border-color: #0b2d69;
+  }
+
+  :global(.datatable-pagination li.disabled a) {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 
   :global(.datatable-table) {

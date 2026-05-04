@@ -3,17 +3,11 @@
   import Footer from '$lib/components/Footer.svelte';
   import DashboardStats from '$lib/components/Projects.svelte';
   import SideBar from '$lib/components/StudentSideBar.svelte';
-  import DataTableWrapper from '$lib/components/DataTableWrapper.svelte';
-
+  import ProjectCardsDataTable from '$lib/components/ProjectCardDataTable.svelte';
   export let data;
-  export let form;
-
-  const columns = [
-    { key: 'proyecto_card', label: 'Proyectos Disponibles', html: true }
-  ];
 
   $: rows = data.rows || [];
-  $: error = form?.error || data.error;
+  $: error = data.error;
 
   $: stats = [
     {
@@ -33,7 +27,7 @@
   <div class="content-wrapper">
     <header class="main-header">
       <h1>MÓDULO ESTUDIANTE</h1>
-      <p>Consulta de proyectos disponibles para participación estudiantil.</p>
+      <p>Consulta general de proyectos académicos disponibles.</p>
     </header>
 
     {#if error}
@@ -42,19 +36,13 @@
 
     <DashboardStats {stats} />
 
-    <section class="list-section">
-      <div class="section-title">
-        <h2>Proyectos Disponibles</h2>
-        <span class="badge">{rows.length} disponibles</span>
-      </div>
-
-      <DataTableWrapper
-        tableId="students-projects-table"
-        {columns}
-        {rows}
-        emptyMessage="No hay proyectos disponibles."
-      />
-    </section>
+    <ProjectCardsDataTable
+      {rows}
+      title="Proyectos Disponibles"
+      badgeColor="#ff9500"
+      emptyMessage="No hay proyectos disponibles."
+      searchPlaceholder="Buscar proyecto por nombre..."
+    />
   </div>
 </main>
 
@@ -83,43 +71,12 @@
     color: #64748b;
   }
 
-  .section-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 1.5rem 0;
-  }
-
-  .badge {
-    background: #ff9500;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-
   .error-msg {
     background: #fee2e2;
     color: #b91c1c;
     padding: 1rem;
     border-radius: 8px;
     margin: 1rem 0;
-  }
-
-  :global(.datatable-table th) {
-    display: none;
-  }
-
-  :global(.datatable-table td) {
-    padding: 0;
-    border: none;
-    background: transparent;
-  }
-
-  :global(.datatable-table tr) {
-    display: block;
-    margin-bottom: 1.5rem;
   }
 
   :global(.project-card) {
@@ -175,12 +132,6 @@
     font-size: 1rem;
   }
 
-  :global(.project-card__right) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   :global(.action-btn) {
     background: #0b2d69;
     color: white;
@@ -189,16 +140,6 @@
     border-radius: 10px;
     cursor: pointer;
     font-weight: 700;
-  }
-
-  :global(.joined-badge) {
-    background: #dcfce7;
-    color: #166534;
-    padding: 0.6rem 1rem;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    display: inline-block;
   }
 
   :global(.inline-form) {

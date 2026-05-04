@@ -4,7 +4,7 @@
   import DashboardStats from '$lib/components/Projects.svelte';
   import SideBar from '$lib/components/TeacherSideBar.svelte';
   import DataTableWrapper from '$lib/components/DataTableWrapper.svelte';
-
+  import ProjectCardsDataTable from '$lib/components/ProjectCardDatatable.svelte';
   export let data;
 
   const columns = [
@@ -47,11 +47,12 @@
         <span class="badge">{rows.length} registros</span>
       </div>
 
-      <DataTableWrapper
-        tableId="teacher-myprojects-table"
-        {columns}
+      <ProjectCardsDataTable
         {rows}
-        emptyMessage="No tienes proyectos asignados todavía."
+        title="Proyectos"
+        badgeColor="#ff9500"
+        emptyMessage="No hay proyectos para mostrar."
+        searchPlaceholder="Buscar proyecto por nombre..."
       />
     </section>
   </div>

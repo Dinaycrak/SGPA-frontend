@@ -3,7 +3,7 @@
   import Footer from '$lib/components/Footer.svelte';
   import DashboardStats from '$lib/components/Projects.svelte';
   import SideBar from '$lib/components/StudentSideBar.svelte';
-  import DataTableWrapper from '$lib/components/DataTableWrapper.svelte';
+  import ProjectCardsDataTable from '$lib/components/ProjectCardDatatable.svelte';
 
   export let data;
 
@@ -47,12 +47,13 @@
         <span class="badge">{rows.length} registros</span>
       </div>
 
-      <DataTableWrapper
-        tableId="students-myprojects-table"
-        {columns}
-        {rows}
-        emptyMessage="Todavía no estás vinculado a ningún proyecto."
-      />
+    <ProjectCardsDataTable
+      {rows}
+      title="Proyectos"
+      badgeColor="#ff9500"
+      emptyMessage="No hay proyectos para mostrar."
+      searchPlaceholder="Buscar proyecto por nombre..."
+    />
     </section>
   </div>
 </main>
@@ -181,8 +182,8 @@
   }
 
   :global(.joined-badge) {
-    background: #dbeafe;
-    color: #1d4ed8;
+    background: #dcfce7;
+    color: #166534;
     padding: 0.6rem 1rem;
     border-radius: 999px;
     font-weight: 700;
