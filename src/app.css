@@ -1,0 +1,240 @@
+:root {
+  --sgpa-black: #05070d;
+  --sgpa-dark: #0b1220;
+  --sgpa-panel: #111827;
+  --sgpa-panel-soft: #172033;
+  --sgpa-gray: #1f2937;
+  --sgpa-gray-2: #334155;
+  --sgpa-muted: #94a3b8;
+  --sgpa-border: rgba(148, 163, 184, 0.22);
+  --sgpa-white: #ffffff;
+  --sgpa-blue: #0b2d69;
+  --sgpa-blue-light: #153f8f;
+  --sgpa-yellow: #f2b705;
+  --sgpa-orange: #f97316;
+  --sgpa-success-bg: rgba(22, 163, 74, 0.15);
+  --sgpa-success: #4ade80;
+  --sgpa-danger-bg: rgba(239, 68, 68, 0.14);
+  --sgpa-danger: #fca5a5;
+  --sgpa-shadow: 0 22px 50px rgba(0, 0, 0, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(11, 45, 105, 0.24), transparent 28rem),
+    radial-gradient(circle at top right, rgba(249, 115, 22, 0.08), transparent 20rem),
+    linear-gradient(180deg, #05070d 0%, #0b1220 45%, #111827 100%);
+  color: var(--sgpa-white);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+main {
+  min-height: 80vh;
+  background:
+    radial-gradient(circle at top left, rgba(11, 45, 105, 0.18), transparent 32rem),
+    linear-gradient(180deg, #0b1220 0%, #111827 100%) !important;
+  color: var(--sgpa-white);
+}
+
+.content-wrapper,
+.container {
+  width: min(1180px, 100%) !important;
+  margin-inline: auto !important;
+}
+
+.main-header,
+.title-block {
+  margin-bottom: 1.5rem !important;
+}
+
+.main-header h1,
+.title-block h1,
+h1 {
+  color: var(--sgpa-white) !important;
+  letter-spacing: -0.04em;
+}
+
+.main-header p,
+.title-block p,
+p {
+  color: var(--sgpa-muted);
+}
+
+.error-msg,
+.error-box {
+  border: 1px solid rgba(239, 68, 68, 0.26) !important;
+  background: var(--sgpa-danger-bg) !important;
+  color: var(--sgpa-danger) !important;
+  border-radius: 18px !important;
+  padding: 1rem 1.15rem !important;
+}
+
+.success-box {
+  border: 1px solid rgba(74, 222, 128, 0.26) !important;
+  background: var(--sgpa-success-bg) !important;
+  color: var(--sgpa-success) !important;
+  border-radius: 18px !important;
+  padding: 1rem 1.15rem !important;
+}
+
+.table-card,
+.datatable-card,
+.form-card,
+.report-card,
+.stat-card,
+.profile-card,
+.login-card,
+.info-card,
+.feature-card,
+.team-card {
+  background: rgba(17, 24, 39, 0.92) !important;
+  color: var(--sgpa-white) !important;
+  border: 1px solid var(--sgpa-border) !important;
+  box-shadow: var(--sgpa-shadow) !important;
+}
+
+input,
+select,
+textarea,
+.search-input,
+.datatable-input,
+.datatable-selector {
+  background: #0b1220 !important;
+  color: var(--sgpa-white) !important;
+  border: 1px solid rgba(148, 163, 184, 0.32) !important;
+}
+
+input::placeholder,
+textarea::placeholder,
+.search-input::placeholder {
+  color: #64748b !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.search-input:focus,
+.datatable-input:focus {
+  outline: none !important;
+  border-color: var(--sgpa-blue-light) !important;
+  box-shadow: 0 0 0 4px rgba(21, 63, 143, 0.22) !important;
+}
+
+button,
+.add-btn,
+.action-btn,
+.primary-btn,
+.btn-primary,
+.save-btn,
+.enroll-btn,
+.nav-btn,
+.login-btn,
+.home-btn,
+.pagination button {
+  background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-light)) !important;
+  color: var(--sgpa-white) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+button:hover,
+.add-btn:hover,
+.action-btn:hover,
+.primary-btn:hover,
+.btn-primary:hover,
+.save-btn:hover,
+.enroll-btn:hover,
+.nav-btn:hover,
+.login-btn:hover,
+.home-btn:hover,
+.pagination button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #111827, var(--sgpa-blue)) !important;
+}
+
+.secondary-btn {
+  background: transparent !important;
+  color: var(--sgpa-white) !important;
+  border: 1px solid rgba(148, 163, 184, 0.36) !important;
+}
+
+.badge,
+.count-badge,
+.section-title .badge,
+.role-tag,
+.status-tag,
+.neutral-badge {
+  background: rgba(11, 45, 105, 0.55) !important;
+  color: var(--sgpa-white) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.status-active,
+.status-indicator.active {
+  background: rgba(22, 163, 74, 0.15) !important;
+  color: #4ade80 !important;
+}
+
+.status-inactive,
+.status-indicator.inactive {
+  background: rgba(239, 68, 68, 0.14) !important;
+  color: #fca5a5 !important;
+}
+
+.danger-btn {
+  background: linear-gradient(135deg, #111827, #7f1d1d) !important;
+}
+
+.enable-btn {
+  background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-light)) !important;
+}
+
+table {
+  color: var(--sgpa-white) !important;
+}
+
+thead th,
+.datatable-table th {
+  background: #0b1220 !important;
+  color: #cbd5e1 !important;
+  border-bottom: 1px solid var(--sgpa-border) !important;
+}
+
+tbody td,
+.datatable-table td {
+  color: #dbeafe !important;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16) !important;
+}
+
+.empty-row,
+.empty-state,
+.empty {
+  background: rgba(15, 23, 42, 0.82) !important;
+  color: var(--sgpa-muted) !important;
+  border: 1px dashed rgba(148, 163, 184, 0.28) !important;
+}

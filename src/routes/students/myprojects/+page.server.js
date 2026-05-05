@@ -6,6 +6,15 @@ import {
   getStatusLabel
 } from '$lib/server/project-helpers.js';
 
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch }) {
   try {
@@ -34,11 +43,11 @@ export async function load({ fetch }) {
             <div class="project-card__left">
               <div class="project-card__icon">📁</div>
               <div class="project-card__content">
-                <h3>${project.project_name ?? 'Sin nombre'}</h3>
-                <p>${project.description ?? 'Sin descripción'}</p>
+                <h3>${escapeHtml(project.project_name || 'Sin nombre')}</h3>
+                <p>${escapeHtml(project.description || 'Sin descripción')}</p>
                 <div class="project-card__meta">
-                  <span><strong>Fecha de inicio:</strong> ${project.start_date ?? 'No definida'}</span>
-                  <span><strong>Estado:</strong> ${getStatusLabel(project.id_status)}</span>
+                  <span><strong>Fecha de inicio:</strong> ${escapeHtml(project.start_date || 'No definida')}</span>
+                  <span><strong>Estado:</strong> ${escapeHtml(getStatusLabel(project.id_status))}</span>
                 </div>
               </div>
             </div>

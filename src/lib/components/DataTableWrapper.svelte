@@ -4,12 +4,12 @@
 
   export let columns = [];
   export let rows = [];
-  export let emptyMessage = 'No hay datos para mostrar.';
+  export let emptyMessage = 'No data to display.';
   export let tableId = 'sgpa-table';
   export let searchable = true;
   export let perPage = 10;
   export let perPageSelect = [10, 20, 30, 50];
-  export let searchPlaceholder = 'Buscar por nombre...';
+  export let searchPlaceholder = 'Search by name...';
 
   let tableElement;
   let datatable;
@@ -34,10 +34,10 @@
         perPageSelect,
         fixedHeight: false,
         labels: {
-          placeholder: searchPlaceholder,
-          perPage: '{select} registros por página',
-          noRows: 'No se encontraron registros',
-          info: 'Mostrando {start} a {end} de {rows} registros'
+                 placeholder: searchPlaceholder,
+                 perPage: '{select} records per page',
+                 noRows: 'No records found',
+                 info: 'Showing {start} to {end} of {rows} records'
         }
       });
     }

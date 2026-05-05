@@ -1,6 +1,5 @@
 <script>
   import { page } from '$app/stores';
-  import 'bootstrap/dist/css/bootstrap.min.css';
 
   let isOpen = $state(false);
 
@@ -9,290 +8,240 @@
     { name: 'Available Projects', href: '/teacher/projects' },
     { name: 'My Projects', href: '/teacher/myprojects' },
     { name: 'Schedules', href: '/teacher/schedules' },
-    { name: 'Profile', href: '/teacher/profile' },
+    { name: 'Profile', href: '/teacher/profile' }
   ];
 
   function toggleMenu() {
     isOpen = !isOpen;
   }
+
+  function closeMenu() {
+    isOpen = false;
+  }
+
+  function isActive(href) {
+    const currentPath = $page.url.pathname.replace(/\/$/, '');
+    const itemPath = href.replace(/\/$/, '');
+
+    return currentPath === itemPath;
+  }
 </script>
 
-<button class="menu-btn" onclick={toggleMenu}>
-  <span class="menu-icon">{isOpen ? '✕' : '☰'}</span>
-  <span>{isOpen ? 'Cerrar' : 'Menú'}</span>
+<button
+  class="menu-toggle"
+  class:open={isOpen}
+  type="button"
+  aria-label={isOpen ? 'Close side menu' : 'Open side menu'}
+  aria-expanded={isOpen}
+  onclick={toggleMenu}
+>
+  <span class="hamburger" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </span>
 </button>
 
 {#if isOpen}
-  <div class="overlay" onclick={toggleMenu} aria-hidden="true"></div>
+  <button class="overlay" type="button" aria-label="Close side menu" onclick={closeMenu}></button>
 {/if}
 
-<div class="sidebar" class:open={isOpen}>
-  <div class="sidebar-top">
-    <div class="logo-wrap">
-      <div class="logo-circle">T</div>
-      <div class="logo-text">
-        <h2>SGPA</h2>
-        <p>Teacher Panel</p>
-      </div>
+<aside class="sidebar" class:open={isOpen}>
+  <div class="sidebar-header">
+    <div class="brand-mark">T</div>
+    <div>
+      <h2>SGPA</h2>
+      <p>Teacher Module</p>
     </div>
   </div>
 
-  <nav class="menu">
+  <nav class="menu" aria-label="Teacher menu">
     {#each menuItems as item}
       <a
         href={item.href}
-        class:active={$page.url.pathname === item.href}
-        onclick={() => isOpen = false}
+        class:active={isActive(item.href)}
+        aria-current={isActive(item.href) ? 'page' : undefined}
+        onclick={closeMenu}
       >
-        <span class="link-indicator"></span>
+        <span class="dot"></span>
         <span>{item.name}</span>
       </a>
     {/each}
   </nav>
-</div>
+</aside>
 
 <style>
-  .menu-btn {
+  .menu-toggle {
     position: fixed;
-    top: 18px;
     left: 18px;
-    z-index: 1100;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    background: linear-gradient(135deg, #0b2d69 0%, #1d73d4 100%);
+    top: 50%;
+    z-index: 1200;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: #111827;
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 12px 18px;
-    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: grid;
+    place-items: center;
     cursor: pointer;
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: 0.02em;
-    box-shadow:
-      0 12px 28px rgba(11, 45, 105, 0.28),
-      0 4px 10px rgba(0, 0, 0, 0.12);
-    backdrop-filter: blur(10px);
-    transition:
-      transform 0.25s ease,
-      box-shadow 0.25s ease,
-      filter 0.25s ease;
+    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.3);
+    transition: left 0.32s ease, background 0.22s ease, transform 0.22s ease;
   }
 
-  .menu-btn:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      0 16px 34px rgba(11, 45, 105, 0.34),
-      0 6px 14px rgba(0, 0, 0, 0.16);
-    filter: brightness(1.04);
+  .menu-toggle:hover {
+    background: #0b2d69;
+    transform: translateY(-50%) scale(1.04);
   }
 
-  .menu-btn:active {
-    transform: translateY(0);
+  .menu-toggle.open {
+    left: 316px;
+    background: #0b2d69;
   }
 
-  .menu-icon {
-    font-size: 1.1rem;
-    line-height: 1;
+  .hamburger {
+    display: grid;
+    gap: 5px;
+  }
+
+  .hamburger span {
+    width: 22px;
+    height: 2px;
+    border-radius: 999px;
+    background: white;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+  }
+
+  .menu-toggle.open .hamburger span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .menu-toggle.open .hamburger span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .menu-toggle.open .hamburger span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
   }
 
   .sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 290px;
+    inset: 0 auto 0 0;
+    z-index: 1150;
+    width: 300px;
     height: 100vh;
+    padding: 1.2rem;
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02)),
-      linear-gradient(180deg, #041c43 0%, #07285d 45%, #0b2d69 100%);
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.1), transparent 12rem),
+      radial-gradient(circle at bottom left, rgba(249, 115, 22, 0.08), transparent 14rem),
+      linear-gradient(180deg, #05070d 0%, #111827 58%, #0b2d69 100%);
     color: white;
-    display: flex;
-    flex-direction: column;
-    padding: 88px 1.2rem 1.2rem;
-    z-index: 1050;
     transform: translateX(-100%);
-    transition: transform 0.38s ease;
-    box-shadow: 14px 0 40px rgba(0, 0, 0, 0.28);
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
-    overflow: hidden;
-  }
-
-  .sidebar::before {
-    content: '';
-    position: absolute;
-    top: -80px;
-    right: -60px;
-    width: 180px;
-    height: 180px;
-    border-radius: 50%;
-    background: rgba(30, 144, 255, 0.16);
-    filter: blur(10px);
-    pointer-events: none;
-  }
-
-  .sidebar::after {
-    content: '';
-    position: absolute;
-    bottom: -70px;
-    left: -70px;
-    width: 170px;
-    height: 170px;
-    border-radius: 50%;
-    background: rgba(242, 183, 5, 0.12);
-    filter: blur(10px);
-    pointer-events: none;
+    transition: transform 0.32s ease;
+    box-shadow: 18px 0 50px rgba(0, 0, 0, 0.34);
+    overflow-y: auto;
   }
 
   .sidebar.open {
     transform: translateX(0);
   }
 
-  .sidebar-top {
-    position: relative;
-    z-index: 1;
-    margin-bottom: 2rem;
-  }
-
-  .logo-wrap {
+  .sidebar-header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 14px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
+    gap: 0.9rem;
+    margin-bottom: 1.4rem;
+    padding: 1rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .logo-circle {
+  .brand-mark {
+    display: grid;
+    place-items: center;
     width: 48px;
     height: 48px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #f2b705 0%, #ffd34d 100%);
+    border-radius: 16px;
+    background: #ffffff;
     color: #0b2d69;
-    font-size: 1.25rem;
-    font-weight: 800;
-    box-shadow: 0 10px 20px rgba(242, 183, 5, 0.22);
+    font-weight: 950;
+    font-size: 1.2rem;
   }
 
-  .logo-text h2 {
+  .sidebar-header h2 {
     margin: 0;
     font-size: 1.2rem;
-    font-weight: 800;
-    color: #ffffff;
-    letter-spacing: 0.03em;
+    font-weight: 950;
   }
 
-  .logo-text p {
-    margin: 2px 0 0;
+  .sidebar-header p {
+    margin: 0.15rem 0 0;
+    color: #cbd5e1;
     font-size: 0.86rem;
-    color: #b9c7de;
   }
 
   .menu {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    display: grid;
+    gap: 0.55rem;
   }
 
   .menu a {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 0.95rem 1rem;
+    gap: 0.75rem;
+    padding: 0.9rem 0.95rem;
     border-radius: 16px;
-    color: #d7e3f5;
+    color: #dbe4f0;
     text-decoration: none;
-    transition:
-      background 0.25s ease,
-      transform 0.25s ease,
-      color 0.25s ease,
-      box-shadow 0.25s ease;
-    position: relative;
-    overflow: hidden;
-    font-weight: 500;
+    font-weight: 760;
+    transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease;
   }
 
   .menu a:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
     transform: translateX(4px);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
   }
 
-  .link-indicator {
-    width: 8px;
-    height: 8px;
+  .menu a.active {
+    background: rgba(255, 255, 255, 0.13);
+    color: white;
+    box-shadow: inset 4px 0 0 #f2b705;
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.35);
-    flex-shrink: 0;
-    transition: all 0.25s ease;
+    background: #64748b;
+    flex: 0 0 auto;
   }
 
-  .menu a:hover .link-indicator {
+  .menu a.active .dot,
+  .menu a:hover .dot {
     background: #f2b705;
-    box-shadow: 0 0 12px rgba(242, 183, 5, 0.5);
-  }
-
-  .active {
-    background: linear-gradient(90deg, rgba(29, 115, 212, 0.28), rgba(242, 183, 5, 0.18)) !important;
-    color: white !important;
-    font-weight: 700;
-    box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-      0 10px 24px rgba(0, 0, 0, 0.12);
-  }
-
-  .active .link-indicator {
-    background: #f2b705;
-    box-shadow: 0 0 12px rgba(242, 183, 5, 0.48);
+    box-shadow: 0 0 0 5px rgba(242, 183, 5, 0.12);
   }
 
   .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(3, 12, 28, 0.52);
+    z-index: 1100;
+    border: none;
+    background: rgba(5, 7, 13, 0.58);
     backdrop-filter: blur(4px);
-    z-index: 1040;
-    animation: fadeOverlay 0.25s ease;
+    cursor: pointer;
   }
 
-  @keyframes fadeOverlay {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .menu-btn {
-      top: 14px;
-      left: 14px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-size: 0.9rem;
-    }
-
+  @media (max-width: 720px) {
     .sidebar {
-      width: 270px;
-      padding: 82px 1rem 1rem;
+      width: min(300px, 84vw);
     }
 
-    .logo-wrap {
-      padding: 12px;
-    }
-
-    .logo-circle {
-      width: 42px;
-      height: 42px;
-      font-size: 1.1rem;
+    .menu-toggle.open {
+      left: min(316px, calc(84vw + 14px));
     }
   }
 </style>

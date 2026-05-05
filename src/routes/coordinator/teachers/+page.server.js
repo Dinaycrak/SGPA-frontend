@@ -1,98 +1,101 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { getUsers, ROLE_IDS } from '$lib/server/project-helpers.js';
+import { fail } from '@sveltejs/kit';
+import {
+  getUsers,
+  getUserById,
+  ROLE_IDS,
+  normalizeActiveStatus
+} from '$lib/server/project-helpers.js';
 import { API_BASE_URL, getAuthHeaders } from '$lib/components/Tokens.js';
 
-async function getUserDetail(fetch, userId) {
-  const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
-    headers: getAuthHeaders('coordinator')
-  });
+function buildUserPayload(user, nextIsActive) {
+  const raw = user?.raw && !Array.isArray(user.raw) ? user.raw : user;
 
-  const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
+  const payload = {
+    ...raw,
+    first_name: raw?.first_name ?? user?.first_name ?? '',
+    last_name: raw?.last_name ?? user?.last_name ?? '',
+    email: raw?.email ?? user?.email ?? '',
+    phone: raw?.phone ?? raw?.phone_number ?? user?.phone ?? user?.phone_number ?? '',
+    id_role: Number(raw?.id_role ?? user?.id_role),
+    is_active: nextIsActive
+  };
 
-  if (!response.ok) {
-    throw new Error(`No se pudo obtener el detalle del docente. Estado ${response.status}. ${text}`);
-  }
+  delete payload.raw;
+  delete payload.id;
 
-  return data;
+  return payload;
 }
 
 async function updateUserActiveStatus(fetch, user, nextIsActive) {
   const userId = Number(user.id_user ?? user.id);
 
-  const patchResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
-    method: 'PATCH',
-    headers: getAuthHeaders('coordinator'),
-    body: JSON.stringify({ is_active: nextIsActive })
-  });
-
-  const patchText = await patchResponse.text();
-
-  if (patchResponse.ok) {
-    return true;
+  if (!userId) {
+    throw new Error('No se recibió un ID válido para actualizar el docente.');
   }
 
-  const fullUser = await getUserDetail(fetch, userId);
+  let detailedUser = user;
 
-  const putPayload = {
-    first_name: fullUser?.first_name ?? user.first_name ?? '',
-    last_name: fullUser?.last_name ?? user.last_name ?? '',
-    email: fullUser?.email ?? user.email ?? '',
-    phone: fullUser?.phone ?? fullUser?.phone_number ?? user.phone ?? user.phone_number ?? '',
-    is_active: nextIsActive,
-    id_role: Number(fullUser?.id_role ?? user.id_role),
-    password_hash: fullUser?.password_hash
-  };
-
-  if (!putPayload.password_hash) {
-    throw new Error(
-      `No se pudo actualizar el docente. El backend exige password_hash y no lo devuelve en /users/${userId}.`
-    );
+  try {
+    detailedUser = await getUserById(fetch, userId, 'coordinator');
+  } catch (_) {
+    detailedUser = user;
   }
 
-  const putResponse = await fetch(`${API_BASE_URL}/users/${userId}`, {
-    method: 'PUT',
-    headers: getAuthHeaders('coordinator'),
-    body: JSON.stringify(putPayload)
-  });
+  const fullPayload = buildUserPayload(detailedUser, nextIsActive);
 
-  const putText = await putResponse.text();
+  const attempts = [
+    { method: 'PATCH', body: { is_active: nextIsActive } },
+    { method: 'PATCH', body: fullPayload },
+    { method: 'PUT', body: fullPayload }
+  ];
 
-  if (putResponse.ok) {
-    return true;
+  let lastError = '';
+
+  for (const attempt of attempts) {
+    const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+      method: attempt.method,
+      headers: getAuthHeaders('coordinator'),
+      body: JSON.stringify(attempt.body)
+    });
+
+    const text = await response.text().catch(() => '');
+
+    if (response.ok) {
+      return true;
+    }
+
+    lastError = `${attempt.method} /users/${userId} falló. Estado ${response.status}. ${text}`;
   }
 
-  throw new Error(
-    `PATCH falló (${patchResponse.status}): ${patchText} | PUT falló (${putResponse.status}): ${putText}`
-  );
+  throw new Error(lastError || 'No se pudo actualizar el estado del docente.');
 }
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch, url }) {
+export async function load({ fetch }) {
   try {
     const users = await getUsers(fetch, 'coordinator');
     const teachers = users.filter((user) => Number(user.id_role) === ROLE_IDS.teacher);
 
-    const rows = teachers.map((teacher) => ({
-      id_user: teacher.id_user,
-      nombre: `${teacher.first_name ?? ''} ${teacher.last_name ?? ''}`.trim(),
-      correo: teacher.email ?? 'Sin correo',
-      estado: teacher.is_active ? 'Activo' : 'Inactivo',
-      is_active: Boolean(teacher.is_active)
-    }));
+    const rows = teachers.map((teacher) => {
+      const isActive = normalizeActiveStatus(teacher.is_active);
+
+      return {
+        id_user: teacher.id_user,
+        nombre: `${teacher.first_name ?? ''} ${teacher.last_name ?? ''}`.trim() || 'Sin nombre',
+        correo: teacher.email ?? 'Sin correo',
+        estado: isActive ? 'Activo' : 'Inactivo',
+        is_active: isActive
+      };
+    });
 
     return {
       rows,
-      totalTeachers: teachers.length,
-      message: url.searchParams.get('message') || '',
-      type: url.searchParams.get('type') || 'success'
+      totalTeachers: teachers.length
     };
   } catch (error) {
     return {
       rows: [],
       totalTeachers: 0,
-      message: '',
-      type: 'error',
       error: error.message || 'Error al cargar los docentes'
     };
   }
@@ -112,25 +115,26 @@ export const actions = {
 
       if (!teacher) {
         return fail(404, {
-          error: 'No se encontró el docente a actualizar'
+          error: 'No se encontró el docente a actualizar.'
         });
       }
 
       await updateUserActiveStatus(fetch, teacher, nextIsActive);
 
-      const message = nextIsActive
-        ? 'Docente HABILITAR con éxito en el sistema.'
-        : 'Docente DESHABILITAR con éxito en el sistema.';
-
-      throw redirect(
-        303,
-        `/coordinator/teachers?message=${encodeURIComponent(message)}&type=success`
-      );
+      return {
+        success: true,
+        message: nextIsActive
+          ? `${userName} fue marcado como ACTIVO.`
+          : `${userName} fue marcado como INACTIVO.`,
+        updatedUser: {
+          id_user: userId,
+          is_active: nextIsActive,
+          estado: nextIsActive ? 'Activo' : 'Inactivo'
+        }
+      };
     } catch (error) {
-      if (error?.status === 303) throw error;
-
       return fail(500, {
-        error: error.message || `No se pudo actualizar el acceso de ${userName}`
+        error: error.message || `No se pudo actualizar el acceso de ${userName}.`
       });
     }
   }

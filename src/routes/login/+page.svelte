@@ -1,7 +1,6 @@
 <script>
   import Header from '$lib/components/Header_L.svelte';
   import Footer from '$lib/components/Footer.svelte';
-  import 'bootstrap/dist/css/bootstrap.min.css';
   import { goto } from '$app/navigation';
 
   let selectedRole = $state('student');
@@ -18,10 +17,10 @@
 </script>
 
 <svelte:head>
-  <title>Login | SGPA</title>
+  <title>Log In | SGPA</title>
   <meta
     name="description"
-    content="Ingreso al Sistema de Gestión de Proyectos Académicos - SGPA"
+    content="Access to the Academic Project Management System - SGPA"
   />
 </svelte:head>
 
@@ -32,35 +31,32 @@
     <section class="login-hero">
       <div class="login-hero-overlay">
         <div class="login-info">
-          <span class="hero-badge">Acceso institucional</span>
-          <h2 class="title">Iniciar sesión</h2>
+          <span class="hero-badge">Institutional Access</span>
+          <h2 class="title">Log In</h2>
           <p class="description">
-            Bienvenido al Sistema de Gestión de Proyectos Académicos. Desde este espacio
-            podrás acceder según tu rol dentro de la plataforma: estudiante, docente o
-            coordinador principal.
+            Welcome to the Academic Project Management System. Select your role
+            to access the corresponding module inside the platform.
           </p>
 
           <div class="info-boxes">
             <article class="info-card">
-              <h3>Control académico</h3>
+              <h3>Academic Control</h3>
               <p>
-                Administra procesos, revisa información y mantén seguimiento organizado de
-                las actividades del sistema.
+                Manage processes, review information and keep academic project activity organized.
               </p>
             </article>
 
             <article class="info-card">
-              <h3>Acceso por roles</h3>
+              <h3>Role-Based Access</h3>
               <p>
-                Cada tipo de usuario cuenta con un ingreso diferenciado según sus funciones
-                dentro del SGPA.
+                Each user type has a dedicated entry point according to their responsibilities.
               </p>
             </article>
           </div>
         </div>
 
         <div class="login-image-slot">
-          <img src="/images/login-banner.png" alt="Imagen institucional de acceso SGPA" />
+          <img src="/images/login-banner.png" alt="SGPA access banner" />
         </div>
       </div>
     </section>
@@ -71,46 +67,46 @@
 
         <div class="login-card-header">
           <span class="login-mini-badge">SGPA</span>
-          <h2 class="login-card-title">Accede a tu cuenta</h2>
+          <h2 class="login-card-title">Access Your Account</h2>
           <p class="login-card-subtitle">
-            Ingresa tus datos y selecciona el tipo de acceso correspondiente.
+            Enter your information and select the access type that matches your role.
           </p>
         </div>
 
         <div class="login-form">
           <div class="input-group-custom">
-            <label for="usuario">Usuario</label>
-            <input id="usuario" class="login-formulary" type="text" placeholder="Ingresa tu usuario" />
+            <label for="usuario">User</label>
+            <input id="usuario" class="login-formulary" type="text" placeholder="Enter your user" />
           </div>
 
           <div class="input-group-custom">
-            <label for="password">Contraseña</label>
-            <input id="password" class="login-formulary" type="password" placeholder="Ingresa tu contraseña" />
+            <label for="password">Password</label>
+            <input id="password" class="login-formulary" type="password" placeholder="Enter your password" />
           </div>
 
           <div class="role-selector">
-            <p class="role-title">Selecciona tu rol</p>
+            <p class="role-title">Select your role</p>
 
             <div class="radio-group-horizontal">
-              <label class:selected={selectedRole === 'student'} class="radio-option-vertical student-card">
+              <label class:selected={selectedRole === 'student'} class="radio-option-vertical">
                 <input type="radio" bind:group={selectedRole} value="student" />
-                <span class="role-pill">Estudiante</span>
+                <span class="role-pill">Student</span>
               </label>
 
-              <label class:selected={selectedRole === 'teacher'} class="radio-option-vertical teacher-card">
+              <label class:selected={selectedRole === 'teacher'} class="radio-option-vertical">
                 <input type="radio" bind:group={selectedRole} value="teacher" />
-                <span class="role-pill">Docente</span>
+                <span class="role-pill">Teacher</span>
               </label>
 
-              <label class:selected={selectedRole === 'coordinator'} class="radio-option-vertical coordinator-card">
+              <label class:selected={selectedRole === 'coordinator'} class="radio-option-vertical">
                 <input type="radio" bind:group={selectedRole} value="coordinator" />
-                <span class="role-pill">Coordinador</span>
+                <span class="role-pill">Coordinator</span>
               </label>
             </div>
           </div>
 
           <button class="btn-primary" onclick={handleLogin}>
-            Ingresar
+            Log In
           </button>
         </div>
       </div>
@@ -121,27 +117,12 @@
 </div>
 
 <style>
-  :global(html) {
-    scroll-behavior: smooth;
-  }
-
-  :global(body) {
-    margin: 0;
-    font-family: 'Montserrat', 'Lato', 'Segoe UI', Arial, sans-serif;
-    background: #f3f3f3;
-    color: #1d1d1d;
-  }
-
-  :global(*) {
-    box-sizing: border-box;
-  }
-
   .page-wrapper {
     min-height: 100vh;
     background:
-      radial-gradient(circle at top left, rgba(29, 115, 212, 0.08), transparent 28%),
-      radial-gradient(circle at top right, rgba(242, 183, 5, 0.08), transparent 22%),
-      linear-gradient(180deg, #f8faff 0%, #eef3fb 35%, #f4f6fa 100%);
+      radial-gradient(circle at top left, rgba(11, 45, 105, 0.28), transparent 28rem),
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.1), transparent 20rem),
+      linear-gradient(180deg, #05070d 0%, #0b1220 45%, #111827 100%);
   }
 
   .login-page {
@@ -161,33 +142,32 @@
     align-items: center;
   }
 
-  .login-info {
-    animation: fadeLeft 0.9s ease;
-  }
-
-  .hero-badge {
+  .hero-badge,
+  .login-mini-badge {
     display: inline-block;
-    background: linear-gradient(135deg, #f2b705 0%, #ffd450 100%);
-    color: #0b2d69;
-    font-weight: 800;
-    font-size: 0.85rem;
+    background: rgba(242, 183, 5, 0.14);
+    color: #fde68a;
+    font-weight: 900;
+    font-size: 0.82rem;
     padding: 8px 16px;
     border-radius: 999px;
     margin-bottom: 18px;
-    box-shadow: 0 10px 24px rgba(242, 183, 5, 0.25);
+    border: 1px solid rgba(242, 183, 5, 0.22);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
   .title {
     margin: 0 0 16px;
-    color: #0b2d69;
-    font-size: clamp(2.1rem, 4vw, 3.6rem);
-    line-height: 1.08;
-    letter-spacing: -0.03em;
+    color: #ffffff;
+    font-size: clamp(2.1rem, 4vw, 3.8rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
   }
 
   .description {
     margin: 0 0 26px;
-    color: #454545;
+    color: #cbd5e1;
     font-size: 1.04rem;
     line-height: 1.8;
     max-width: 690px;
@@ -200,267 +180,151 @@
   }
 
   .info-card {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
+    background: rgba(17, 24, 39, 0.88);
+    border-radius: 22px;
     padding: 22px;
-    border: 1px solid rgba(11, 45, 105, 0.08);
+    border: 1px solid rgba(148, 163, 184, 0.22);
     border-top: 4px solid #0b2d69;
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.06);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-
-  .info-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.25);
   }
 
   .info-card h3 {
     margin: 0 0 10px;
-    color: #0b2d69;
-    font-size: 1.08rem;
+    color: #ffffff;
   }
 
   .info-card p {
     margin: 0;
-    color: #4f4f4f;
+    color: #94a3b8;
     line-height: 1.7;
   }
 
   .login-image-slot {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation: fadeRight 1s ease;
+    border-radius: 30px;
+    overflow: hidden;
+    background: rgba(17, 24, 39, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
   }
 
   .login-image-slot img {
     width: 100%;
-    max-width: 560px;
-    border-radius: 28px;
+    height: 100%;
+    min-height: 340px;
     object-fit: cover;
-    box-shadow: 0 24px 52px rgba(11, 45, 105, 0.18);
-    border: 4px solid rgba(255, 255, 255, 0.85);
+    display: block;
   }
 
   .login-section {
-    padding: 20px 24px 0;
+    padding: 30px 24px;
   }
 
   .login-card {
-    max-width: 620px;
+    max-width: 720px;
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(14px);
-    border-radius: 28px;
-    box-shadow: 0 22px 46px rgba(0, 0, 0, 0.08);
+    position: relative;
     overflow: hidden;
-    border: 1px solid rgba(11, 45, 105, 0.08);
+    background: rgba(17, 24, 39, 0.92);
+    border-radius: 28px;
+    padding: 2rem;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
   }
 
   .card-top-line {
-    height: 8px;
-    background: linear-gradient(90deg, #0b2d69 0%, #1d73d4 55%, #f2b705 100%);
-  }
-
-  .login-card-header {
-    padding: 28px 34px 10px;
-    text-align: center;
-  }
-
-  .login-mini-badge {
-    display: inline-block;
-    margin-bottom: 10px;
-    background: rgba(11, 45, 105, 0.08);
-    color: #0b2d69;
-    padding: 7px 14px;
-    border-radius: 999px;
-    font-size: 0.82rem;
-    font-weight: 700;
+    position: absolute;
+    inset: 0 0 auto;
+    height: 5px;
+    background: linear-gradient(90deg, #0b2d69, #f2b705, #f97316);
   }
 
   .login-card-title {
     margin: 0;
-    color: #0b2d69;
-    font-size: 2rem;
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 950;
   }
 
   .login-card-subtitle {
-    margin: 10px 0 0;
-    color: #5b5b5b;
-    line-height: 1.7;
+    margin: 0.45rem 0 1.5rem;
+    color: #94a3b8;
   }
 
   .login-form {
-    padding: 20px 34px 34px;
+    display: grid;
+    gap: 1.1rem;
   }
 
   .input-group-custom {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 18px;
+    display: grid;
+    gap: 0.45rem;
   }
 
-  .input-group-custom label {
-    font-weight: 700;
-    color: #0b2d69;
-    margin-bottom: 8px;
+  label,
+  .role-title {
+    color: #e5e7eb;
+    font-weight: 800;
   }
 
   .login-formulary {
     width: 100%;
-    padding: 14px 16px;
+    padding: 0.9rem 1rem;
     border-radius: 14px;
-    border: 1px solid #d4dceb;
-    background: #f8fbff;
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .login-formulary:focus {
-    border-color: #1d73d4;
-    box-shadow: 0 0 0 4px rgba(29, 115, 212, 0.12);
   }
 
   .role-selector {
-    margin: 24px 0 26px;
-  }
-
-  .role-title {
-    margin: 0 0 12px;
-    font-weight: 800;
-    color: #0b2d69;
+    margin-top: 0.25rem;
   }
 
   .radio-group-horizontal {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 14px;
+    gap: 0.8rem;
   }
 
   .radio-option-vertical {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 82px;
-    border-radius: 18px;
-    border: 2px solid transparent;
     cursor: pointer;
-    font-weight: 700;
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    user-select: none;
+    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: #0b1220;
+    padding: 1rem;
+    text-align: center;
+    transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
   }
 
   .radio-option-vertical input {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .student-card {
-    background: rgba(29, 115, 212, 0.08);
-    color: #0b2d69;
-  }
-
-  .teacher-card {
-    background: rgba(242, 183, 5, 0.12);
-    color: #7b5a00;
-  }
-
-  .coordinator-card {
-    background: rgba(11, 45, 105, 0.1);
-    color: #0b2d69;
-  }
-
-  .radio-option-vertical:hover {
-    transform: translateY(-3px);
+    display: none;
   }
 
   .radio-option-vertical.selected {
-    border-color: #1d73d4;
-    box-shadow: 0 12px 24px rgba(29, 115, 212, 0.15);
+    border-color: rgba(242, 183, 5, 0.65);
+    background: rgba(242, 183, 5, 0.1);
+    transform: translateY(-2px);
   }
 
   .role-pill {
-    font-size: 0.98rem;
+    color: #ffffff;
+    font-weight: 900;
   }
 
   .btn-primary {
     width: 100%;
     border: none;
-    border-radius: 16px;
-    padding: 15px 20px;
-    background: linear-gradient(135deg, #0b2d69 0%, #1d73d4 100%);
-    color: white;
-    font-weight: 800;
-    font-size: 1rem;
+    padding: 0.95rem 1rem;
+    border-radius: 999px;
+    font-weight: 950;
     cursor: pointer;
-    box-shadow: 0 14px 28px rgba(11, 45, 105, 0.2);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    margin-top: 0.5rem;
   }
 
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.03);
-    box-shadow: 0 18px 34px rgba(11, 45, 105, 0.25);
-  }
-
-  @keyframes fadeLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-24px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes fadeRight {
-    from {
-      opacity: 0;
-      transform: translateX(24px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @media (max-width: 980px) {
+  @media (max-width: 900px) {
     .login-hero-overlay {
       grid-template-columns: 1fr;
     }
 
-    .login-image-slot {
-      order: -1;
-    }
-
-    .info-boxes {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 700px) {
+    .info-boxes,
     .radio-group-horizontal {
       grid-template-columns: 1fr;
-    }
-
-    .login-card-header,
-    .login-form {
-      padding-left: 20px;
-      padding-right: 20px;
-    }
-
-    .login-hero {
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-
-    .login-section {
-      padding-left: 16px;
-      padding-right: 16px;
     }
   }
 </style>

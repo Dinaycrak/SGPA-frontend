@@ -1,30 +1,52 @@
-import { fail, redirect } from '@sveltejs/kit';
-import { getUsers, ROLE_IDS } from '$lib/server/project-helpers.js';
+import { fail } from '@sveltejs/kit';
+import {
+  getUsers,
+  getUserById,
+  ROLE_IDS,
+  normalizeActiveStatus
+} from '$lib/server/project-helpers.js';
 import { API_BASE_URL, getAuthHeaders } from '$lib/components/Tokens.js';
+
+function buildUserPayload(user, nextIsActive) {
+  const raw = user?.raw && !Array.isArray(user.raw) ? user.raw : user;
+
+  const payload = {
+    ...raw,
+    first_name: raw?.first_name ?? user?.first_name ?? '',
+    last_name: raw?.last_name ?? user?.last_name ?? '',
+    email: raw?.email ?? user?.email ?? '',
+    phone: raw?.phone ?? raw?.phone_number ?? user?.phone ?? user?.phone_number ?? '',
+    id_role: Number(raw?.id_role ?? user?.id_role),
+    is_active: nextIsActive
+  };
+
+  delete payload.raw;
+  delete payload.id;
+
+  return payload;
+}
 
 async function updateUserActiveStatus(fetch, user, nextIsActive) {
   const userId = Number(user.id_user ?? user.id);
 
+  if (!userId) {
+    throw new Error('No se recibió un ID válido para actualizar el estudiante.');
+  }
+
+  let detailedUser = user;
+
+  try {
+    detailedUser = await getUserById(fetch, userId, 'coordinator');
+  } catch (_) {
+    detailedUser = user;
+  }
+
+  const fullPayload = buildUserPayload(detailedUser, nextIsActive);
+
   const attempts = [
-    {
-      method: 'PATCH',
-      body: { is_active: nextIsActive }
-    },
-    {
-      method: 'PUT',
-      body: { is_active: nextIsActive }
-    },
-    {
-      method: 'PUT',
-      body: {
-        first_name: user.first_name ?? '',
-        last_name: user.last_name ?? '',
-        email: user.email ?? '',
-        phone: user.phone ?? user.phone_number ?? '',
-        is_active: nextIsActive,
-        id_role: Number(user.id_role)
-      }
-    }
+    { method: 'PATCH', body: { is_active: nextIsActive } },
+    { method: 'PATCH', body: fullPayload },
+    { method: 'PUT', body: fullPayload }
   ];
 
   let lastError = '';
@@ -36,44 +58,44 @@ async function updateUserActiveStatus(fetch, user, nextIsActive) {
       body: JSON.stringify(attempt.body)
     });
 
-    const text = await response.text();
+    const text = await response.text().catch(() => '');
 
     if (response.ok) {
       return true;
     }
 
-    lastError = `Método ${attempt.method} falló. Estado ${response.status}. ${text}`;
+    lastError = `${attempt.method} /users/${userId} falló. Estado ${response.status}. ${text}`;
   }
 
-  throw new Error(lastError || 'No se pudo actualizar el estado del estudiante');
+  throw new Error(lastError || 'No se pudo actualizar el estado del estudiante.');
 }
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch, url }) {
+export async function load({ fetch }) {
   try {
     const users = await getUsers(fetch, 'coordinator');
     const students = users.filter((user) => Number(user.id_role) === ROLE_IDS.student);
 
-    const rows = students.map((student) => ({
-      id_user: student.id_user,
-      nombre: `${student.first_name ?? ''} ${student.last_name ?? ''}`.trim(),
-      correo: student.email ?? 'Sin correo',
-      estado: student.is_active ? 'Activo' : 'Inactivo',
-      is_active: Boolean(student.is_active)
-    }));
+    const rows = students.map((student) => {
+      const isActive = normalizeActiveStatus(student.is_active);
+
+      return {
+        id_user: student.id_user,
+        nombre: `${student.first_name ?? ''} ${student.last_name ?? ''}`.trim() || 'Sin nombre',
+        correo: student.email ?? 'Sin correo',
+        estado: isActive ? 'Activo' : 'Inactivo',
+        is_active: isActive
+      };
+    });
 
     return {
       rows,
-      totalStudents: students.length,
-      message: url.searchParams.get('message') || '',
-      type: url.searchParams.get('type') || 'success'
+      totalStudents: students.length
     };
   } catch (error) {
     return {
       rows: [],
       totalStudents: 0,
-      message: '',
-      type: 'error',
       error: error.message || 'Error al cargar los estudiantes'
     };
   }
@@ -93,25 +115,26 @@ export const actions = {
 
       if (!student) {
         return fail(404, {
-          error: 'No se encontró el estudiante a actualizar'
+          error: 'No se encontró el estudiante a actualizar.'
         });
       }
 
       await updateUserActiveStatus(fetch, student, nextIsActive);
 
-      const message = nextIsActive
-        ? `Estudiante HABILITAR con éxito en el sistema.`
-        : `Estudiante DESHABILITAR con éxito en el sistema.`;
-
-      throw redirect(
-        303,
-        `/coordinator/students?message=${encodeURIComponent(message)}&type=success`
-      );
+      return {
+        success: true,
+        message: nextIsActive
+          ? `${userName} fue marcado como ACTIVO.`
+          : `${userName} fue marcado como INACTIVO.`,
+        updatedUser: {
+          id_user: userId,
+          is_active: nextIsActive,
+          estado: nextIsActive ? 'Activo' : 'Inactivo'
+        }
+      };
     } catch (error) {
-      if (error?.status === 303) throw error;
-
       return fail(500, {
-        error: error.message || `No se pudo actualizar el acceso de ${userName}`
+        error: error.message || `No se pudo actualizar el acceso de ${userName}.`
       });
     }
   }
