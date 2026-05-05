@@ -202,7 +202,7 @@
 
   .hero {
     position: relative;
-    background: linear-gradient(135deg, #e9eef7 0%, #f3f3f3 100%);
+    background: linear-gradient(135deg, #fafafa 0%, #415982 100%);
     padding: 54px 24px 48px;
   }
 
