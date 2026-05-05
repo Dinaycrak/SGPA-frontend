@@ -1,16 +1,19 @@
 <script>
-    import Header from "../../lib/components/Header_St.svelte";
-    import Footer from "../../lib/components/Footer.svelte";
-    import SideBar from "../../lib/components/CoordinatorSideBar.svelte";
-    import Dashboard from "../../lib/components/Dashboard.svelte";
-    import 'bootstrap/dist/css/bootstrap.min.css';
-
+  import Header from '../../lib/components/Header_St.svelte';
+  import Footer from '../../lib/components/Footer.svelte';
+  import SideBar from '../../lib/components/CoordinatorSideBar.svelte';
+  import Dashboard from '../../lib/components/Dashboard.svelte';
+  import 'bootstrap/dist/css/bootstrap.min.css';
 </script>
 
 <Header />
 <SideBar />
 
-<Dashboard />
+<Dashboard
+  roleName="Coordinator"
+  eyebrow="Coordinator Module"
+  title="Academic Control Panel"
+  description="Manage projects, teachers, students and users from a clear and organized interface."
+/>
 
 <Footer />
-

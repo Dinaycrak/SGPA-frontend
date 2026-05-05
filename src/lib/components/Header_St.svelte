@@ -7,8 +7,8 @@
 
   <div class="header-container">
     <div class="brand">
-      <div class="logo-slot" aria-label="Logo universitario">
-        <img src="/images/logo-cul.png" alt="Logo de la universidad" />
+      <div class="logo-slot" aria-label="University logo">
+        <img src="/images/logo-cul.png" alt="University logo" />
       </div>
 
       <div class="brand-text">
@@ -21,35 +21,36 @@
           <span class="dot"></span>
           <span>A</span>
         </h1>
-        <p>Sistema de Gestión de Proyectos Académicos</p>
+        <p>Academic Project Management System</p>
       </div>
     </div>
 
-    <nav class="main-nav" aria-label="Navegación principal">
-      <a href="/" class="nav-btn">Inicio</a>
-      <a href="/login" class="nav-btn">Login</a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="/" class="nav-btn">Home</a>
+      <a href="/login" class="nav-btn">Log In</a>
     </nav>
   </div>
 </header>
 
 <style>
   .top-bar {
-    height: 26px;
-    background: #0b2d69;
+    height: 8px;
+    background: linear-gradient(90deg, #0b2d69, #111827, #f2b705);
   }
 
   .site-header {
     position: sticky;
     top: 0;
     z-index: 30;
-    background: #ffffff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    background: rgba(5, 7, 13, 0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
   }
 
   .header-container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 18px 24px;
+    padding: 16px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -63,56 +64,45 @@
   }
 
   .logo-slot {
-    width: 78px;
-    height: 78px;
-    border-radius: 12px;
+    width: 70px;
+    height: 70px;
+    border-radius: 18px;
     overflow: hidden;
-    background: #f8fbff;
+    background: #ffffff;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
   }
 
   .logo-slot img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    display: block;
-  }
-
-  .brand-text {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
   }
 
   .brand-title {
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 10px;
-    color: #0b2d69;
-    font-size: 1.9rem;
+    gap: 9px;
+    color: #ffffff;
+    font-size: 1.8rem;
     line-height: 1;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    font-weight: 900;
   }
 
   .brand-title .dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     background: #f2b705;
     border-radius: 50%;
-    display: inline-block;
-    flex-shrink: 0;
-    transform: translateY(1px);
   }
 
   .brand-text p {
     margin: 8px 0 0;
-    color: #666;
-    font-size: 0.95rem;
+    color: #94a3b8;
+    font-size: 0.92rem;
   }
 
   .main-nav {
@@ -124,17 +114,15 @@
   .nav-btn {
     text-decoration: none;
     padding: 10px 18px;
-    background: #0b2d69;
+    background: linear-gradient(135deg, #0b2d69, #153f8f);
     color: #fff;
     border-radius: 999px;
     font-size: 0.96rem;
-    font-weight: 600;
-    transition: 0.25s ease;
-    box-shadow: 0 8px 20px rgba(11, 45, 105, 0.12);
+    font-weight: 800;
+    transition: transform 0.22s ease;
   }
 
   .nav-btn:hover {
-    background: #08214d;
     transform: translateY(-1px);
   }
 
@@ -144,29 +132,8 @@
       align-items: flex-start;
     }
 
-    .brand {
-      width: 100%;
-      align-items: center;
-    }
-
-    .main-nav {
-      width: 100%;
-      justify-content: flex-start;
-      gap: 10px;
-    }
-
     .brand-title {
       font-size: 1.5rem;
-      gap: 8px;
-    }
-
-    .brand-title .dot {
-      width: 6px;
-      height: 6px;
-    }
-
-    .brand-text p {
-      font-size: 0.88rem;
     }
   }
 </style>

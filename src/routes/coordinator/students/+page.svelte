@@ -1,4 +1,5 @@
 <script>
+  import { enhance } from '$app/forms';
   import Header from '$lib/components/Header_St.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import SideBar from '$lib/components/CoordinatorSideBar.svelte';
@@ -10,12 +11,17 @@
   let currentPage = 1;
   const pageSize = 10;
 
-  $: rows = data?.rows || [];
+  let localRows = [];
+
+  $: if (data?.rows) {
+    localRows = data.rows;
+  }
+
   $: totalStudents = data?.totalStudents || 0;
   $: error = form?.error || data?.error || '';
-  $: successMessage = data?.message || '';
+  $: successMessage = form?.message || '';
 
-  $: filteredRows = rows.filter((row) => {
+  $: filteredRows = localRows.filter((row) => {
     const term = search.toLowerCase().trim();
     if (!term) return true;
 
@@ -45,6 +51,28 @@
   function confirmToggle(name, nextIsActive) {
     const actionText = nextIsActive ? 'HABILITAR' : 'DESHABILITAR';
     return confirm(`¿Estás seguro de que deseas ${actionText} al estudiante ${name}?`);
+  }
+
+  function updateLocalUser(updatedUser) {
+    localRows = localRows.map((row) =>
+      Number(row.id_user) === Number(updatedUser.id_user)
+        ? {
+            ...row,
+            is_active: updatedUser.is_active,
+            estado: updatedUser.estado
+          }
+        : row
+    );
+  }
+
+  function handleEnhance() {
+    return async ({ result, update }) => {
+      await update({ reset: false });
+
+      if (result.type === 'success' && result.data?.updatedUser) {
+        updateLocalUser(result.data.updatedUser);
+      }
+    };
   }
 </script>
 
@@ -83,9 +111,10 @@
               <th>Nombre completo</th>
               <th>Correo</th>
               <th>Estado</th>
-              <th>Acción de Seguridad</th>
+              <th>Acción de seguridad</th>
             </tr>
           </thead>
+
           <tbody>
             {#if paginatedRows.length > 0}
               {#each paginatedRows as row}
@@ -105,9 +134,10 @@
                     <form
                       method="POST"
                       action="?/toggleStatus"
-                      on:submit={(e) => {
+                      use:enhance={handleEnhance}
+                      onsubmit={(event) => {
                         if (!confirmToggle(row.nombre, !row.is_active)) {
-                          e.preventDefault();
+                          event.preventDefault();
                         }
                       }}
                     >
@@ -121,11 +151,7 @@
                         class:danger-btn={row.is_active}
                         class:enable-btn={!row.is_active}
                       >
-                        {#if row.is_active}
-                          Deshabilitar Acceso
-                        {:else}
-                          Habilitar Acceso
-                        {/if}
+                        {row.is_active ? 'Deshabilitar Acceso' : 'Habilitar Acceso'}
                       </button>
                     </form>
                   </td>
@@ -146,13 +172,13 @@
         <span>Mostrando {paginatedRows.length} de {filteredRows.length} registros</span>
 
         <div class="pagination">
-          <button type="button" on:click={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
+          <button type="button" onclick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
             Anterior
           </button>
 
           <span>Página {currentPage} de {totalPages}</span>
 
-          <button type="button" on:click={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
+          <button type="button" onclick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
             Siguiente
           </button>
         </div>
@@ -165,9 +191,8 @@
 
 <style>
   .page-wrap {
-    background: #eef3f8;
     min-height: 100vh;
-    padding: 1.5rem 1rem 3rem;
+    padding: 2rem 1rem 3rem;
   }
 
   .container {
@@ -176,31 +201,29 @@
   }
 
   .title-block {
-    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
 
   .title-block h1 {
-    font-size: 2.7rem;
-    font-weight: 800;
-    color: #111827;
-    margin: 0 0 0.5rem;
+    font-size: clamp(2rem, 4vw, 2.7rem);
+    font-weight: 900;
+    margin: 0;
   }
 
   .count-badge {
-    display: inline-block;
-    background: #1d9bf0;
-    color: white;
-    font-weight: 700;
-    font-size: 0.95rem;
-    padding: 0.35rem 1rem;
-    border-radius: 999px;
+    display: inline-flex;
+    padding: 0.45rem 1rem;
+    font-size: 0.92rem;
   }
 
   .table-card {
-    background: white;
-    border-radius: 18px;
+    margin-top: 1.2rem;
+    border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
   }
 
   .table-toolbar {
@@ -209,13 +232,13 @@
   }
 
   .search-input {
-    width: 100%;
-    max-width: 420px;
+    width: min(440px, 100%);
     padding: 0.85rem 1rem;
     border: 1px solid #d1d5db;
-    border-radius: 12px;
+    border-radius: 999px;
     outline: none;
     font-size: 0.98rem;
+    background: #f8fafc;
   }
 
   .table-wrapper {
@@ -229,63 +252,53 @@
 
   thead th {
     text-align: left;
-    padding: 1.35rem 1.5rem;
-    font-size: 0.95rem;
-    color: #111827;
+    padding: 1.1rem 1.5rem;
+    font-size: 0.82rem;
+    color: #475569;
+    background: #f8fafc;
     border-bottom: 1px solid #e5e7eb;
-    background: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
   tbody td {
-    padding: 1.25rem 1.5rem;
+    padding: 1.2rem 1.5rem;
     border-bottom: 1px solid #eef2f7;
-    font-size: 1rem;
     color: #334155;
     vertical-align: middle;
   }
 
   .name-cell {
-    font-weight: 700;
-    color: #334e68;
+    font-weight: 850;
+    color: #111827;
   }
 
   .status-pill {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 102px;
+    min-width: 104px;
     padding: 0.45rem 0.9rem;
     border-radius: 999px;
-    font-weight: 800;
-    font-size: 0.9rem;
-  }
-
-  .status-active {
-    background: #dff5df;
-    color: #137333;
-  }
-
-  .status-inactive {
-    background: #f7dede;
-    color: #991b1b;
+    font-weight: 900;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
   }
 
   .action-btn {
     border: none;
-    border-radius: 10px;
-    padding: 0.9rem 1.2rem;
-    font-weight: 700;
+    border-radius: 999px;
+    padding: 0.78rem 1.1rem;
+    font-weight: 850;
     cursor: pointer;
     color: white;
-    min-width: 210px;
+    min-width: 190px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .danger-btn {
-    background: #ef2222;
-  }
-
-  .enable-btn {
-    background: #1fa83d;
+  .action-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 22px rgba(15, 23, 42, 0.12);
   }
 
   .empty-row {
@@ -300,6 +313,8 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.25rem;
+    color: #64748b;
+    font-weight: 650;
     flex-wrap: wrap;
   }
 
@@ -307,15 +322,15 @@
     display: flex;
     gap: 0.75rem;
     align-items: center;
+    flex-wrap: wrap;
   }
 
   .pagination button {
     border: none;
-    background: #0f2f6b;
     color: white;
     padding: 0.65rem 1rem;
-    border-radius: 10px;
-    font-weight: 700;
+    border-radius: 999px;
+    font-weight: 800;
     cursor: pointer;
   }
 
@@ -324,27 +339,7 @@
     cursor: not-allowed;
   }
 
-  .success-box {
-    background: #dcfce7;
-    color: #166534;
-    padding: 1rem;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-  }
-
-  .error-box {
-    background: #fee2e2;
-    color: #b91c1c;
-    padding: 1rem;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-  }
-
   @media (max-width: 768px) {
-    .title-block h1 {
-      font-size: 2rem;
-    }
-
     thead th,
     tbody td {
       padding: 1rem;

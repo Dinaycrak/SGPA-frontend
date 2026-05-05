@@ -68,7 +68,7 @@
         align-items: center;
         gap: 1.5rem;
         padding: 2rem;
-        background: #fff;
+        background: #1e293b;
         border-left: 10px solid;
         border-bottom: 1px solid #f1f5f9;
     }
