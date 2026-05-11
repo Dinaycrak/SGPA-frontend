@@ -1,128 +1,124 @@
 <script>
   import { base } from '$app/paths';
-  import Header from "$lib/components/Header.svelte";
-  import Footer from "$lib/components/Footer.svelte";
+  import Header from '$lib/components/Header.svelte';
+  import Footer from '$lib/components/Footer.svelte';
+
   const quickAccess = [
     {
-      title: 'Gestión de proyectos',
+      title: 'Project management',
       description:
-        'Consulta, registra y organiza los proyectos académicos dentro del sistema SGPA.',
-      action: 'Ver más',
+        'View, register, and organize academic projects within the SGPA system.',
+      action: 'Learn more',
       image: '/images/gestion-proyectos.png'
     },
     {
-      title: 'Convocatorias',
+      title: 'Calls',
       description:
-        'Accede a convocatorias activas, procesos de inscripción y seguimiento académico.',
-      action: 'Explorar',
+        'Access active calls, enrollment processes, and academic tracking.',
+      action: 'Explore',
       image: '/images/convocatorias.png'
     },
     {
-      title: 'Seguimiento académico',
+      title: 'Academic tracking',
       description:
-        'Visualiza el estado general de los procesos, entregas, avances y responsables.',
-      action: 'Consultar',
+        'View the overall status of processes, deliverables, progress, and responsible users.',
+      action: 'View',
       image: '/images/seguimiento.png'
     }
   ];
 
   const teamCards = [
     {
-      role: 'Coordinador',
-      text: 'Administrador principal del sistema, encargado de la supervisión general y la validación de procesos.',
+      role: 'Coordinator',
+      text: 'Main system administrator responsible for overall supervision and process validation.',
       image: '/images/coordinador.png'
     },
     {
-      role: 'Equipo académico',
-      text: 'Grupo de apoyo responsable del seguimiento, revisión y acompañamiento de la gestión de proyectos.',
+      role: 'Academic team',
+      text: 'Support team responsible for tracking, reviewing, and supporting project management.',
       image: '/images/equipo-academico.png'
     },
     {
-      role: 'Docentes',
-      text: 'Participan en la orientación, evaluación y acompañamiento de iniciativas académicas.',
+      role: 'Teachers',
+      text: 'They participate in guiding, evaluating, and supporting academic initiatives.',
       image: '/images/docentes.png'
     }
-  ];
-
-  const modules = [
-    'Registro de proyectos',
-    'Seguimiento de avances',
-    'Consulta de información',
-    'Gestión de usuarios',
-    'Control académico',
-    'Organización de convocatorias'
   ];
 </script>
 
 <svelte:head>
-  <title>SGPA | Sistema de Gestión de Proyectos Académicos</title>
+  <title>SGPA | Academic Project Management System</title>
   <meta
     name="description"
-    content="Plataforma SGPA para la gestión de proyectos académicos de la Corporación Universitaria Latinoamericana."
+    content="SGPA platform for academic project management at Corporación Universitaria Latinoamericana."
   />
 </svelte:head>
 
 <div class="page">
-
   <Header />
-
 
   <main id="inicio">
     <section class="hero">
       <div class="hero-overlay">
         <div class="hero-content">
-          <span class="hero-badge">Plataforma institucional</span>
-          <h2>Sistema de Gestión de Proyectos Académicos</h2>
+          <span class="hero-badge">Institutional platform</span>
+
+          <h2>Academic Project Management System</h2>
+
           <p>
-            SGPA es una plataforma orientada a la organización, seguimiento y administración
-            de proyectos académicos dentro del entorno universitario. Su propósito es facilitar
-            el control de procesos, responsables, avances y consulta de información relevante
-            en un solo lugar.
+            SGPA is a platform focused on organizing, tracking, and managing
+            academic projects within the university environment. Its purpose is to simplify
+            the control of processes, responsible users, progress, and relevant information
+            in one place.
           </p>
 
           <div class="hero-actions">
-            <a href="{base}/login" class="primary-btn">Ingresar al sistema</a>
-            <a href="#funcionamiento" class="secondary-btn">Conocer más</a>
+            <a href="{base}/login" class="primary-btn">Enter the system</a>
+            <a href="#funcionamiento" class="secondary-btn">Learn more</a>
           </div>
         </div>
 
         <div class="hero-image-slot">
-          <img src="/images/login-banner.png" alt="Banner principal del sistema SGPA" />
+          <img src="/images/login-banner.png" alt="Main SGPA system banner" />
         </div>
       </div>
     </section>
 
     <section id="funcionamiento" class="info-section">
       <div class="section-header">
-        <h3>¿Cómo funciona SGPA?</h3>
+        <span class="section-eyebrow">How it works</span>
+        <h3>How does SGPA work?</h3>
         <p>
-          El sistema está diseñado para centralizar la gestión académica relacionada con
-          proyectos, convocatorias, seguimiento y control administrativo.
+          The system is designed to centralize academic management related to
+          projects, calls, tracking, and administrative control.
         </p>
       </div>
 
       <div class="info-grid">
         <article class="info-card">
-          <h4>Administración central</h4>
+          <span class="card-number">01</span>
+          <h4>Central administration</h4>
           <p>
-            El coordinador actúa como administrador principal del sistema, supervisando procesos,
-            verificando información y gestionando el flujo general de los proyectos académicos.
+            The coordinator acts as the main system administrator, supervising processes,
+            verifying information, and managing the overall flow of academic projects.
           </p>
         </article>
 
         <article class="info-card">
-          <h4>Control y seguimiento</h4>
+          <span class="card-number">02</span>
+          <h4>Control and tracking</h4>
           <p>
-            SGPA permite llevar trazabilidad de actividades, estados, entregables y evolución
-            de cada proyecto, reduciendo desorden y mejorando la consulta institucional.
+            SGPA enables traceability of activities, statuses, deliverables, and project progress,
+            reducing disorder and improving institutional consultation.
           </p>
         </article>
 
         <article class="info-card">
-          <h4>Acceso organizado</h4>
+          <span class="card-number">03</span>
+          <h4>Organized access</h4>
           <p>
-            La plataforma busca ofrecer una navegación clara para usuarios académicos,
-            administrativos y responsables de procesos relacionados con los proyectos.
+            The platform aims to provide clear navigation for academic users,
+            administrative users, and those responsible for project-related processes.
           </p>
         </article>
       </div>
@@ -130,7 +126,12 @@
 
     <section class="cards-section">
       <div class="section-header">
-        <h3>Áreas principales del sistema</h3>
+        <span class="section-eyebrow">Modules</span>
+        <h3>Main system areas</h3>
+        <p>
+          SGPA organizes its main functions into clear modules designed to simplify
+          consultation and management of academic information.
+        </p>
       </div>
 
       <div class="cards-grid">
@@ -152,10 +153,11 @@
 
     <section id="equipo" class="team-section">
       <div class="section-header">
-        <h3>Coordinador y equipo principal</h3>
+        <span class="section-eyebrow">Equipo</span>
+        <h3>Coordinator y equipo principal</h3>
         <p>
-          Este apartado puede usarse para presentar al coordinador del sistema y al equipo base
-          encargado de la administración y acompañamiento del proyecto.
+          This section can be used to introduce the system coordinator and the core team
+          responsible for project administration and support.
         </p>
       </div>
 
@@ -165,6 +167,7 @@
             <div class="team-image-slot">
               <img src={person.image} alt={person.role} />
             </div>
+
             <div class="team-content">
               <h4>{person.role}</h4>
               <p>{person.text}</p>
@@ -174,44 +177,31 @@
       </div>
     </section>
   </main>
+
   <Footer />
 </div>
 
 <style>
-  :global(body) {
-    margin: 0;
-    font-family: 'Montserrat', 'Lato', 'Segoe UI', Arial, sans-serif;
-    background: #f3f3f3;
-    color: #1d1d1d;
-  }
-
-  :global(html) {
-    scroll-behavior: smooth;
-  }
-
-  :global(*) {
-    box-sizing: border-box;
-  }
-
   .page {
     min-height: 100vh;
-    background: #f3f3f3;
+    background: var(--sgpa-bg);
   }
-
-
 
   .hero {
     position: relative;
-    background: linear-gradient(135deg, #fafafa 0%, #415982 100%);
-    padding: 54px 24px 48px;
+    padding: 58px 24px 52px;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.16), transparent 24rem),
+      linear-gradient(135deg, #ffffff 0%, var(--sgpa-blue-soft) 100%);
+    border-bottom: 1px solid var(--sgpa-border);
   }
 
   .hero-overlay {
     max-width: 1280px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.15fr 1fr;
-    gap: 32px;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 38px;
     align-items: center;
   }
 
@@ -219,31 +209,37 @@
     padding: 10px 0;
   }
 
-  .hero-badge {
-    display: inline-block;
-    background: #f2b705;
-    color: #0b2d69;
-    font-weight: 700;
-    font-size: 0.85rem;
+  .hero-badge,
+  .section-eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    background: var(--sgpa-yellow-soft);
+    color: var(--sgpa-blue);
+    font-weight: 950;
+    font-size: 0.82rem;
     padding: 8px 14px;
     border-radius: 999px;
     margin-bottom: 18px;
+    border: 1px solid rgba(242, 183, 5, 0.32);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
   .hero-content h2 {
     margin: 0 0 16px;
-    font-size: clamp(2.1rem, 4vw, 3.8rem);
-    line-height: 1.1;
-    color: #0b2d69;
-    letter-spacing: -0.02em;
+    font-size: clamp(2.25rem, 4vw, 4rem);
+    line-height: 1.05;
+    color: var(--sgpa-blue-dark);
+    letter-spacing: -0.045em;
+    font-weight: 950;
   }
 
   .hero-content p {
     margin: 0;
     font-size: 1.08rem;
     line-height: 1.8;
-    color: #3f3f3f;
-    max-width: 700px;
+    color: var(--sgpa-text-soft);
+    max-width: 720px;
   }
 
   .hero-actions {
@@ -255,38 +251,23 @@
 
   .primary-btn,
   .secondary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
     text-decoration: none;
     padding: 13px 22px;
     border-radius: 999px;
-    font-weight: 700;
-    transition: 0.25s ease;
-  }
-
-  .primary-btn {
-    background: #0b2d69;
-    color: white;
-  }
-
-  .primary-btn:hover {
-    background: #081f49;
-    transform: translateY(-1px);
-  }
-
-  .secondary-btn {
-    border: 1.5px solid #0b2d69;
-    color: #0b2d69;
-    background: transparent;
-  }
-
-  .secondary-btn:hover {
-    background: rgba(11, 45, 105, 0.06);
+    font-weight: 900;
   }
 
   .hero-image-slot {
     min-height: 420px;
-    border-radius: 24px;
+    border-radius: 30px;
     overflow: hidden;
-    background: #dbe6f7;
+    background: #ffffff;
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-lg);
   }
 
   .hero-image-slot img {
@@ -311,119 +292,98 @@
 
   .section-header h3 {
     margin: 0 0 14px;
-    color: #0b2d69;
+    color: var(--sgpa-blue-dark);
     font-size: clamp(1.9rem, 3vw, 3rem);
-    font-weight: 500;
+    font-weight: 950;
   }
 
   .section-header p {
     max-width: 860px;
     margin: 0 auto;
-    color: #5b5b5b;
+    color: var(--sgpa-text-soft);
     font-size: 1.03rem;
     line-height: 1.8;
   }
 
-  .info-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-  }
-
-  .info-card {
-    background: white;
-    border-radius: 22px;
-    padding: 28px;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
-    border-top: 4px solid #0b2d69;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-
-  .info-card:hover,
-  .feature-card:hover,
-  .team-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.1);
-  }
-
-  .info-card h4,
-  .feature-content h4,
-  .team-content h4 {
-    margin: 0 0 14px;
-    color: #0b2d69;
-    font-size: 1.2rem;
-  }
-
-  .info-card p,
-  .feature-content p,
-  .team-content p {
-    margin: 0;
-    color: #4d4d4d;
-    line-height: 1.75;
-  }
-
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 26px;
-  }
-
-  .feature-card {
-    background: white;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-
-  .feature-image-slot {
-    aspect-ratio: 9 / 8;
-    background: #dbe6f7;
-    overflow: hidden;
-  }
-
-  .feature-image-slot img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  .feature-content {
-    padding: 24px;
-    text-align: center;
-  }
-
-  .feature-content a {
-    display: inline-block;
-    margin-top: 18px;
-    text-decoration: none;
-    font-weight: 700;
-    color: #0b2d69;
-    border-bottom: 2px solid #f2b705;
-    padding-bottom: 3px;
-  }
-
+  .info-grid,
+  .cards-grid,
   .team-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 26px;
   }
 
+  .info-card,
+  .feature-card,
   .team-card {
-    background: white;
+    background: #ffffff;
     border-radius: 24px;
     overflow: hidden;
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.06);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-sm);
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .info-card {
+    padding: 28px;
+    border-top: 5px solid var(--sgpa-blue);
+  }
+
+  .card-number {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 1rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: var(--sgpa-blue-soft);
+    color: var(--sgpa-blue);
+    font-weight: 950;
+    font-size: 0.78rem;
+  }
+
+  .info-card:hover,
+  .feature-card:hover,
+  .team-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--sgpa-shadow-md);
+    border-color: rgba(11, 45, 105, 0.18);
+  }
+
+  .info-card h4,
+  .feature-content h4,
+  .team-content h4 {
+    margin: 0 0 14px;
+    color: var(--sgpa-blue);
+    font-size: 1.2rem;
+    font-weight: 900;
+  }
+
+  .info-card p,
+  .feature-content p,
+  .team-content p {
+    margin: 0;
+    color: var(--sgpa-text-soft);
+    line-height: 1.75;
+  }
+
+  .feature-image-slot,
+  .team-image-slot {
+    background: var(--sgpa-blue-soft);
+    overflow: hidden;
+  }
+
+  .feature-image-slot {
+    aspect-ratio: 9 / 8;
   }
 
   .team-image-slot {
     aspect-ratio: 4 / 3;
-    background: #dbe6f7;
-    overflow: hidden;
   }
 
+  .feature-image-slot img,
   .team-image-slot img {
     width: 100%;
     height: 100%;
@@ -431,7 +391,52 @@
     display: block;
   }
 
+  .feature-content,
   .team-content {
     padding: 24px;
+  }
+
+  .feature-content {
+    text-align: center;
+  }
+
+  .feature-content a {
+    display: inline-flex;
+    margin-top: 18px;
+    text-decoration: none;
+    font-weight: 900;
+    color: var(--sgpa-blue);
+    border-bottom: 3px solid var(--sgpa-yellow);
+    padding-bottom: 3px;
+  }
+
+  .feature-content a:hover {
+    color: var(--sgpa-blue-dark);
+  }
+
+  @media (max-width: 960px) {
+    .hero-overlay,
+    .info-grid,
+    .cards-grid,
+    .team-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-image-slot {
+      min-height: 300px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .hero,
+    .info-section,
+    .cards-section,
+    .team-section {
+      padding-inline: 16px;
+    }
+
+    .hero-actions a {
+      width: 100%;
+    }
   }
 </style>

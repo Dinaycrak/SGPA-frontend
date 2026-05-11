@@ -3,24 +3,20 @@
   import Footer from '$lib/components/Footer.svelte';
   import DashboardStats from '$lib/components/Projects.svelte';
   import SideBar from '$lib/components/TeacherSideBar.svelte';
-  import DataTableWrapper from '$lib/components/DataTableWrapper.svelte';
   import ProjectCardsDataTable from '$lib/components/ProjectCardDatatable.svelte';
-  export let data;
 
-  const columns = [
-    { key: 'proyecto_card', label: 'Mis Proyectos', html: true }
-  ];
+  export let data;
 
   $: rows = data.rows || [];
   $: error = data.error;
 
   $: stats = [
     {
-      label: 'Mis Proyectos',
+      label: 'My projects',
       value: data.totalProjects || 0,
       icon: `<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>`,
-      bgColor: '#dbeafe',
-      color: '#2563eb'
+      bgColor: 'var(--sgpa-success-bg)',
+      color: 'var(--sgpa-success)'
     }
   ];
 </script>
@@ -31,8 +27,13 @@
 <main>
   <div class="content-wrapper">
     <header class="main-header">
-      <h1>MÓDULO DOCENTE</h1>
-      <p>Proyectos asignados directamente a tu perfil.</p>
+      <div>
+        <span class="eyebrow">Teacher module</span>
+        <h1>My projects asignados</h1>
+        <p>View the academic projects assigned directly to your teacher profile.</p>
+      </div>
+
+      <span class="header-badge">Assignments</span>
     </header>
 
     {#if error}
@@ -41,20 +42,13 @@
 
     <DashboardStats {stats} />
 
-    <section class="list-section">
-      <div class="section-title">
-        <h2>Mis Proyectos</h2>
-        <span class="badge">{rows.length} registros</span>
-      </div>
-
-      <ProjectCardsDataTable
-        {rows}
-        title="Proyectos"
-        badgeColor="#ff9500"
-        emptyMessage="No hay proyectos para mostrar."
-        searchPlaceholder="Buscar proyecto por nombre..."
-      />
-    </section>
+    <ProjectCardsDataTable
+      {rows}
+      title="My projects"
+      badgeColor="var(--sgpa-success)"
+      emptyMessage="No assigned projects to display."
+      searchPlaceholder="Search assigned project..."
+    />
   </div>
 </main>
 
@@ -62,132 +56,82 @@
 
 <style>
   main {
-    background-color: #f1f5f9;
     min-height: 80vh;
-    padding: 2rem 1rem;
+    padding: 2rem 1rem 3rem;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.12), transparent 22rem),
+      linear-gradient(180deg, #ffffff 0%, var(--sgpa-bg) 100%);
   }
 
   .content-wrapper {
-    max-width: 1100px;
+    max-width: 1180px;
     margin: 0 auto;
   }
 
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.5rem;
+    margin-bottom: 1.4rem;
+    padding: 1.6rem;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.16), transparent 18rem),
+      linear-gradient(135deg, #ffffff 0%, var(--sgpa-blue-soft) 100%);
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-md);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 0.75rem;
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    background: var(--sgpa-yellow-soft);
+    color: var(--sgpa-blue);
+    font-size: 0.78rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(242, 183, 5, 0.28);
+  }
+
   .main-header h1 {
-    color: #0b2d69;
     margin: 0;
-    font-size: 1.8rem;
-    font-weight: 800;
+    color: var(--sgpa-blue-dark);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 950;
+    letter-spacing: -0.045em;
   }
 
   .main-header p {
-    color: #64748b;
+    max-width: 720px;
+    margin: 0.7rem 0 0;
+    color: var(--sgpa-text-soft);
+    line-height: 1.7;
   }
 
-  .section-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 1.5rem 0;
-  }
-
-  .badge {
-    background: #0b2d69;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
+  .header-badge {
+    flex: 0 0 auto;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--sgpa-blue);
+    border: 1px solid var(--sgpa-border);
+    font-weight: 950;
+    box-shadow: var(--sgpa-shadow-sm);
   }
 
   .error-msg {
-    background: #fee2e2;
-    color: #b91c1c;
-    padding: 1rem;
-    border-radius: 8px;
     margin: 1rem 0;
   }
 
-  :global(.datatable-table th) {
-    display: none;
-  }
-
-  :global(.datatable-table td) {
-    padding: 0;
-    border: none;
-    background: transparent;
-  }
-
-  :global(.datatable-table tr) {
-    display: block;
-    margin-bottom: 1.5rem;
-  }
-
-  :global(.project-card) {
-    background: white;
-    border-radius: 20px;
-    border-left: 6px solid #0b2d69;
-    padding: 1.8rem;
-    display: flex;
-    justify-content: space-between;
-    gap: 1.5rem;
-    align-items: center;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-    flex-wrap: wrap;
-  }
-
-  :global(.project-card__left) {
-    display: flex;
-    gap: 1.25rem;
-    align-items: flex-start;
-    flex: 1;
-  }
-
-  :global(.project-card__icon) {
-    width: 72px;
-    height: 72px;
-    border-radius: 16px;
-    background: #f8f1e8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    flex-shrink: 0;
-  }
-
-  :global(.project-card__content h3) {
-    margin: 0 0 0.6rem;
-    color: #0b2d69;
-    font-size: 1.9rem;
-    font-weight: 800;
-  }
-
-  :global(.project-card__content p) {
-    margin: 0 0 0.8rem;
-    color: #4b5563;
-    font-size: 1rem;
-  }
-
-  :global(.project-card__meta) {
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-    color: #475569;
-    font-size: 1rem;
-  }
-
-  :global(.project-card__right) {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  :global(.joined-badge) {
-    background: #dbeafe;
-    color: #1d4ed8;
-    padding: 0.6rem 1rem;
-    border-radius: 999px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    display: inline-block;
+  @media (max-width: 760px) {
+    .main-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
   }
 </style>

@@ -7,8 +7,8 @@
 
   <div class="header-container">
     <div class="brand">
-      <div class="logo-slot" aria-label="University logo">
-        <img src="/images/logo-cul.png" alt="University logo" />
+      <div class="logo-slot" aria-label="Logo universitario">
+        <img src="/images/logo-cul.png" alt="CUL university logo" />
       </div>
 
       <div class="brand-text">
@@ -27,30 +27,30 @@
 
     <nav class="main-nav" aria-label="Main navigation">
       <a href="/" class="nav-btn">Home</a>
-      <a href="/login" class="nav-btn">Log In</a>
+      <a href="/login" class="nav-btn">Login</a>
     </nav>
   </div>
 </header>
 
 <style>
   .top-bar {
-    height: 8px;
-    background: linear-gradient(90deg, #0b2d69, #111827, #f2b705);
+    height: 7px;
+    background: linear-gradient(90deg, var(--sgpa-blue), var(--sgpa-yellow), var(--sgpa-orange));
   }
 
   .site-header {
     position: sticky;
     top: 0;
     z-index: 30;
-    background: rgba(5, 7, 13, 0.9);
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    border-bottom: 1px solid var(--sgpa-border);
   }
 
   .header-container {
     max-width: 1280px;
     margin: 0 auto;
-    padding: 16px 24px;
+    padding: 14px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -72,7 +72,8 @@
     flex-shrink: 0;
     display: grid;
     place-items: center;
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-sm);
   }
 
   .logo-slot img {
@@ -86,42 +87,77 @@
     display: flex;
     align-items: center;
     gap: 9px;
-    color: #ffffff;
+    color: var(--sgpa-blue);
     font-size: 1.8rem;
     line-height: 1;
-    font-weight: 900;
+    font-weight: 950;
+    letter-spacing: 0.02em;
   }
 
   .brand-title .dot {
     width: 7px;
     height: 7px;
-    background: #f2b705;
+    background: var(--sgpa-yellow);
     border-radius: 50%;
   }
 
   .brand-text p {
     margin: 8px 0 0;
-    color: #94a3b8;
+    color: var(--sgpa-text-soft);
     font-size: 0.92rem;
+    font-weight: 650;
   }
 
   .main-nav {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex-wrap: wrap;
   }
 
-  .nav-btn {
+  .main-nav a {
     text-decoration: none;
-    padding: 10px 18px;
-    background: linear-gradient(135deg, #0b2d69, #153f8f);
-    color: #fff;
-    border-radius: 999px;
-    font-size: 0.96rem;
+    color: var(--sgpa-text-soft);
+    font-size: 0.95rem;
     font-weight: 800;
-    transition: transform 0.22s ease;
+    position: relative;
+    transition: color 0.22s ease, transform 0.22s ease;
+    padding: 8px 0;
   }
 
+  .main-nav a:hover,
+  .main-nav a.active {
+    color: var(--sgpa-blue);
+  }
+
+  .main-nav a.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 3px;
+    background: var(--sgpa-yellow);
+    border-radius: 999px;
+  }
+
+  .login-btn,
+  .home-btn,
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 18px !important;
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    color: #ffffff !important;
+    border-radius: 999px;
+    font-weight: 900 !important;
+    box-shadow: 0 10px 22px rgba(11, 45, 105, 0.16);
+  }
+
+  .login-btn:hover,
+  .home-btn:hover,
   .nav-btn:hover {
     transform: translateY(-1px);
   }

@@ -12,14 +12,14 @@ export async function load({ fetch }) {
         if (response.status === 401) {
             return {
                 projects: [],
-                error: "Sesión expirada o no autorizada."
+                error: "Session expired or unauthorized."
             };
         }
 
         if (!response.ok) {
             return {
                 projects: [],
-                error: `Error de API: ${response.status}`
+                error: `API error: ${response.status}`
             };
         }
 
@@ -38,7 +38,7 @@ export async function load({ fetch }) {
     } catch (error) {
         return {
             projects: [],
-            error: "No se pudo conectar con el servidor de proyectos."
+            error: "Could not connect to the project server."
         };
     }
 }

@@ -2,35 +2,34 @@
   <div class="footer-divider"></div>
 
   <div class="footer-grid">
+    <div class="footer-column footer-brand">
+      <h4>SGPA</h4>
+      <p>
+        Academic Project Management System focused on tracking,
+        organizing, and consulting projects within the institutional environment.
+      </p>
+    </div>
+
     <div class="footer-column">
       <h4>CONTACT</h4>
-      <p>Calle 58 # 55 - 24A Barranquilla - Colombia</p>
-
-      <h5>Admission Process</h5>
-      <p>Mobile (+57) 314 8962734</p>
-      <p>Email promocion@ul.edu.co</p>
-
-      <h5>Transfer and Re-entry Process</h5>
-      <p>Mobile (+57) 317 6688650</p>
-      <p>Email kilarioss@ul.edu.co</p>
+      <p>58th Street #55-24A Barranquilla, Colombia</p>
+      <p>Email: promocion@ul.edu.co</p>
+      <p>Phone: (+57) 314 8962734</p>
     </div>
 
     <div class="footer-column">
       <h4>USEFUL LINKS</h4>
-      <a href="/">Directory</a>
-      <a href="/">Data Protection Policy</a>
-      <a href="/">DIAN Information</a>
-      <a href="/">Audiovisual Room Booking</a>
-      <a href="/">User Support</a>
-      <a href="/">Psychological Counseling</a>
-      <a href="/">Tutoring Request</a>
+      <a href="/">Home</a>
+      <a href="/login">System login</a>
+      <a href="/">Data processing policy</a>
+      <a href="/">User support</a>
     </div>
 
     <div class="footer-column">
-      <h4>ACADEMIC OFFER</h4>
-      <a href="/">Professional Programs</a>
-      <a href="/">Technology Programs</a>
-      <a href="/">Preparatory Cycles</a>
+      <h4>MODULES</h4>
+      <a href="/coordinator">Coordinator</a>
+      <a href="/teacher">Teacher</a>
+      <a href="/students">Student</a>
     </div>
   </div>
 
@@ -46,56 +45,52 @@
 
 <style>
   .site-footer {
-    background: #05070d;
-    color: #f8fafc;
-    padding: 64px 24px 42px;
-    border-top: 1px solid rgba(148, 163, 184, 0.18);
+    background: linear-gradient(135deg, var(--sgpa-blue-dark), var(--sgpa-blue));
+    color: #ffffff;
+    padding: 56px 24px 34px;
+    border-top: 5px solid var(--sgpa-yellow);
   }
 
   .footer-divider {
     max-width: 1280px;
-    margin: 0 auto 42px;
+    margin: 0 auto 34px;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(242, 183, 5, 0.45), transparent);
+    background: linear-gradient(90deg, transparent, rgba(242, 183, 5, 0.55), transparent);
   }
 
   .footer-divider.bottom {
-    margin-top: 38px;
-    margin-bottom: 30px;
+    margin-top: 34px;
+    margin-bottom: 24px;
   }
 
   .footer-grid {
     max-width: 1280px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.2fr 1fr 1fr;
-    gap: 42px;
+    grid-template-columns: 1.2fr 1fr 1fr 1fr;
+    gap: 32px;
   }
 
   .footer-column h4 {
-    margin: 0 0 24px;
-    color: #fff;
-    font-size: 1rem;
+    margin: 0 0 18px;
+    color: #ffffff;
+    font-size: 0.92rem;
     letter-spacing: 0.08em;
-  }
-
-  .footer-column h5 {
-    margin: 22px 0 10px;
-    color: #fff;
-    font-size: 1rem;
+    font-weight: 950;
   }
 
   .footer-column p,
   .footer-column a {
     display: block;
-    margin: 0 0 12px;
-    color: #cbd5e1;
+    margin: 0 0 10px;
+    color: rgba(255, 255, 255, 0.78);
     text-decoration: none;
-    line-height: 1.7;
+    line-height: 1.65;
+    font-size: 0.95rem;
   }
 
   .footer-column a:hover {
-    color: #f2b705;
+    color: var(--sgpa-yellow);
   }
 
   .footer-social {
@@ -108,25 +103,32 @@
   }
 
   .social-link {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     display: grid;
     place-items: center;
     text-decoration: none;
-    background: #111827;
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    font-weight: 900;
-    transition: transform 0.2s ease, background 0.2s ease;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    font-weight: 950;
+    transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
   }
 
   .social-link:hover {
     transform: translateY(-2px);
-    background: #0b2d69;
+    background: var(--sgpa-yellow);
+    color: var(--sgpa-blue-dark);
   }
 
   @media (max-width: 1080px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
     .footer-grid {
       grid-template-columns: 1fr;
     }

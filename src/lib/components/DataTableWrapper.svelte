@@ -9,7 +9,7 @@
   export let searchable = true;
   export let perPage = 10;
   export let perPageSelect = [10, 20, 30, 50];
-  export let searchPlaceholder = 'Search by name...';
+  export let searchPlaceholder = 'Search...';
 
   let tableElement;
   let datatable;
@@ -34,10 +34,10 @@
         perPageSelect,
         fixedHeight: false,
         labels: {
-                 placeholder: searchPlaceholder,
-                 perPage: '{select} records per page',
-                 noRows: 'No records found',
-                 info: 'Showing {start} to {end} of {rows} records'
+          placeholder: searchPlaceholder,
+          perPage: '{select} records per page',
+          noRows: 'No records found',
+          info: 'Showing {start} to {end} of {rows} records'
         }
       });
     }
@@ -93,11 +93,12 @@
 
 <style>
   .datatable-card {
-    background: white;
-    border-radius: 18px;
-    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: var(--sgpa-shadow-md);
     overflow: hidden;
     padding: 1rem;
+    border: 1px solid var(--sgpa-border);
   }
 
   .sgpa-datatable {
@@ -107,7 +108,11 @@
   .empty-state {
     padding: 2rem;
     text-align: center;
-    color: #64748b;
+    color: var(--sgpa-muted);
+    border: 1px dashed var(--sgpa-border-strong);
+    border-radius: 18px;
+    background: var(--sgpa-surface-soft);
+    font-weight: 800;
   }
 
   :global(.datatable-top) {
@@ -128,17 +133,26 @@
     min-width: 280px;
     max-width: 420px;
     padding: 0.85rem 1rem;
-    border: 1px solid #d1d5db;
-    border-radius: 12px;
+    border: 1px solid var(--sgpa-border);
+    border-radius: 999px;
     outline: none;
     font-size: 0.98rem;
+    background: #ffffff;
+    color: var(--sgpa-text);
+  }
+
+  :global(.datatable-input:focus) {
+    border-color: var(--sgpa-yellow);
+    box-shadow: var(--sgpa-focus);
   }
 
   :global(.datatable-selector) {
-    border: 1px solid #d1d5db;
-    border-radius: 10px;
+    border: 1px solid var(--sgpa-border);
+    border-radius: 12px;
     padding: 0.65rem 0.8rem;
     font-size: 0.95rem;
+    background: #ffffff;
+    color: var(--sgpa-text);
   }
 
   :global(.datatable-bottom) {
@@ -151,8 +165,9 @@
   }
 
   :global(.datatable-info) {
-    color: #111827;
+    color: var(--sgpa-text-soft);
     font-size: 0.95rem;
+    font-weight: 700;
   }
 
   :global(.datatable-pagination ul) {
@@ -170,18 +185,18 @@
     min-width: 38px;
     height: 38px;
     padding: 0 12px;
-    border-radius: 10px;
-    border: 1px solid #cbd5e1;
+    border-radius: 999px;
+    border: 1px solid var(--sgpa-border);
     text-decoration: none;
-    color: #0b2d69;
-    background: white;
-    font-weight: 700;
+    color: var(--sgpa-blue);
+    background: #ffffff;
+    font-weight: 850;
   }
 
   :global(.datatable-pagination li.active a) {
-    background: #0b2d69;
-    color: white;
-    border-color: #0b2d69;
+    background: var(--sgpa-blue);
+    color: #ffffff;
+    border-color: var(--sgpa-blue);
   }
 
   :global(.datatable-pagination li.disabled a) {
@@ -195,18 +210,22 @@
   }
 
   :global(.datatable-table th) {
-    background: #f8fafc;
-    color: #0f172a;
+    background: var(--sgpa-blue-soft);
+    color: var(--sgpa-blue-dark);
     padding: 1rem;
     text-align: left;
-    font-weight: 700;
-    border-bottom: 2px solid #e2e8f0;
+    font-weight: 950;
+    border-bottom: 1px solid var(--sgpa-border);
   }
 
   :global(.datatable-table td) {
     padding: 1rem;
-    border-bottom: 1px solid #eef2f7;
-    color: #475569;
+    border-bottom: 1px solid var(--sgpa-border);
+    color: var(--sgpa-text-soft);
     vertical-align: top;
+  }
+
+  :global(.datatable-table tbody tr:hover) {
+    background: var(--sgpa-surface-soft);
   }
 </style>
