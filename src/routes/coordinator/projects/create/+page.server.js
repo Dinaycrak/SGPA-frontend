@@ -8,46 +8,17 @@ const DEFAULT_RESEARCH_GROUP_ID = 1;
 
 const DEFAULT_STATUSES = [
   { id: 1, name: 'Active' },
-  { id: 2, name: 'Completado' },
-  { id: 3, name: 'Pendiente' }
+  { id: 2, name: 'Completed' },
+  { id: 3, name: 'Pending' }
 ];
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch }) {
+function parseJsonSafe(text) {
+  if (!text) return null;
+
   try {
-    const usersResponse = await fetch(`${API_BASE_URL}/users`, {
-      headers: getAuthHeaders('coordinator')
-    });
-
-    const usersText = await usersResponse.text();
-    const usersData = usersText ? JSON.parse(usersText) : [];
-
-    const teachers = Array.isArray(usersData)
-      ? usersData
-          .map((user) => ({
-            id_user: user?.id_user ?? user?.id ?? null,
-            first_name: user?.first_name ?? '',
-            last_name: user?.last_name ?? '',
-            email: user?.email ?? '',
-            id_role: user?.id_role ?? null
-          }))
-          .filter((user) => Number(user.id_role) === PROJECT_USER_TEACHER_ROLE_ID)
-      : [];
-
-    return {
-      teachers,
-      defaultTeacherId: DEFAULT_TEACHER_ID,
-      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
-      statuses: DEFAULT_STATUSES
-    };
-  } catch (error) {
-    return {
-      teachers: [],
-      defaultTeacherId: DEFAULT_TEACHER_ID,
-      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
-      statuses: DEFAULT_STATUSES,
-      error: error.message || 'Could not load form information'
-    };
+    return JSON.parse(text);
+  } catch (_) {
+    return null;
   }
 }
 
@@ -64,6 +35,7 @@ function normalizeDate(dateValue) {
   }
 
   const parsed = new Date(value);
+
   if (Number.isNaN(parsed.getTime())) return value;
 
   return parsed.toISOString().split('T')[0];
@@ -97,12 +69,22 @@ function normalizeProject(project) {
 
 function normalizeProjectUser(item) {
   if (Array.isArray(item)) {
+    const possibleRole = item[3];
+    const possibleDate = item[4];
+
+    const thirdPositionLooksLikeDate =
+      typeof possibleRole === 'string' && /^\d{4}-\d{2}-\d{2}/.test(possibleRole);
+
     return {
       id_project_user: item[0] ?? null,
       id_project: item[1] ?? null,
       id_user: item[2] ?? null,
-      id_role: item[3] ?? null,
-      assigned_date: normalizeDate(item[4] ?? '')
+      assigned_date: thirdPositionLooksLikeDate
+        ? normalizeDate(item[3])
+        : normalizeDate(item[4]),
+      id_role: thirdPositionLooksLikeDate
+        ? item[4] ?? null
+        : item[3] ?? null
     };
   }
 
@@ -115,13 +97,82 @@ function normalizeProjectUser(item) {
   };
 }
 
+function extractCreatedProjectId(responseData) {
+  if (!responseData) return null;
+
+  if (Array.isArray(responseData)) {
+    return normalizeProject(responseData).id_project;
+  }
+
+  if (responseData.id_project) return responseData.id_project;
+  if (responseData.id) return responseData.id;
+
+  if (responseData.project?.id_project) return responseData.project.id_project;
+  if (responseData.project?.id) return responseData.project.id;
+
+  if (responseData.data?.id_project) return responseData.data.id_project;
+  if (responseData.data?.id) return responseData.data.id;
+
+  if (responseData.result?.id_project) return responseData.result.id_project;
+  if (responseData.result?.id) return responseData.result.id;
+
+  return normalizeProject(responseData?.data ?? responseData ?? {}).id_project;
+}
+
+/** @type {import('./$types').PageServerLoad} */
+export async function load({ fetch }) {
+  try {
+    const usersResponse = await fetch(`${API_BASE_URL}/users`, {
+      headers: getAuthHeaders('coordinator')
+    });
+
+    const usersText = await usersResponse.text();
+    const usersData = parseJsonSafe(usersText) ?? [];
+
+    if (!usersResponse.ok) {
+      throw new Error(`Could not load users. Status ${usersResponse.status}. ${usersText}`);
+    }
+
+    const teachers = Array.isArray(usersData)
+      ? usersData
+          .map((user) => ({
+            id_user: user?.id_user ?? user?.id ?? user?.[0] ?? null,
+            first_name: user?.first_name ?? user?.[1] ?? '',
+            last_name: user?.last_name ?? user?.[2] ?? '',
+            email: user?.email ?? user?.[3] ?? '',
+            id_role: user?.id_role ?? user?.role_id ?? user?.[6] ?? null
+          }))
+          .filter((user) => Number(user.id_role) === PROJECT_USER_TEACHER_ROLE_ID)
+      : [];
+
+    return {
+      teachers,
+      defaultTeacherId: DEFAULT_TEACHER_ID,
+      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
+      statuses: DEFAULT_STATUSES
+    };
+  } catch (error) {
+    return {
+      teachers: [],
+      defaultTeacherId: DEFAULT_TEACHER_ID,
+      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
+      statuses: DEFAULT_STATUSES,
+      error: error.message || 'Could not load form information'
+    };
+  }
+}
+
 async function getAllProjects(fetch) {
   const response = await fetch(`${API_BASE_URL}/projects`, {
     headers: getAuthHeaders('coordinator')
   });
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : [];
+  const data = parseJsonSafe(text) ?? [];
+
+  if (!response.ok) {
+    throw new Error(`Could not query projects. Status ${response.status}. ${text}`);
+  }
 
   return Array.isArray(data) ? data.map(normalizeProject) : [];
 }
@@ -132,7 +183,7 @@ async function getAllProjectUsers(fetch) {
   });
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : [];
+  const data = parseJsonSafe(text) ?? [];
 
   if (!response.ok) {
     throw new Error(`Could not query project-users. Status ${response.status}. ${text}`);
@@ -158,13 +209,34 @@ function findExistingExactProject(projects, payload) {
   );
 }
 
-async function ensureTeacherAssigned(fetch, { id_project, id_user, assigned_date }) {
+async function relationAlreadyExists(fetch, { id_project, id_user }) {
+  try {
+    const relations = await getAllProjectUsers(fetch);
+
+    return relations.some(
+      (relation) =>
+        Number(relation.id_project) === Number(id_project) &&
+        Number(relation.id_user) === Number(id_user) &&
+        Number(relation.id_role) === PROJECT_USER_TEACHER_ROLE_ID
+    );
+  } catch (_) {
+    return false;
+  }
+}
+
+async function assignTeacherToProject(fetch, { id_project, id_user, assigned_date }) {
   const payload = {
     id_project: Number(id_project),
     id_user: Number(id_user),
     id_role: PROJECT_USER_TEACHER_ROLE_ID,
-    assigned_date
+    assigned_date: assigned_date || null
   };
+
+  const alreadyExists = await relationAlreadyExists(fetch, payload);
+
+  if (alreadyExists) {
+    return true;
+  }
 
   const createResponse = await fetch(`${API_BASE_URL}/project-users`, {
     method: 'POST',
@@ -175,23 +247,14 @@ async function ensureTeacherAssigned(fetch, { id_project, id_user, assigned_date
   const createText = await createResponse.text();
 
   if (!createResponse.ok) {
+    const existsAfterError = await relationAlreadyExists(fetch, payload);
+
+    if (existsAfterError) {
+      return true;
+    }
+
     throw new Error(
       `Could not register the teacher in project-users. Status ${createResponse.status}. Response: ${createText}`
-    );
-  }
-
-  const relations = await getAllProjectUsers(fetch);
-
-  const exists = relations.some(
-    (relation) =>
-      Number(relation.id_project) === Number(id_project) &&
-      Number(relation.id_user) === Number(id_user) &&
-      Number(relation.id_role) === PROJECT_USER_TEACHER_ROLE_ID
-  );
-
-  if (!exists) {
-    throw new Error(
-      `The API returned OK when registering the teacher, but the relationship does not appear in /project-users.`
     );
   }
 
@@ -201,6 +264,7 @@ async function ensureTeacherAssigned(fetch, { id_project, id_user, assigned_date
 export const actions = {
   default: async ({ request, fetch }) => {
     const formData = await request.formData();
+
     const teacherRaw = formData.get('teacher_id');
     const researchGroupRaw = formData.get('id_research_group');
 
@@ -234,8 +298,6 @@ export const actions = {
     };
 
     try {
-      let createdProjectId = null;
-
       const createResponse = await fetch(`${API_BASE_URL}/projects`, {
         method: 'POST',
         headers: getAuthHeaders('coordinator'),
@@ -245,12 +307,13 @@ export const actions = {
       const createText = await createResponse.text();
 
       if (!createResponse.ok) {
-        let backendMessage = createText;
+        const parsedError = parseJsonSafe(createText);
 
-        try {
-          const parsed = JSON.parse(createText);
-          backendMessage = parsed?.detail || parsed?.message || createText;
-        } catch (_) {}
+        const backendMessage =
+          parsedError?.detail ||
+          parsedError?.message ||
+          parsedError?.error ||
+          createText;
 
         return fail(400, {
           error: `Could not create the project. Status ${createResponse.status}. ${backendMessage}`,
@@ -258,21 +321,10 @@ export const actions = {
         });
       }
 
-      let createdProjectResponse = null;
+      const createdProjectResponse = parseJsonSafe(createText);
+      let createdProjectId = extractCreatedProjectId(createdProjectResponse);
 
-      try {
-        createdProjectResponse = createText ? JSON.parse(createText) : null;
-      } catch (_) {
-        createdProjectResponse = null;
-      }
-
-      const normalized = normalizeProject(
-        createdProjectResponse?.data ?? createdProjectResponse ?? {}
-      );
-
-      if (normalized?.id_project) {
-        createdProjectId = Number(normalized.id_project);
-      } else {
+      if (!createdProjectId) {
         const refreshedProjects = await getAllProjects(fetch);
         const latestMatch = findExistingExactProject(refreshedProjects, projectPayload);
         createdProjectId = latestMatch?.id_project ? Number(latestMatch.id_project) : null;
@@ -285,7 +337,7 @@ export const actions = {
         });
       }
 
-      await ensureTeacherAssigned(fetch, {
+      await assignTeacherToProject(fetch, {
         id_project: createdProjectId,
         id_user: Number(values.teacher_id),
         assigned_date: values.start_date
@@ -293,10 +345,12 @@ export const actions = {
 
       throw redirect(303, '/coordinator/projects');
     } catch (error) {
-      if (error?.status === 303) throw error;
+      if (error?.status === 303) {
+        throw error;
+      }
 
       return fail(500, {
-        error: error.message || 'Internal error while creating the project or assigning the teacher',
+        error: error.message || 'Internal error while creating the project or assigning the teacher.',
         values
       });
     }

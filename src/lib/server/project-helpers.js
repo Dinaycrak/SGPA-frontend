@@ -2,7 +2,7 @@ import { API_BASE_URL, getAuthHeaders, PROFILE_USER_IDS } from '$lib/components/
 
 export const ROLE_IDS = {
   student: 1,
-  coordinator: 2,
+  coordinator: 4,
   teacher: 3
 };
 
@@ -27,6 +27,29 @@ function parseJson(text) {
   } catch (_) {
     return text;
   }
+}
+
+function normalizeDate(dateValue) {
+  if (!dateValue) return '';
+
+  const value = String(dateValue).trim();
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+  if (/^\d{4}-\d{2}-\d{2}T/.test(value)) {
+    return value.split('T')[0];
+  }
+
+  if (/^\d{2}\/\d{2}\/\d{4}$/.test(value)) {
+    const [day, month, year] = value.split('/');
+    return `${year}-${month}-${day}`;
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) return value;
+
+  return parsed.toISOString().split('T')[0];
 }
 
 async function requestJson(fetch, path, moduleName = 'coordinator', options = {}) {
@@ -116,8 +139,8 @@ export function normalizeProject(project) {
       id_project: project[0] ?? null,
       project_name: project[1] ?? '',
       description: project[2] ?? '',
-      start_date: project[3] ?? '',
-      end_date: project[4] ?? '',
+      start_date: normalizeDate(project[3]),
+      end_date: normalizeDate(project[4]),
       id_status: project[5] ?? null,
       id_research_group: project[6] ?? null,
       created_by: project[7] ?? null,
@@ -129,8 +152,8 @@ export function normalizeProject(project) {
     id_project: project?.id_project ?? project?.id ?? null,
     project_name: project?.project_name ?? project?.name ?? '',
     description: project?.description ?? '',
-    start_date: project?.start_date ?? '',
-    end_date: project?.end_date ?? '',
+    start_date: normalizeDate(project?.start_date),
+    end_date: normalizeDate(project?.end_date),
     id_status: project?.id_status ?? project?.status_id ?? null,
     id_research_group: project?.id_research_group ?? null,
     created_by: project?.created_by ?? null,
@@ -170,12 +193,22 @@ export function normalizeUser(user) {
 
 export function normalizeProjectUser(item) {
   if (Array.isArray(item)) {
+    const possibleRole = item[3];
+    const possibleDate = item[4];
+
+    const thirdPositionLooksLikeDate =
+      typeof possibleRole === 'string' && /^\d{4}-\d{2}-\d{2}/.test(possibleRole);
+
     return {
       id_project_user: item[0] ?? null,
       id_project: item[1] ?? null,
       id_user: item[2] ?? null,
-      id_role: item[3] ?? null,
-      assigned_date: item[4] ?? null,
+      assigned_date: thirdPositionLooksLikeDate
+        ? normalizeDate(item[3])
+        : normalizeDate(item[4]),
+      id_role: thirdPositionLooksLikeDate
+        ? item[4] ?? null
+        : item[3] ?? null,
       raw: item
     };
   }
@@ -185,7 +218,7 @@ export function normalizeProjectUser(item) {
     id_project: item?.id_project ?? null,
     id_user: item?.id_user ?? null,
     id_role: item?.id_role ?? null,
-    assigned_date: item?.assigned_date ?? null,
+    assigned_date: normalizeDate(item?.assigned_date ?? ''),
     raw: item
   };
 }
@@ -239,7 +272,7 @@ export async function resolveProjectUserEndpoint(fetch, moduleName = 'coordinato
         return url;
       }
     } catch (_) {
-      // Sigue probando candidatos.
+      // Continue testing candidates.
     }
   }
 
@@ -250,7 +283,9 @@ export async function getProjectUsers(fetch, moduleName = 'coordinator') {
   const url = await resolveProjectUserEndpoint(fetch, moduleName);
   const data = await requestJsonWithReadFallback(fetch, url, moduleName);
 
-  return extractList(data, ['project_users', 'projectUsers', 'project_users']).map(normalizeProjectUser);
+  return extractList(data, ['project_users', 'projectUsers', 'projectUsers']).map(
+    normalizeProjectUser
+  );
 }
 
 export async function assignUserToProject(fetch, moduleName, payload) {
