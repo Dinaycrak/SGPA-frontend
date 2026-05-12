@@ -12,14 +12,14 @@ export async function load({ fetch }) {
         if (response.status === 401) {
             return {
                 user: {},
-                error: "Sesión expirada o no autorizada."
+                error: "Session expired or unauthorized."
             };
         }
 
         if (!response.ok) {
             return {
                 user: {},
-                error: `Error de API: ${response.status}`
+                error: `API error: ${response.status}`
             };
         }
 
@@ -39,7 +39,7 @@ export async function load({ fetch }) {
     } catch (error) {
         return {
             user: {},
-            error: "Error de conexión con el servidor."
+            error: "Server connection error."
         };
     }
 }

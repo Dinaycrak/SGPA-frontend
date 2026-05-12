@@ -50,7 +50,7 @@
 
   function confirmToggle(name, nextIsActive) {
     const actionText = nextIsActive ? 'HABILITAR' : 'DESHABILITAR';
-    return confirm(`¿Estás seguro de que deseas ${actionText} al estudiante ${name}?`);
+    return confirm(`¿Estás seguro of que deseas ${actionText} al estudiante ${name}?`);
   }
 
   function updateLocalUser(updatedUser) {
@@ -81,10 +81,15 @@
 
 <main class="page-wrap">
   <section class="container">
-    <div class="title-block">
-      <h1>Lista de Estudiantes</h1>
-      <span class="count-badge">{totalStudents} Registrados</span>
-    </div>
+    <header class="title-block">
+      <div>
+        <span class="eyebrow">Módulo coordinador</span>
+        <h1>Student list</h1>
+        <p>View and manage the access status of registered students.</p>
+      </div>
+
+      <span class="count-badge">{totalStudents} registered</span>
+    </header>
 
     {#if successMessage}
       <div class="success-box">✅ {successMessage}</div>
@@ -96,11 +101,17 @@
 
     <div class="table-card">
       <div class="table-toolbar">
+        <div>
+          <h2>Estudiantes registered</h2>
+          <p>Search by name, email, or account status.</p>
+        </div>
+
         <input
           type="text"
           bind:value={search}
-          placeholder="Buscar por nombre, correo o estado..."
+          placeholder="Search student..."
           class="search-input"
+          aria-label="Search student"
         />
       </div>
 
@@ -108,10 +119,10 @@
         <table>
           <thead>
             <tr>
-              <th>Nombre completo</th>
-              <th>Correo</th>
-              <th>Estado</th>
-              <th>Acción de seguridad</th>
+              <th>Full name</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Security action</th>
             </tr>
           </thead>
 
@@ -151,7 +162,7 @@
                         class:danger-btn={row.is_active}
                         class:enable-btn={!row.is_active}
                       >
-                        {row.is_active ? 'Deshabilitar Acceso' : 'Habilitar Acceso'}
+                        {row.is_active ? 'Disable access' : 'Enable access'}
                       </button>
                     </form>
                   </td>
@@ -160,7 +171,7 @@
             {:else}
               <tr>
                 <td colspan="4" class="empty-row">
-                  No se encontraron estudiantes.
+                  No students found.
                 </td>
               </tr>
             {/if}
@@ -169,17 +180,25 @@
       </div>
 
       <div class="table-footer">
-        <span>Mostrando {paginatedRows.length} de {filteredRows.length} registros</span>
+        <span>Showing {paginatedRows.length} of {filteredRows.length} records</span>
 
         <div class="pagination">
-          <button type="button" onclick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
-            Anterior
+          <button
+            type="button"
+            onclick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
           </button>
 
-          <span>Página {currentPage} de {totalPages}</span>
+          <span>Page {currentPage} of {totalPages}</span>
 
-          <button type="button" onclick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
-            Siguiente
+          <button
+            type="button"
+            onclick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
           </button>
         </div>
       </div>
@@ -191,8 +210,11 @@
 
 <style>
   .page-wrap {
-    min-height: 100vh;
+    min-height: 80vh;
     padding: 2rem 1rem 3rem;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.12), transparent 22rem),
+      linear-gradient(180deg, #ffffff 0%, var(--sgpa-bg) 100%);
   }
 
   .container {
@@ -203,42 +225,106 @@
   .title-block {
     display: flex;
     justify-content: space-between;
-    align-items: end;
-    gap: 1rem;
+    align-items: flex-end;
+    gap: 1.5rem;
     flex-wrap: wrap;
+    margin-bottom: 1.4rem;
+    padding: 1.6rem;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.16), transparent 18rem),
+      linear-gradient(135deg, #ffffff 0%, var(--sgpa-blue-soft) 100%);
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-md);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 0.75rem;
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    background: var(--sgpa-yellow-soft);
+    color: var(--sgpa-blue);
+    font-size: 0.78rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(242, 183, 5, 0.28);
   }
 
   .title-block h1 {
-    font-size: clamp(2rem, 4vw, 2.7rem);
-    font-weight: 900;
     margin: 0;
+    color: var(--sgpa-blue-dark);
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 950;
+    letter-spacing: -0.045em;
+  }
+
+  .title-block p {
+    margin: 0.7rem 0 0;
+    color: var(--sgpa-text-soft);
+    line-height: 1.7;
   }
 
   .count-badge {
     display: inline-flex;
-    padding: 0.45rem 1rem;
-    font-size: 0.92rem;
+    flex: 0 0 auto;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--sgpa-blue);
+    border: 1px solid var(--sgpa-border);
+    font-weight: 950;
+    box-shadow: var(--sgpa-shadow-sm);
+  }
+
+  .success-box,
+  .error-box {
+    margin-bottom: 1rem;
   }
 
   .table-card {
     margin-top: 1.2rem;
-    border-radius: 24px;
+    border-radius: 26px;
     overflow: hidden;
+    background: #ffffff;
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-md);
   }
 
   .table-toolbar {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 1.2rem 1.35rem;
+    border-bottom: 1px solid var(--sgpa-border);
+    background: var(--sgpa-surface-soft);
+    flex-wrap: wrap;
+  }
+
+  .table-toolbar h2 {
+    margin: 0;
+    color: var(--sgpa-blue-dark);
+    font-size: 1.25rem;
+    font-weight: 950;
+  }
+
+  .table-toolbar p {
+    margin: 0.35rem 0 0;
+    color: var(--sgpa-text-soft);
   }
 
   .search-input {
-    width: min(440px, 100%);
-    padding: 0.85rem 1rem;
-    border: 1px solid #d1d5db;
+    width: min(420px, 100%);
+    min-height: 44px;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--sgpa-border);
     border-radius: 999px;
     outline: none;
-    font-size: 0.98rem;
-    background: #f8fafc;
+    font-size: 0.96rem;
+    background: #ffffff;
   }
 
   .table-wrapper {
@@ -252,59 +338,88 @@
 
   thead th {
     text-align: left;
-    padding: 1.1rem 1.5rem;
-    font-size: 0.82rem;
-    color: #475569;
-    background: #f8fafc;
-    border-bottom: 1px solid #e5e7eb;
+    padding: 1rem 1.25rem;
+    font-size: 0.78rem;
+    color: var(--sgpa-blue-dark);
+    background: var(--sgpa-blue-soft);
+    border-bottom: 1px solid var(--sgpa-border);
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
   }
 
   tbody td {
-    padding: 1.2rem 1.5rem;
-    border-bottom: 1px solid #eef2f7;
-    color: #334155;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--sgpa-border);
+    color: var(--sgpa-text-soft);
     vertical-align: middle;
   }
 
+  tbody tr:hover {
+    background: var(--sgpa-surface-soft);
+  }
+
   .name-cell {
-    font-weight: 850;
-    color: #111827;
+    color: var(--sgpa-blue-dark);
+    font-weight: 900;
   }
 
   .status-pill {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 104px;
-    padding: 0.45rem 0.9rem;
+    padding: 0.42rem 0.75rem;
     border-radius: 999px;
-    font-weight: 900;
     font-size: 0.78rem;
-    letter-spacing: 0.04em;
+    font-weight: 950;
+    white-space: nowrap;
+  }
+
+  .status-active {
+    background: var(--sgpa-success-bg);
+    color: var(--sgpa-success);
+  }
+
+  .status-inactive {
+    background: var(--sgpa-danger-bg);
+    color: var(--sgpa-danger);
   }
 
   .action-btn {
-    border: none;
+    min-height: 40px;
+    padding: 0.65rem 0.9rem;
     border-radius: 999px;
-    padding: 0.78rem 1.1rem;
-    font-weight: 850;
+    font-weight: 900;
+    border: 1px solid transparent;
     cursor: pointer;
-    color: white;
-    min-width: 190px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
   }
 
-  .action-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 22px rgba(15, 23, 42, 0.12);
+  .danger-btn {
+    background: var(--sgpa-danger-bg);
+    color: var(--sgpa-danger);
+    border-color: rgba(220, 38, 38, 0.18);
+  }
+
+  .danger-btn:hover {
+    background: #fecaca;
+    color: #991b1b;
+  }
+
+  .enable-btn {
+    background: var(--sgpa-success-bg);
+    color: var(--sgpa-success);
+    border-color: rgba(21, 128, 61, 0.18);
+  }
+
+  .enable-btn:hover {
+    background: #bbf7d0;
+    color: #166534;
   }
 
   .empty-row {
     text-align: center;
+    color: var(--sgpa-muted);
     padding: 2rem;
-    color: #64748b;
+    font-weight: 800;
   }
 
   .table-footer {
@@ -313,25 +428,31 @@
     align-items: center;
     gap: 1rem;
     padding: 1rem 1.25rem;
-    color: #64748b;
-    font-weight: 650;
+    background: #ffffff;
+    color: var(--sgpa-text-soft);
     flex-wrap: wrap;
   }
 
   .pagination {
     display: flex;
-    gap: 0.75rem;
     align-items: center;
+    gap: 0.75rem;
     flex-wrap: wrap;
   }
 
   .pagination button {
-    border: none;
-    color: white;
-    padding: 0.65rem 1rem;
+    min-height: 38px;
+    padding: 0.55rem 0.85rem;
     border-radius: 999px;
-    font-weight: 800;
+    border: 1px solid var(--sgpa-border);
+    background: #ffffff;
+    color: var(--sgpa-blue);
+    font-weight: 850;
     cursor: pointer;
+  }
+
+  .pagination button:hover {
+    background: var(--sgpa-blue-soft);
   }
 
   .pagination button:disabled {
@@ -339,15 +460,28 @@
     cursor: not-allowed;
   }
 
-  @media (max-width: 768px) {
-    thead th,
-    tbody td {
-      padding: 1rem;
+  .pagination span {
+    color: var(--sgpa-text-soft);
+    font-weight: 800;
+  }
+
+  @media (max-width: 760px) {
+    .title-block {
+      align-items: flex-start;
+      flex-direction: column;
     }
 
-    .action-btn {
-      min-width: auto;
+    .search-input {
       width: 100%;
+    }
+
+    .table-footer {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .pagination {
+      justify-content: space-between;
     }
   }
 </style>

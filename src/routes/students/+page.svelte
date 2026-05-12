@@ -11,9 +11,9 @@
 
 <Dashboard
   roleName="Student"
-  eyebrow="Student Module"
-  title="Academic Project Overview"
-  description="Explore available projects, review your enrollments and consult your personal information inside SGPA."
+  eyebrow="Student module"
+  title="Academic projects overview"
+  description="Explore available projects, review your enrollments, and check your personal information within SGPA."
 />
 
 <Footer />

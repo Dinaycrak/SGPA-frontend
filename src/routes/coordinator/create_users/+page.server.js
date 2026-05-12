@@ -33,7 +33,7 @@ export const actions = {
 		if (!first_name || !last_name || !email || !phone || !password || !id_role) {
 			return fail(400, {
 				success: false,
-				error: 'Todos los campos son obligatorios.',
+				error: 'All fields are required.',
 				values
 			});
 		}
@@ -41,7 +41,7 @@ export const actions = {
 		if (![1, 3].includes(id_role)) {
 			return fail(400, {
 				success: false,
-				error: 'El rol seleccionado no es válido. Solo se permite Estudiante o Profesor.',
+				error: 'The selected role is not valid. Only Student or Teacher is allowed.',
 				values
 			});
 		}
@@ -76,7 +76,7 @@ export const actions = {
 			if (response.status === 401) {
 				return fail(401, {
 					success: false,
-					error: 'No autorizado. El token del coordinador expiró o no es válido.',
+					error: 'Unauthorized. The coordinator token expired or is not valid.',
 					values
 				});
 			}
@@ -96,13 +96,13 @@ export const actions = {
 
 			return {
 				success: true,
-				message: 'Usuario creado correctamente.',
+				message: 'User created successfully.',
 				createdUser: result
 			};
 		} catch (error) {
 			return fail(400, {
 				success: false,
-				error: 'Falló la conexión o el procesamiento del servidor.',
+				error: 'The server connection or processing failed.',
 				values
 			});
 		}

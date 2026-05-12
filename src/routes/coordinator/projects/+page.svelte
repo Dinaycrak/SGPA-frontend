@@ -3,24 +3,27 @@
   import Footer from '$lib/components/Footer.svelte';
   import DashboardStats from '$lib/components/Projects.svelte';
   import SideBar from '$lib/components/CoordinatorSideBar.svelte';
-  import DataTableWrapper from '$lib/components/DataTableWrapper.svelte';
   import ProjectCardsDataTable from '$lib/components/ProjectCardDatatable.svelte';
+
   export let data;
 
-  const columns = [
-    { key: 'proyecto_card', label: 'Proyectos', html: true }
-  ];
-
-  $: rows = data.rows || [];
-  $: error = data.error;
+  $: rows = data?.rows || [];
+  $: error = data?.error;
 
   $: stats = [
     {
-      label: 'Total Proyectos',
-      value: data.totalProjects || 0,
+      label: 'Total projects',
+      value: data?.totalProjects || 0,
       icon: `<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>`,
-      bgColor: '#dbeafe',
-      color: '#2563eb'
+      bgColor: 'var(--sgpa-blue-soft)',
+      color: 'var(--sgpa-blue)'
+    },
+    {
+      label: 'Visible records',
+      value: rows.length,
+      icon: `<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>`,
+      bgColor: 'var(--sgpa-yellow-soft)',
+      color: 'var(--sgpa-warning)'
     }
   ];
 </script>
@@ -31,16 +34,17 @@
 <main>
   <div class="content-wrapper">
     <header class="main-header">
-      <div class="header-top">
-        <div>
-          <h1>MÓDULO COORDINADOR</h1>
-          <p>Gestión integral de proyectos académicos.</p>
-        </div>
-
-        <a class="add-btn" href="/coordinator/projects/create">
-          + Agregar Proyecto
-        </a>
+      <div class="header-copy">
+        <span class="eyebrow">Coordinator module</span>
+        <h1>Project management</h1>
+        <p>
+          View, manage, and create academic projects registered in SGPA.
+        </p>
       </div>
+
+      <a class="add-btn" href="/coordinator/projects/create">
+        + Add project
+      </a>
     </header>
 
     {#if error}
@@ -51,16 +55,20 @@
 
     <section class="list-section">
       <div class="section-title">
-        <h2>Gestionar Proyectos</h2>
-        <span class="badge">{rows.length} registros</span>
+        <div>
+          <h2>Project list</h2>
+          <p>Review registered projects, their status, and assigned teacher.</p>
+        </div>
+
+        <span class="badge">{rows.length} records</span>
       </div>
 
       <ProjectCardsDataTable
         {rows}
-        title="Proyectos"
-        badgeColor="#ff9500"
-        emptyMessage="No hay proyectos para mostrar."
-        searchPlaceholder="Buscar proyecto por nombre..."
+        title="Projects"
+        badgeColor="#0b2d69"
+        emptyMessage="No projects to display."
+        searchPlaceholder="Search project by name, teacher, or status..."
       />
     </section>
   </div>
@@ -70,76 +78,116 @@
 
 <style>
   main {
-    background-color: #f1f5f9;
     min-height: 80vh;
-    padding: 2rem 1rem;
+    padding: 2rem 1rem 3rem;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.12), transparent 22rem),
+      linear-gradient(180deg, #ffffff 0%, var(--sgpa-bg) 100%);
   }
 
   .content-wrapper {
-    max-width: 1100px;
+    max-width: 1180px;
     margin: 0 auto;
   }
 
-  .header-top {
+  .main-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
+    align-items: flex-end;
+    gap: 1.5rem;
+    margin-bottom: 1.4rem;
+    padding: 1.6rem;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.16), transparent 18rem),
+      linear-gradient(135deg, #ffffff 0%, var(--sgpa-blue-soft) 100%);
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-md);
   }
 
-  h1 {
-    color: #0b2d69;
+  .eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 0.75rem;
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    background: var(--sgpa-yellow-soft);
+    color: var(--sgpa-blue);
+    font-size: 0.78rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(242, 183, 5, 0.28);
+  }
+
+  .main-header h1 {
     margin: 0;
-    font-size: 1.8rem;
-    font-weight: 800;
+    color: var(--sgpa-blue-dark);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 950;
+    letter-spacing: -0.045em;
   }
 
-  p {
-    color: #64748b;
-    margin-top: 5px;
+  .main-header p {
+    max-width: 720px;
+    margin: 0.7rem 0 0;
+    color: var(--sgpa-text-soft);
+    line-height: 1.7;
   }
 
   .add-btn {
-    background: #0b2d69;
-    color: white;
-    text-decoration: none;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 46px;
+    padding: 0.85rem 1.15rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 950;
+    box-shadow: 0 12px 24px rgba(11, 45, 105, 0.16);
   }
 
   .add-btn:hover {
-    background: #1540a5;
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--sgpa-blue-dark), var(--sgpa-blue));
+  }
+
+  .list-section {
+    margin-top: 1.25rem;
   }
 
   .section-title {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 1.5rem;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .section-title h2 {
+    margin: 0;
+    color: var(--sgpa-blue-dark);
+    font-size: 1.5rem;
+    font-weight: 950;
+  }
+
+  .section-title p {
+    margin: 0.35rem 0 0;
+    color: var(--sgpa-text-soft);
   }
 
   .badge {
-    background: #ff9500;
-    color: white;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-  }
-
-  .error-msg {
-    background: #fee2e2;
-    color: #b91c1c;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: var(--sgpa-blue-soft);
+    color: var(--sgpa-blue);
+    border: 1px solid rgba(11, 45, 105, 0.12);
+    font-size: 0.84rem;
+    font-weight: 950;
   }
 
   :global(.datatable-table th) {
@@ -154,60 +202,70 @@
 
   :global(.datatable-table tr) {
     display: block;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.15rem;
   }
 
   :global(.project-card) {
-    background: white;
-    border-radius: 20px;
-    border-left: 6px solid #f59e0b;
-    padding: 1.8rem;
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid var(--sgpa-border);
+    border-left: 6px solid var(--sgpa-blue);
+    padding: 1.45rem;
     display: flex;
     justify-content: space-between;
     gap: 1.5rem;
     align-items: center;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--sgpa-shadow-sm);
     flex-wrap: wrap;
+  }
+
+  :global(.project-card:hover) {
+    box-shadow: var(--sgpa-shadow-md);
+    border-color: rgba(11, 45, 105, 0.18);
   }
 
   :global(.project-card__left) {
     display: flex;
-    gap: 1.25rem;
+    gap: 1.2rem;
     align-items: flex-start;
     flex: 1;
+    min-width: 260px;
   }
 
   :global(.project-card__icon) {
-    width: 72px;
-    height: 72px;
-    border-radius: 16px;
-    background: #f8f1e8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: var(--sgpa-blue-soft);
+    color: var(--sgpa-blue);
+    display: grid;
+    place-items: center;
+    font-size: 1.8rem;
     flex-shrink: 0;
   }
 
   :global(.project-card__content h3) {
-    margin: 0 0 0.6rem;
-    color: #0b2d69;
-    font-size: 1.9rem;
-    font-weight: 800;
+    margin: 0 0 0.55rem;
+    color: var(--sgpa-blue-dark);
+    font-size: clamp(1.3rem, 2vw, 1.75rem);
+    font-weight: 950;
+    letter-spacing: -0.035em;
   }
 
   :global(.project-card__content p) {
-    margin: 0 0 0.8rem;
-    color: #4b5563;
-    font-size: 1rem;
+    margin: 0 0 0.85rem;
+    color: var(--sgpa-text-soft);
+    font-size: 0.97rem;
+    line-height: 1.65;
   }
 
   :global(.project-card__meta) {
     display: flex;
     flex-direction: column;
     gap: 0.45rem;
-    color: #475569;
-    font-size: 1rem;
+    color: var(--sgpa-text-soft);
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 
   :global(.project-card__right) {
@@ -217,12 +275,33 @@
   }
 
   :global(.neutral-badge) {
-    background: #f1f5f9;
-    color: #475569;
-    padding: 0.6rem 1rem;
+    background: var(--sgpa-blue-soft);
+    color: var(--sgpa-blue);
+    padding: 0.55rem 0.9rem;
     border-radius: 999px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    display: inline-block;
+    font-weight: 900;
+    font-size: 0.84rem;
+    display: inline-flex;
+    border: 1px solid rgba(11, 45, 105, 0.12);
+  }
+
+  @media (max-width: 760px) {
+    .main-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .add-btn {
+      width: 100%;
+    }
+
+    :global(.project-card) {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    :global(.project-card__left) {
+      flex-direction: column;
+    }
   }
 </style>

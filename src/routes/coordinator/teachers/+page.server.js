@@ -30,7 +30,7 @@ async function updateUserActiveStatus(fetch, user, nextIsActive) {
   const userId = Number(user.id_user ?? user.id);
 
   if (!userId) {
-    throw new Error('No se recibió un ID válido para actualizar el docente.');
+    throw new Error('A valid teacher ID was not received for update.');
   }
 
   let detailedUser = user;
@@ -64,10 +64,10 @@ async function updateUserActiveStatus(fetch, user, nextIsActive) {
       return true;
     }
 
-    lastError = `${attempt.method} /users/${userId} falló. Estado ${response.status}. ${text}`;
+    lastError = `${attempt.method} /users/${userId} failed. Status ${response.status}. ${text}`;
   }
 
-  throw new Error(lastError || 'No se pudo actualizar el estado del docente.');
+  throw new Error(lastError || 'Could not update the teacher status.');
 }
 
 /** @type {import('./$types').PageServerLoad} */
@@ -81,9 +81,9 @@ export async function load({ fetch }) {
 
       return {
         id_user: teacher.id_user,
-        nombre: `${teacher.first_name ?? ''} ${teacher.last_name ?? ''}`.trim() || 'Sin nombre',
-        correo: teacher.email ?? 'Sin correo',
-        estado: isActive ? 'Activo' : 'Inactivo',
+        nombre: `${teacher.first_name ?? ''} ${teacher.last_name ?? ''}`.trim() || 'Unnamed',
+        correo: teacher.email ?? 'No email',
+        estado: isActive ? 'Active' : 'Inactive',
         is_active: isActive
       };
     });
@@ -96,7 +96,7 @@ export async function load({ fetch }) {
     return {
       rows: [],
       totalTeachers: 0,
-      error: error.message || 'Error al cargar los docentes'
+      error: error.message || 'Error loading teachers'
     };
   }
 }
@@ -115,7 +115,7 @@ export const actions = {
 
       if (!teacher) {
         return fail(404, {
-          error: 'No se encontró el docente a actualizar.'
+          error: 'The teacher to update was not found.'
         });
       }
 
@@ -129,12 +129,12 @@ export const actions = {
         updatedUser: {
           id_user: userId,
           is_active: nextIsActive,
-          estado: nextIsActive ? 'Activo' : 'Inactivo'
+          estado: nextIsActive ? 'Active' : 'Inactive'
         }
       };
     } catch (error) {
       return fail(500, {
-        error: error.message || `No se pudo actualizar el acceso de ${userName}.`
+        error: error.message || `Could not update access for ${userName}.`
       });
     }
   }

@@ -7,7 +7,7 @@ const DEFAULT_TEACHER_ID = Number(PROFILE_USER_IDS.teacher || 39);
 const DEFAULT_RESEARCH_GROUP_ID = 1;
 
 const DEFAULT_STATUSES = [
-  { id: 1, name: 'Activo' },
+  { id: 1, name: 'Active' },
   { id: 2, name: 'Completado' },
   { id: 3, name: 'Pendiente' }
 ];
@@ -46,7 +46,7 @@ export async function load({ fetch }) {
       defaultTeacherId: DEFAULT_TEACHER_ID,
       defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
       statuses: DEFAULT_STATUSES,
-      error: error.message || 'No se pudo cargar la información del formulario'
+      error: error.message || 'Could not load form information'
     };
   }
 }
@@ -135,7 +135,7 @@ async function getAllProjectUsers(fetch) {
   const data = text ? JSON.parse(text) : [];
 
   if (!response.ok) {
-    throw new Error(`No se pudo consultar project-users. Estado ${response.status}. ${text}`);
+    throw new Error(`Could not query project-users. Status ${response.status}. ${text}`);
   }
 
   return Array.isArray(data) ? data.map(normalizeProjectUser) : [];
@@ -176,7 +176,7 @@ async function ensureTeacherAssigned(fetch, { id_project, id_user, assigned_date
 
   if (!createResponse.ok) {
     throw new Error(
-      `No se pudo registrar el profesor en project-users. Estado ${createResponse.status}. Respuesta: ${createText}`
+      `Could not register the teacher in project-users. Status ${createResponse.status}. Response: ${createText}`
     );
   }
 
@@ -191,7 +191,7 @@ async function ensureTeacherAssigned(fetch, { id_project, id_user, assigned_date
 
   if (!exists) {
     throw new Error(
-      `La API respondió OK al registrar el profesor, pero la relación no aparece en /project-users.`
+      `The API returned OK when registering the teacher, but the relationship does not appear in /project-users.`
     );
   }
 
@@ -218,7 +218,7 @@ export const actions = {
 
     if (!values.project_name || !values.start_date || !values.teacher_id) {
       return fail(400, {
-        error: 'Debes completar nombre del proyecto, fecha de inicio y profesor asignado.',
+        error: 'You must complete the project name, start date, and assigned teacher.',
         values
       });
     }
@@ -253,7 +253,7 @@ export const actions = {
         } catch (_) {}
 
         return fail(400, {
-          error: `No se pudo crear el proyecto. Estado ${createResponse.status}. ${backendMessage}`,
+          error: `Could not create the project. Status ${createResponse.status}. ${backendMessage}`,
           values
         });
       }
@@ -280,7 +280,7 @@ export const actions = {
 
       if (!createdProjectId) {
         return fail(400, {
-          error: 'El proyecto se creó, pero no se pudo recuperar el id_project para asignar el docente.',
+          error: 'The project was created, but id_project could not be retrieved to assign the teacher.',
           values
         });
       }
@@ -296,7 +296,7 @@ export const actions = {
       if (error?.status === 303) throw error;
 
       return fail(500, {
-        error: error.message || 'Error interno al crear el proyecto o asignar el docente',
+        error: error.message || 'Internal error while creating the project or assigning the teacher',
         values
       });
     }

@@ -1,16 +1,15 @@
 <script>
-  export let name;
-  export let schedule;
+  export let name = 'Academic project';
+  export let schedule = 'No schedule defined';
 
   function viewStudents() {
-    alert("Aquí verías los estudiantes del proyecto: " + name);
+    alert('Here you would see the students for the project: ' + name);
   }
 </script>
 
 <div class="card">
-  
   <div class="left">
-    <div class="icon"></div>
+    <div class="icon">📁</div>
 
     <div class="info">
       <h3>{name}</h3>
@@ -18,53 +17,80 @@
     </div>
   </div>
 
-  <button class="students-btn" on:click={viewStudents}>
-    Ver estudiantes
+  <button class="students-btn" type="button" onclick={viewStudents}>
+    View students
   </button>
-
 </div>
 
 <style>
-.card{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:white;
-  padding:15px;
-  border-radius:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.1);
-}
+  .card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    background: #ffffff;
+    padding: 1.25rem;
+    border-radius: 22px;
+    border: 1px solid var(--sgpa-border);
+    border-left: 6px solid var(--sgpa-blue);
+    box-shadow: var(--sgpa-shadow-sm);
+    flex-wrap: wrap;
+  }
 
-.left{
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 260px;
+    flex: 1;
+  }
 
-.icon{
-  font-size:22px;
-}
+  .icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: var(--sgpa-blue-soft);
+    color: var(--sgpa-blue);
+    font-size: 1.45rem;
+  }
 
-h3{
-  margin:0;
-  color:#ff5100;
-}
+  h3 {
+    margin: 0;
+    color: var(--sgpa-blue-dark);
+    font-size: 1.15rem;
+    font-weight: 950;
+  }
 
-p{
-  margin:0;
-  color:gray;
-}
+  p {
+    margin: 0.3rem 0 0;
+    color: var(--sgpa-text-soft);
+    line-height: 1.5;
+  }
 
-.students-btn{
-  background:#0b2d69;
-  color:white;
-  border:none;
-  padding:8px 14px;
-  border-radius:6px;
-  cursor:pointer;
-}
+  .students-btn {
+    min-height: 42px;
+    padding: 0.72rem 1rem;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    color: #ffffff;
+    font-weight: 900;
+    cursor: pointer;
+  }
 
-.students-btn:hover{
-  background:#1540a5;
-}
+  .students-btn:hover {
+    background: linear-gradient(135deg, var(--sgpa-blue-dark), var(--sgpa-blue));
+  }
+
+  @media (max-width: 640px) {
+    .left {
+      min-width: 100%;
+    }
+
+    .students-btn {
+      width: 100%;
+    }
+  }
 </style>

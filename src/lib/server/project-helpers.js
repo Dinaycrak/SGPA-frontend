@@ -45,7 +45,7 @@ async function requestJson(fetch, path, moduleName = 'coordinator', options = {}
 
   if (!response.ok) {
     const error = new Error(
-      `No se pudo consultar ${path}. Estado ${response.status}. ${
+      `Could not query ${path}. Status ${response.status}. ${
         typeof data === 'string' ? data : JSON.stringify(data ?? '')
       }`
     );
