@@ -1,21 +1,21 @@
 <script>
   export let roleName = 'SGPA';
-  export let eyebrow = 'Main Panel';
-  export let title = 'SGPA Dashboard';
-  export let description = 'View the main information of the academic project management system.';
+  export let eyebrow = 'Main panel';
+  export let title = 'SGPA dashboard';
+  export let description = 'Check the main information of the academic project management system.';
 
   const quickCards = [
     {
-      label: 'Academic Management',
-      text: 'Organize projects, users and academic processes from one place.'
+      label: 'Academic management',
+      text: 'Organize projects, users, and academic processes from one place.'
     },
     {
-      label: 'Visual Tracking',
-      text: 'Review indicators and reports while keeping the system structure clear.'
+      label: 'Visual tracking',
+      text: 'Review indicators and reports while keeping a clear system structure.'
     },
     {
-      label: 'Role-Based Access',
-      text: 'Each module keeps its own navigation, permissions and workflow.'
+      label: 'Role-based access',
+      text: 'Each module keeps its own navigation, permissions, and workflow.'
     }
   ];
 </script>
@@ -30,12 +30,12 @@
       </div>
 
       <div class="role-card" aria-label="Active role">
-        <span>Active Role</span>
+        <span>Active role</span>
         <strong>{roleName}</strong>
       </div>
     </div>
 
-    <section class="quick-grid" aria-label="System summary">
+    <section class="quick-grid" aria-label="Resumen del sistema">
       {#each quickCards as card}
         <article class="quick-card">
           <span class="quick-dot"></span>
@@ -48,8 +48,8 @@
     <section class="report-card">
       <div class="report-header">
         <div>
-          <span class="eyebrow dark">Integrated Report</span>
-          <h2>General System Overview</h2>
+          <span class="eyebrow dark">Integrated report</span>
+          <h2>System overview</h2>
         </div>
 
         <span class="report-badge">Power BI</span>
@@ -71,6 +71,9 @@
   .dashboard-page {
     min-height: 80vh;
     padding: 2rem 1rem 3rem;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.12), transparent 22rem),
+      linear-gradient(180deg, #ffffff 0%, var(--sgpa-bg) 100%);
   }
 
   .dashboard-shell {
@@ -87,10 +90,12 @@
     align-items: stretch;
     padding: clamp(1.4rem, 3vw, 2.4rem);
     border-radius: 28px;
-    color: #ffffff;
-    background: linear-gradient(135deg, #05070d, #111827 55%, #0b2d69);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--sgpa-text);
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.18), transparent 18rem),
+      linear-gradient(135deg, #ffffff 0%, var(--sgpa-blue-soft) 100%);
+    box-shadow: var(--sgpa-shadow-lg);
+    border: 1px solid var(--sgpa-border);
   }
 
   .hero-card::before {
@@ -101,7 +106,7 @@
     right: -90px;
     top: -110px;
     border-radius: 999px;
-    background: rgba(242, 183, 5, 0.12);
+    background: rgba(11, 45, 105, 0.08);
     filter: blur(10px);
   }
 
@@ -117,18 +122,20 @@
     margin-bottom: 0.75rem;
     padding: 0.42rem 0.8rem;
     border-radius: 999px;
-    background: rgba(242, 183, 5, 0.14);
-    color: #fde68a;
+    background: var(--sgpa-yellow-soft);
+    color: var(--sgpa-blue);
     font-size: 0.78rem;
-    font-weight: 900;
+    font-weight: 950;
     letter-spacing: 0.08em;
     text-transform: uppercase;
+    border: 1px solid rgba(242, 183, 5, 0.28);
   }
 
   .eyebrow.dark {
     margin-bottom: 0.45rem;
-    background: rgba(11, 45, 105, 0.45);
-    color: #dbeafe;
+    background: var(--sgpa-blue-soft);
+    color: var(--sgpa-blue);
+    border-color: rgba(11, 45, 105, 0.12);
   }
 
   h1,
@@ -139,6 +146,7 @@
 
   .hero-content h1 {
     max-width: 720px;
+    color: var(--sgpa-blue-dark);
     font-size: clamp(2rem, 4vw, 3.4rem);
     font-weight: 950;
     letter-spacing: -0.04em;
@@ -148,7 +156,7 @@
   .hero-content p {
     max-width: 720px;
     margin-top: 1rem;
-    color: #cbd5e1;
+    color: var(--sgpa-text-soft);
     font-size: 1.03rem;
     line-height: 1.7;
   }
@@ -160,124 +168,123 @@
     min-height: 190px;
     padding: 1.25rem;
     border-radius: 22px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(14px);
+    background: #ffffff;
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-sm);
   }
 
   .role-card span {
-    color: #cbd5e1;
+    color: var(--sgpa-text-soft);
     font-size: 0.88rem;
-    font-weight: 800;
+    font-weight: 850;
   }
 
   .role-card strong {
     margin-top: 0.35rem;
-    color: #ffffff;
+    color: var(--sgpa-blue);
     font-size: 1.45rem;
   }
 
   .quick-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
-    margin: 1.25rem 0;
+    margin: 1.2rem 0;
+  }
+
+  .quick-card,
+  .report-card {
+    background: #ffffff;
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-sm);
   }
 
   .quick-card {
-    padding: 1.25rem;
     border-radius: 22px;
-    background: rgba(17, 24, 39, 0.92);
-    border: 1px solid rgba(148, 163, 184, 0.22);
-    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+    padding: 1.25rem;
   }
 
   .quick-dot {
-    display: inline-block;
-    width: 11px;
-    height: 11px;
-    margin-bottom: 0.85rem;
+    display: inline-flex;
+    width: 12px;
+    height: 12px;
     border-radius: 999px;
-    background: #f2b705;
-    box-shadow: 0 0 0 7px rgba(242, 183, 5, 0.09);
+    background: var(--sgpa-yellow);
+    box-shadow: 0 0 0 6px rgba(242, 183, 5, 0.14);
+    margin-bottom: 1rem;
   }
 
   .quick-card h2 {
-    color: #ffffff;
+    margin-bottom: 0.5rem;
+    color: var(--sgpa-blue);
     font-size: 1.05rem;
-    font-weight: 900;
+    font-weight: 950;
   }
 
   .quick-card p {
-    margin-top: 0.45rem;
-    color: #94a3b8;
+    color: var(--sgpa-text-soft);
     line-height: 1.6;
-    font-size: 0.95rem;
   }
 
   .report-card {
+    border-radius: 26px;
     overflow: hidden;
-    border-radius: 28px;
-    background: rgba(17, 24, 39, 0.92);
-    border: 1px solid rgba(148, 163, 184, 0.22);
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
   }
 
   .report-header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1.35rem 1.45rem;
-    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    align-items: center;
+    padding: 1.3rem;
+    border-bottom: 1px solid var(--sgpa-border);
   }
 
   .report-header h2 {
-    color: #ffffff;
-    font-size: 1.35rem;
-    font-weight: 900;
+    color: var(--sgpa-blue-dark);
+    font-weight: 950;
   }
 
   .report-badge {
-    padding: 0.45rem 0.85rem;
     border-radius: 999px;
-    color: #111827;
-    background: #f2b705;
-    font-size: 0.82rem;
+    padding: 0.45rem 0.85rem;
+    color: var(--sgpa-blue);
+    background: var(--sgpa-blue-soft);
     font-weight: 900;
   }
 
   .iframe-wrap {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 8.2;
-    min-height: 420px;
-    background: #0f172a;
+    background: var(--sgpa-bg);
+    padding: 1rem;
   }
 
-  .iframe-wrap iframe {
-    position: absolute;
-    inset: 0;
+  iframe {
     width: 100%;
-    height: 100%;
+    min-height: 460px;
+    border: 0;
+    border-radius: 18px;
+    background: #ffffff;
   }
 
   @media (max-width: 900px) {
-    .hero-card {
-      grid-template-columns: 1fr;
-    }
-
-    .role-card {
-      min-height: auto;
-    }
-
+    .hero-card,
     .quick-grid {
       grid-template-columns: 1fr;
     }
 
-    .iframe-wrap {
-      aspect-ratio: auto;
-      height: 460px;
+    iframe {
+      min-height: 360px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .dashboard-page {
+      padding: 1.2rem 0.8rem 2.2rem;
+    }
+
+    .report-header {
+      align-items: flex-start;
+      flex-direction: column;
     }
   }
 </style>

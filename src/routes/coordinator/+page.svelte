@@ -11,9 +11,9 @@
 
 <Dashboard
   roleName="Coordinator"
-  eyebrow="Coordinator Module"
-  title="Academic Control Panel"
-  description="Manage projects, teachers, students and users from a clear and organized interface."
+  eyebrow="Coordinator module"
+  title="Academic control panel"
+  description="Manage projects, teachers, students, and users from a clear, organized, and institutional interface."
 />
 
 <Footer />

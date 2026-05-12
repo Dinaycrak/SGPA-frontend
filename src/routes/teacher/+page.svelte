@@ -11,9 +11,9 @@
 
 <Dashboard
   roleName="Teacher"
-  eyebrow="Teacher Module"
-  title="Assigned Project Tracking"
-  description="Review academic information, available projects and your assigned project activity."
+  eyebrow="Teacher module"
+  title="Assigned project tracking"
+  description="Check academic information, review available projects, and track activity for your assigned projects."
 />
 
 <Footer />

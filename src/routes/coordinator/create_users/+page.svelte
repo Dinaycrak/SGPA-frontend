@@ -1,354 +1,402 @@
 <script>
-	import Header from "$lib/components/Header_St.svelte";
-	import Footer from "$lib/components/Footer.svelte";
-	import SideBar from "../../../lib/components/CoordinatorSideBar.svelte";
+  import Header from '$lib/components/Header_St.svelte';
+  import Footer from '$lib/components/Footer.svelte';
+  import SideBar from '$lib/components/CoordinatorSideBar.svelte';
 
-	export let form;
+  export let form;
 
-	$: savedValues = form?.values || {};
+  $: savedValues = form?.values || {};
 
-	function getValue(name) {
-		return savedValues[name] ?? "";
-	}
+  function getValue(name) {
+    return savedValues[name] ?? '';
+  }
 </script>
 
 <Header />
-
 <SideBar />
 
 <main>
-	<div class="content-wrapper">
-		<header class="main-header">
-			<div class="header-top">
-				<div>
-					<h1>MÓDULO COORDINADOR</h1>
-					<p>Registro de usuarios del sistema para estudiantes y profesores.</p>
-				</div>
+  <div class="content-wrapper">
+    <header class="main-header">
+      <div class="header-copy">
+        <span class="eyebrow">Coordinator module</span>
+        <h1>Create user</h1>
+        <p>
+          Register students and teachers within SGPA while keeping the information
+          organized for academic management.
+        </p>
+      </div>
 
-				<div class="header-badge">
-					<span>Crear Usuario</span>
-				</div>
-			</div>
-		</header>
+      <div class="header-badge">
+        User management
+      </div>
+    </header>
 
-		{#if form?.success}
-			<div class="success-msg">✅ {form.message}</div>
-		{/if}
+    {#if form?.success}
+      <div class="success-msg">✅ {form.message}</div>
+    {/if}
 
-		{#if form?.error}
-			<div class="error-msg">⚠️ {form.error}</div>
-		{/if}
+    {#if form?.error}
+      <div class="error-msg">⚠️ {form.error}</div>
+    {/if}
 
-		<section class="form-section">
-			<div class="section-title">
-				<h2>Formulario de Registro</h2>
-				<span class="badge">Coordinador</span>
-			</div>
+    <section class="form-section">
+      <div class="section-title">
+        <div>
+          <h2>Registration form</h2>
+          <p>Fill in the basic information for the user to be created.</p>
+        </div>
 
-			<div class="form-card">
-				<form method="POST" class="user-form">
-					<div class="form-grid">
-						<div class="field">
-							<label for="first_name">Nombres</label>
-							<input
-								id="first_name"
-								name="first_name"
-								type="text"
-								placeholder="Ej: Alejandro"
-								value={getValue('first_name')}
-								required
-							/>
-						</div>
+        <span class="badge">Coordinator</span>
+      </div>
 
-						<div class="field">
-							<label for="last_name">Apellidos</label>
-							<input
-								id="last_name"
-								name="last_name"
-								type="text"
-								placeholder="Ej: Gómez"
-								value={getValue('last_name')}
-								required
-							/>
-						</div>
+      <div class="form-card">
+        <form method="POST" class="user-form">
+          <div class="form-grid">
+            <div class="field">
+              <label for="first_name">First names</label>
+              <input
+                id="first_name"
+                name="first_name"
+                type="text"
+                placeholder="Example: Alexander"
+                value={getValue('first_name')}
+                required
+              />
+            </div>
 
-						<div class="field">
-							<label for="email">Correo electrónico</label>
-							<input
-								id="email"
-								name="email"
-								type="email"
-								placeholder="Ej: usuario@correo.com"
-								value={getValue('email')}
-								required
-							/>
-						</div>
+            <div class="field">
+              <label for="last_name">Last names</label>
+              <input
+                id="last_name"
+                name="last_name"
+                type="text"
+                placeholder="Example: Gomez"
+                value={getValue('last_name')}
+                required
+              />
+            </div>
 
-						<div class="field">
-							<label for="phone">Teléfono</label>
-							<input
-								id="phone"
-								name="phone"
-								type="text"
-								placeholder="Ej: 3001234567"
-								value={getValue('phone')}
-								required
-							/>
-						</div>
+            <div class="field">
+              <label for="email">Email address</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="Example: user@email.com"
+                value={getValue('email')}
+                required
+              />
+            </div>
 
-						<div class="field">
-							<label for="password">Contraseña</label>
-							<input
-								id="password"
-								name="password"
-								type="password"
-								placeholder="Ingresa una contraseña"
-								required
-							/>
-						</div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input
+                id="phone"
+                name="phone"
+                type="text"
+                placeholder="Example: 3001234567"
+                value={getValue('phone')}
+                required
+              />
+            </div>
 
-                        <div class="field">
-                            <label for="id_role">Tipo de usuario</label>
-                            <select id="id_role" name="id_role" required>
-                                <option value="">Selecciona un rol</option>
-                                <option value="3" selected={String(getValue('id_role')) === '3'}>
-                                    Profesor
-                                </option>
-                                <option value="1" selected={String(getValue('id_role')) === '1'}>
-                                    Estudiante
-                                </option>
-                            </select>
-                        </div>
-					</div>
+            <div class="field">
+              <label for="password">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Enter a password"
+                autocomplete="new-password"
+                required
+              />
+            </div>
 
-					<div class="extra-options">
-						<label class="checkbox-label" for="is_active">
-							<input
-								id="is_active"
-								name="is_active"
-								type="checkbox"
-								checked={savedValues.is_active ?? true}
-							/>
-							<span>Usuario activo</span>
-						</label>
-					</div>
+            <div class="field">
+              <label for="id_role">User type</label>
+              <select id="id_role" name="id_role" required>
+                <option value="">Select a role</option>
+                <option value="3" selected={String(getValue('id_role')) === '3'}>
+                  Teacher
+                </option>
+                <option value="1" selected={String(getValue('id_role')) === '1'}>
+                  Student
+                </option>
+              </select>
+            </div>
+          </div>
 
+          <div class="extra-options">
+            <label class="checkbox-label" for="is_active">
+              <input
+                id="is_active"
+                name="is_active"
+                type="checkbox"
+                checked={savedValues.is_active ?? true}
+              />
 
-					<div class="form-actions">
-						<button type="submit" class="save-btn">+ Crear Usuario</button>
-						<button type="reset" class="clear-btn">Limpiar</button>
-					</div>
-				</form>
-			</div>
-		</section>
-	</div>
+              <span>
+                <strong>Active user</strong>
+                <small>Allows the user to appear enabled within the system.</small>
+              </span>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="reset" class="clear-btn">Clear form</button>
+            <button type="submit" class="save-btn">Create user</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
 </main>
 
 <Footer />
 
 <style>
-	main {
-		background-color: #f1f5f9;
-		min-height: 80vh;
-		padding: 2rem 1rem;
-	}
+  main {
+    min-height: 80vh;
+    padding: 2rem 1rem 3rem;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.12), transparent 22rem),
+      linear-gradient(180deg, #ffffff 0%, var(--sgpa-bg) 100%);
+  }
 
-	.content-wrapper {
-		max-width: 1100px;
-		margin: 0 auto;
-	}
+  .content-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
 
-	.header-top {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 2rem;
-		flex-wrap: wrap;
-		gap: 1rem;
-	}
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.5rem;
+    margin-bottom: 1.6rem;
+    padding: 1.6rem;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.16), transparent 18rem),
+      linear-gradient(135deg, #ffffff 0%, var(--sgpa-blue-soft) 100%);
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-md);
+  }
 
-	h1 {
-		color: #0b2d69;
-		margin: 0;
-		font-size: 1.8rem;
-		font-weight: 800;
-	}
+  .eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 0.75rem;
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    background: var(--sgpa-yellow-soft);
+    color: var(--sgpa-blue);
+    font-size: 0.78rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(242, 183, 5, 0.28);
+  }
 
-	p {
-		color: #64748b;
-		margin-top: 5px;
-	}
+  .main-header h1 {
+    margin: 0;
+    color: var(--sgpa-blue-dark);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 950;
+    letter-spacing: -0.045em;
+  }
 
-	.header-badge {
-		color: rgb(0, 132, 255);
-		padding: 10px 20px;
-		font-weight: 700;
-		font-size: 30px; 
-	}
+  .main-header p {
+    max-width: 720px;
+    margin: 0.7rem 0 0;
+    color: var(--sgpa-text-soft);
+    line-height: 1.7;
+  }
 
-	.section-title {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		margin-bottom: 1.5rem;
-		flex-wrap: wrap;
-	}
+  .header-badge {
+    flex: 0 0 auto;
+    padding: 0.75rem 1rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--sgpa-blue);
+    border: 1px solid var(--sgpa-border);
+    font-weight: 950;
+    box-shadow: var(--sgpa-shadow-sm);
+  }
 
-	.section-title h2 {
-		margin: 0;
-		color: #0b2d69;
-		font-size: 1.4rem;
-	}
+  .success-msg,
+  .error-msg {
+    margin-bottom: 1rem;
+  }
 
-	.badge {
-		background: #ff9500;
-		color: white;
-		padding: 4px 12px;
-		border-radius: 20px;
-		font-size: 0.8rem;
-		font-weight: bold;
-	}
+  .form-section {
+    display: grid;
+    gap: 1rem;
+  }
 
-	.form-card {
-		background: white;
-		border-radius: 14px;
-		padding: 2rem;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-		border-left: 6px solid #ff9500;
-	}
+  .section-title {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
 
-	.user-form {
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
+  .section-title h2 {
+    margin: 0;
+    color: var(--sgpa-blue-dark);
+    font-size: 1.45rem;
+    font-weight: 950;
+  }
 
-	.form-grid {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 1.2rem;
-	}
+  .section-title p {
+    margin: 0.35rem 0 0;
+    color: var(--sgpa-text-soft);
+  }
 
-	.field {
-		display: flex;
-		flex-direction: column;
-		gap: 0.45rem;
-	}
+  .badge {
+    padding: 0.45rem 0.85rem;
+    background: var(--sgpa-blue-soft);
+    color: var(--sgpa-blue);
+    border: 1px solid rgba(11, 45, 105, 0.12);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 950;
+  }
 
-	.field label {
-		font-weight: 700;
-		color: #0f172a;
-		font-size: 0.95rem;
-	}
+  .form-card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: clamp(1.2rem, 3vw, 2rem);
+    box-shadow: var(--sgpa-shadow-md);
+    border: 1px solid var(--sgpa-border);
+    border-top: 6px solid var(--sgpa-blue);
+  }
 
-	.field input,
-	.field select {
-		padding: 12px 14px;
-		border: 1px solid #cbd5e1;
-		border-radius: 10px;
-		font-size: 0.95rem;
-		outline: none;
-		transition: 0.2s;
-		background: #fff;
-	}
+  .user-form {
+    display: grid;
+    gap: 1.5rem;
+  }
 
-	.field input:focus,
-	.field select:focus {
-		border-color: #0b2d69;
-		box-shadow: 0 0 0 3px rgba(11, 45, 105, 0.12);
-	}
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.1rem;
+  }
 
+  .field {
+    display: grid;
+    gap: 0.45rem;
+  }
 
-	.extra-options {
-		display: flex;
-		align-items: center;
-		padding: 0.6rem 0 0.2rem 0;
-	}
+  .field label {
+    color: var(--sgpa-blue-dark);
+    font-weight: 850;
+    font-size: 0.95rem;
+  }
 
-	.checkbox-label {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font-weight: 600;
-		color: #334155;
-		cursor: pointer;
-	}
+  .field input,
+  .field select {
+    width: 100%;
+    min-height: 46px;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--sgpa-border);
+    border-radius: 14px;
+    background: #ffffff;
+    color: var(--sgpa-text);
+    outline: none;
+  }
 
+  .field input:focus,
+  .field select:focus {
+    border-color: var(--sgpa-yellow);
+    box-shadow: var(--sgpa-focus);
+  }
 
-	.form-actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: 12px;
-		border-top: 1px solid #e2e8f0;
-		padding-top: 1.3rem;
-		flex-wrap: wrap;
-	}
+  .extra-options {
+    padding: 1rem;
+    border-radius: 20px;
+    background: var(--sgpa-surface-soft);
+    border: 1px solid var(--sgpa-border);
+  }
 
-	.save-btn {
-		background: #0b2d69;
-		color: white;
-		border: none;
-		padding: 12px 22px;
-		border-radius: 10px;
-		cursor: pointer;
-		font-weight: 700;
-		transition: 0.2s;
-	}
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    color: var(--sgpa-text);
+    cursor: pointer;
+  }
 
-	.save-btn:hover {
-		background: #1540a5;
-		transform: translateY(-1px);
-	}
+  .checkbox-label input {
+    width: 18px;
+    height: 18px;
+    margin-top: 0.2rem;
+    accent-color: var(--sgpa-blue);
+  }
 
-	.clear-btn {
-		background: white;
-		color: #dc2626;
-		border: 1.5px solid #dc2626;
-		padding: 12px 22px;
-		border-radius: 10px;
-		cursor: pointer;
-		font-weight: 700;
-		transition: 0.2s;
-	}
+  .checkbox-label span {
+    display: grid;
+    gap: 0.2rem;
+  }
 
-	.clear-btn:hover {
-		background: #fee2e2;
-	}
+  .checkbox-label strong {
+    color: var(--sgpa-blue-dark);
+    font-weight: 900;
+  }
 
-	.error-msg {
-		background: #fee2e2;
-		color: #b91c1c;
-		padding: 1rem;
-		border-radius: 8px;
-		margin-bottom: 1.5rem;
-		font-weight: 600;
-	}
+  .checkbox-label small {
+    color: var(--sgpa-text-soft);
+    line-height: 1.5;
+  }
 
-	.success-msg {
-		background: #dcfce7;
-		color: #166534;
-		padding: 1rem;
-		border-radius: 8px;
-		margin-bottom: 1.5rem;
-		font-weight: 600;
-	}
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    border-top: 1px solid var(--sgpa-border);
+    padding-top: 1.3rem;
+    flex-wrap: wrap;
+  }
 
-	@media (max-width: 768px) {
-		.form-grid {
-			grid-template-columns: 1fr;
-		}
+  .save-btn,
+  .clear-btn {
+    min-height: 46px;
+    padding: 0.8rem 1.2rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 950;
+  }
 
-		.form-card {
-			padding: 1.25rem;
-		}
+  .clear-btn {
+    background: #ffffff;
+    color: var(--sgpa-blue);
+    border: 1px solid var(--sgpa-border-strong);
+  }
 
-		.form-actions {
-			justify-content: stretch;
-		}
+  .clear-btn:hover {
+    background: var(--sgpa-blue-soft);
+    color: var(--sgpa-blue-dark);
+  }
 
-		.save-btn,
-		.clear-btn {
-			width: 100%;
-		}
-	}
+  @media (max-width: 780px) {
+    .main-header {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-actions {
+      justify-content: stretch;
+    }
+
+    .save-btn,
+    .clear-btn {
+      width: 100%;
+    }
+  }
 </style>

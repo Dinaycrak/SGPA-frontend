@@ -45,7 +45,7 @@ export async function load({ fetch }) {
         : `
           <form method="POST" class="inline-form">
             <input type="hidden" name="id_project" value="${escapeHtml(project.id_project)}">
-            <button type="submit" class="action-btn">Ingresar al proyecto</button>
+            <button type="submit" class="action-btn">Enter project</button>
           </form>
         `;
 
@@ -55,11 +55,11 @@ export async function load({ fetch }) {
             <div class="project-card__left">
               <div class="project-card__icon">📁</div>
               <div class="project-card__content">
-                <h3>${escapeHtml(project.project_name || 'Sin nombre')}</h3>
-                <p>${escapeHtml(project.description || 'Sin descripción')}</p>
+                <h3>${escapeHtml(project.project_name || 'Unnamed')}</h3>
+                <p>${escapeHtml(project.description || 'No description')}</p>
                 <div class="project-card__meta">
-                  <span><strong>Fecha de inicio:</strong> ${escapeHtml(project.start_date || 'No definida')}</span>
-                  <span><strong>Estado:</strong> ${escapeHtml(getStatusLabel(project.id_status))}</span>
+                  <span><strong>Start date:</strong> ${escapeHtml(project.start_date || 'Not defined')}</span>
+                  <span><strong>Status:</strong> ${escapeHtml(getStatusLabel(project.id_status))}</span>
                 </div>
               </div>
             </div>
@@ -79,7 +79,7 @@ export async function load({ fetch }) {
     return {
       rows: [],
       totalProjects: 0,
-      error: error.message || 'Error al cargar proyectos disponibles'
+      error: error.message || 'Error loading available projects'
     };
   }
 }
@@ -90,7 +90,7 @@ export const actions = {
     const idProject = Number(formData.get('id_project'));
 
     if (!idProject) {
-      return fail(400, { error: 'Proyecto inválido.' });
+      return fail(400, { error: 'Invalid project.' });
     }
 
     try {
@@ -114,11 +114,11 @@ export const actions = {
 
       return {
         success: true,
-        message: 'El estudiante fue inscrito correctamente en el proyecto.'
+        message: 'The student was successfully enrolled in the project.'
       };
     } catch (error) {
       return fail(500, {
-        error: error.message || 'No se pudo registrar al estudiante en el proyecto.'
+        error: error.message || 'Could not enroll the student in the project.'
       });
     }
   }

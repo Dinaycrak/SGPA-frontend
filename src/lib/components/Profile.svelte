@@ -1,153 +1,225 @@
 <script>
-    // Recibimos los datos del usuario como una prop única
-    export let user = {};
-    
-    // Función de apoyo para identificar el rol visualmente
-    function getRoleConfig(roleId) {
-        const configs = {
-            1: { name: "Estudiante", color: "#ff9500", label: "Pregrado" },
-            3: { name: "Profesor", color: "#9333ea", label: "Docente / Investigador" },
-            4: { name: "Coordinador", color: "#0b2d69", label: "Gestión Académica" }
-        };
-        return configs[roleId] || { name: "Usuario", color: "#64748b", label: "Sistema" };
-    }
+  export let user = {};
 
-    $: role = getRoleConfig(user.id_role);
+  function getRoleConfig(roleId) {
+    const configs = {
+      1: { name: "Student", color: "#e87500", label: "Undergraduate" },
+      3: { name: "Teacher", color: "#153f8f", label: "Teacher / Investigador" },
+      4: { name: "Coordinator", color: "#0b2d69", label: "Academic Management" }
+    };
+
+    return configs[roleId] || { name: "User", color: "#5f6f89", label: "System" };
+  }
+
+  $: role = getRoleConfig(user.id_role);
 </script>
 
 <div class="profile-card">
-    <div class="profile-header" style="border-left-color: {role.color}">
-        <div class="avatar" style="background-color: {role.color}">
-            {user.first_name?.[0] || 'U'}{user.last_name?.[0] || ''}
-        </div>
-        <div class="user-meta">
-            <h1>{user.first_name} {user.last_name}</h1>
-            <span class="role-tag" style="background-color: {role.color}15; color: {role.color}">
-                {role.name} - {role.label}
-            </span>
-        </div>
+  <div class="profile-header" style="border-left-color: {role.color}">
+    <div class="avatar" style="background-color: {role.color}">
+      {user.first_name?.[0] || 'U'}{user.last_name?.[0] || ''}
     </div>
 
-    <div class="info-sections">
-        <section class="data-group">
-            <h3><i class="icon">📧</i> Contacto y Acceso</h3>
-            <div class="field">
-                <span class="label">Correo Institucional</span>
-                <span class="value">{user.email}</span>
-            </div>
-            <div class="field">
-                <span class="label">Teléfono de contacto</span>
-                <span class="value">{user.phone || 'No registrado'}</span>
-            </div>
-        </section>
+    <div class="user-meta">
+      <span class="profile-eyebrow">Institutional profile</span>
+      <h1>{user.first_name || 'User'} {user.last_name || ''}</h1>
 
-        <section class="data-group">
-            <h3><i class="icon">🔑</i> Identificación</h3>
-            <div class="field">
-                <span class="label">Estado de cuenta</span>
-                <span class="status-indicator {user.is_active ? 'active' : 'inactive'}">
-                    {user.is_active ? '● Activa' : '○ Inactiva'}
-                </span>
-            </div>
-        </section>
+      <span class="role-tag" style="background-color: {role.color}15; color: {role.color}">
+        {role.name} · {role.label}
+      </span>
     </div>
+  </div>
+
+  <div class="info-sections">
+    <section class="data-group">
+      <h3><span class="icon">📧</span> Contact and access</h3>
+
+      <div class="field">
+        <span class="label">Institutional email</span>
+        <span class="value">{user.email || 'Not registered'}</span>
+      </div>
+
+      <div class="field">
+        <span class="label">Contact phone</span>
+        <span class="value">{user.phone || 'Not registered'}</span>
+      </div>
+    </section>
+
+    <section class="data-group">
+      <h3><span class="icon">🔑</span> Identification</h3>
+
+      <div class="field">
+        <span class="label">Account status</span>
+        <span class="status-indicator {user.is_active ? 'active' : 'inactive'}">
+          {user.is_active ? '● Active' : '○ Inactive'}
+        </span>
+      </div>
+
+      <div class="field">
+        <span class="label">Assigned role</span>
+        <span class="value">{role.name}</span>
+      </div>
+    </section>
+  </div>
 </div>
 
 <style>
-    .profile-card {
-        background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-        max-width: 800px;
-        margin: 0 auto;
+  .profile-card {
+    background: #ffffff;
+    border-radius: 28px;
+    box-shadow: var(--sgpa-shadow-md);
+    overflow: hidden;
+    max-width: 900px;
+    margin: 0 auto;
+    border: 1px solid var(--sgpa-border);
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.16), transparent 16rem),
+      linear-gradient(135deg, #ffffff, var(--sgpa-blue-soft));
+    border-left: 10px solid;
+    border-bottom: 1px solid var(--sgpa-border);
+  }
+
+  .avatar {
+    width: 82px;
+    height: 82px;
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.8rem;
+    font-weight: 950;
+    text-transform: uppercase;
+    box-shadow: 0 14px 28px rgba(11, 45, 105, 0.18);
+    flex-shrink: 0;
+  }
+
+  .profile-eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 0.45rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: var(--sgpa-yellow-soft);
+    color: var(--sgpa-blue);
+    border: 1px solid rgba(242, 183, 5, 0.28);
+    font-size: 0.75rem;
+    font-weight: 950;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .user-meta h1 {
+    margin: 0;
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    color: var(--sgpa-blue-dark);
+    font-weight: 950;
+    letter-spacing: -0.04em;
+  }
+
+  .role-tag {
+    font-size: 0.78rem;
+    font-weight: 900;
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-top: 0.7rem;
+    display: inline-flex;
+    text-transform: uppercase;
+    border: 1px solid rgba(11, 45, 105, 0.12);
+  }
+
+  .info-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 2rem;
+  }
+
+  .data-group {
+    background: var(--sgpa-surface-soft);
+    border: 1px solid var(--sgpa-border);
+    border-radius: 22px;
+    padding: 1.2rem;
+  }
+
+  .data-group h3 {
+    font-size: 0.9rem;
+    color: var(--sgpa-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 950;
+  }
+
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .field {
+    margin-bottom: 1rem;
+  }
+
+  .field:last-child {
+    margin-bottom: 0;
+  }
+
+  .label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--sgpa-muted);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.25rem;
+  }
+
+  .value {
+    font-size: 1rem;
+    color: var(--sgpa-text);
+    font-weight: 750;
+    overflow-wrap: anywhere;
+  }
+
+  .status-indicator {
+    display: inline-flex;
+    border-radius: 999px;
+    padding: 0.38rem 0.75rem;
+    font-weight: 900;
+    font-size: 0.9rem;
+  }
+
+  .status-indicator.active {
+    background: var(--sgpa-success-bg);
+    color: var(--sgpa-success);
+  }
+
+  .status-indicator.inactive {
+    background: var(--sgpa-danger-bg);
+    color: var(--sgpa-danger);
+  }
+
+  @media (max-width: 700px) {
+    .info-sections {
+      grid-template-columns: 1fr;
+      padding: 1.2rem;
     }
 
     .profile-header {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-        padding: 2rem;
-        background: #1e293b;
-        border-left: 10px solid;
-        border-bottom: 1px solid #f1f5f9;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1.4rem;
     }
-
-    .avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.8rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .user-meta h1 {
-        margin: 0;
-        font-size: 1.5rem;
-        color: #1e293b;
-    }
-
-    .role-tag {
-        font-size: 0.8rem;
-        font-weight: 700;
-        padding: 4px 12px;
-        border-radius: 20px;
-        margin-top: 0.5rem;
-        display: inline-block;
-        text-transform: uppercase;
-    }
-
-    .info-sections {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-        padding: 2rem;
-    }
-
-    .data-group h3 {
-        font-size: 0.9rem;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 1.2rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .field {
-        margin-bottom: 1rem;
-    }
-
-    .label {
-        display: block;
-        font-size: 0.75rem;
-        color: #64748b;
-        font-weight: 600;
-    }
-
-    .value {
-        font-size: 1rem;
-        color: #334155;
-        font-weight: 500;
-    }
-
-    .status-indicator {
-        font-weight: 700;
-        font-size: 0.9rem;
-    }
-
-    .status-indicator.active { color: #10b981; }
-    .status-indicator.inactive { color: #ef4444; }
-
-    @media (max-width: 600px) {
-        .info-sections { grid-template-columns: 1fr; }
-        .profile-header { flex-direction: column; text-align: center; }
-    }
+  }
 </style>

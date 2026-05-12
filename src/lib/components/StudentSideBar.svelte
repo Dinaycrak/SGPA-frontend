@@ -4,9 +4,9 @@
   let isOpen = $state(false);
 
   const menuItems = [
-    { name: 'Dashboard', href: '/students' },
-    { name: 'Available Projects', href: '/students/projects' },
-    { name: 'My Projects', href: '/students/myprojects' },
+    { name: 'Main panel', href: '/students' },
+    { name: 'Available projects', href: '/students/projects' },
+    { name: 'My projects', href: '/students/myprojects' },
     { name: 'Schedules', href: '/students/schedules' },
     { name: 'Profile', href: '/students/profile' }
   ];
@@ -48,10 +48,11 @@
 
 <aside class="sidebar" class:open={isOpen}>
   <div class="sidebar-header">
-    <div class="brand-mark">S</div>
+    <div class="brand-mark">E</div>
+
     <div>
       <h2>SGPA</h2>
-      <p>Student Module</p>
+      <p>Student module</p>
     </div>
   </div>
 
@@ -80,24 +81,25 @@
     width: 48px;
     height: 48px;
     border-radius: 16px;
-    background: #111827;
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #ffffff;
+    color: var(--sgpa-blue);
+    border: 1px solid var(--sgpa-border);
     display: grid;
     place-items: center;
     cursor: pointer;
-    box-shadow: 0 18px 34px rgba(0, 0, 0, 0.3);
+    box-shadow: var(--sgpa-shadow-md);
     transition: left 0.32s ease, background 0.22s ease, transform 0.22s ease;
   }
 
   .menu-toggle:hover {
-    background: #0b2d69;
+    background: var(--sgpa-blue-soft);
     transform: translateY(-50%) scale(1.04);
   }
 
   .menu-toggle.open {
     left: 316px;
-    background: #0b2d69;
+    background: var(--sgpa-blue);
+    color: #ffffff;
   }
 
   .hamburger {
@@ -109,7 +111,7 @@
     width: 22px;
     height: 2px;
     border-radius: 999px;
-    background: white;
+    background: currentColor;
     transition: transform 0.22s ease, opacity 0.22s ease;
   }
 
@@ -133,13 +135,13 @@
     height: 100vh;
     padding: 1.2rem;
     background:
-      radial-gradient(circle at top right, rgba(242, 183, 5, 0.1), transparent 12rem),
-      radial-gradient(circle at bottom left, rgba(249, 115, 22, 0.08), transparent 14rem),
-      linear-gradient(180deg, #05070d 0%, #111827 58%, #0b2d69 100%);
-    color: white;
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.18), transparent 13rem),
+      linear-gradient(180deg, #ffffff 0%, #f8fbff 62%, var(--sgpa-blue-soft) 100%);
+    color: var(--sgpa-text);
     transform: translateX(-100%);
     transition: transform 0.32s ease;
-    box-shadow: 18px 0 50px rgba(0, 0, 0, 0.34);
+    box-shadow: 18px 0 44px rgba(15, 35, 70, 0.14);
+    border-right: 1px solid var(--sgpa-border);
     overflow-y: auto;
   }
 
@@ -154,8 +156,9 @@
     margin-bottom: 1.4rem;
     padding: 1rem;
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #ffffff;
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-sm);
   }
 
   .brand-mark {
@@ -164,22 +167,24 @@
     width: 48px;
     height: 48px;
     border-radius: 16px;
-    background: #ffffff;
-    color: #0b2d69;
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    color: #ffffff;
     font-weight: 950;
     font-size: 1.2rem;
   }
 
   .sidebar-header h2 {
     margin: 0;
+    color: var(--sgpa-blue-dark);
     font-size: 1.2rem;
     font-weight: 950;
   }
 
   .sidebar-header p {
     margin: 0.15rem 0 0;
-    color: #cbd5e1;
+    color: var(--sgpa-text-soft);
     font-size: 0.86rem;
+    font-weight: 650;
   }
 
   .menu {
@@ -193,36 +198,42 @@
     gap: 0.75rem;
     padding: 0.9rem 0.95rem;
     border-radius: 16px;
-    color: #dbe4f0;
+    color: var(--sgpa-text-soft);
     text-decoration: none;
-    font-weight: 760;
-    transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease;
+    font-weight: 800;
+    border: 1px solid transparent;
+    transition:
+      transform 0.22s ease,
+      background 0.22s ease,
+      color 0.22s ease,
+      border-color 0.22s ease;
   }
 
   .menu a:hover {
     transform: translateX(4px);
-    background: rgba(255, 255, 255, 0.08);
-    color: white;
+    background: #ffffff;
+    color: var(--sgpa-blue);
+    border-color: var(--sgpa-border);
   }
 
   .menu a.active {
-    background: rgba(255, 255, 255, 0.13);
-    color: white;
-    box-shadow: inset 4px 0 0 #f2b705;
+    background: var(--sgpa-blue);
+    color: #ffffff;
+    box-shadow: inset 5px 0 0 var(--sgpa-yellow);
   }
 
   .dot {
     width: 9px;
     height: 9px;
     border-radius: 999px;
-    background: #64748b;
+    background: var(--sgpa-border-strong);
     flex: 0 0 auto;
   }
 
   .menu a.active .dot,
   .menu a:hover .dot {
-    background: #f2b705;
-    box-shadow: 0 0 0 5px rgba(242, 183, 5, 0.12);
+    background: var(--sgpa-yellow);
+    box-shadow: 0 0 0 5px rgba(242, 183, 5, 0.18);
   }
 
   .overlay {
@@ -230,7 +241,7 @@
     inset: 0;
     z-index: 1100;
     border: none;
-    background: rgba(5, 7, 13, 0.58);
+    background: rgba(15, 35, 70, 0.28);
     backdrop-filter: blur(4px);
     cursor: pointer;
   }

@@ -41,12 +41,12 @@ export async function load({ fetch }) {
             <div class="project-card__left">
               <div class="project-card__icon">📁</div>
               <div class="project-card__content">
-                <h3>${project.project_name ?? 'Sin nombre'}</h3>
-                <p>${project.description ?? 'Sin descripción'}</p>
+                <h3>${project.project_name ?? 'Unnamed'}</h3>
+                <p>${project.description ?? 'No description'}</p>
                 <div class="project-card__meta">
-                  <span><strong>Fecha de inicio:</strong> ${project.start_date ?? 'No definida'}</span>
-                  <span><strong>Estado:</strong> ${getStatusLabel(project.id_status)}</span>
-                  <span><strong>Docente:</strong> ${teacher ? getUserFullName(teacher) : 'Sin asignar'}</span>
+                  <span><strong>Start date:</strong> ${project.start_date ?? 'Not defined'}</span>
+                  <span><strong>Status:</strong> ${getStatusLabel(project.id_status)}</span>
+                  <span><strong>Teacher:</strong> ${teacher ? getUserFullName(teacher) : 'Unassigned'}</span>
                 </div>
               </div>
             </div>
@@ -66,7 +66,7 @@ export async function load({ fetch }) {
     return {
       rows: [],
       totalProjects: 0,
-      error: error.message || 'No se pudieron obtener los proyectos.'
+      error: error.message || 'Could not load projects.'
     };
   }
 }
