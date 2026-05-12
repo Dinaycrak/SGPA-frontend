@@ -7,6 +7,15 @@ import {
   getUserFullName
 } from '$lib/server/project-helpers.js';
 
+function escapeHtml(value = '') {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch }) {
   try {
@@ -35,23 +44,34 @@ export async function load({ fetch }) {
       const teacherId = teacherByProject.get(Number(project.id_project));
       const teacher = teacherId ? usersMap.get(teacherId) : null;
 
+      const projectName = escapeHtml(project.project_name ?? 'Unnamed');
+      const description = escapeHtml(project.description ?? 'No description');
+      const startDate = escapeHtml(project.start_date ?? 'Not defined');
+      const status = escapeHtml(getStatusLabel(project.id_status));
+      const teacherName = escapeHtml(
+        teacher ? getUserFullName(teacher) : 'Unassigned'
+      );
+
       return {
         proyecto_card: `
           <div class="project-card">
             <div class="project-card__left">
               <div class="project-card__icon">📁</div>
+
               <div class="project-card__content">
-                <h3>${project.project_name ?? 'Unnamed'}</h3>
-                <p>${project.description ?? 'No description'}</p>
+                <h3>${projectName}</h3>
+                <p>${description}</p>
+
                 <div class="project-card__meta">
-                  <span><strong>Start date:</strong> ${project.start_date ?? 'Not defined'}</span>
-                  <span><strong>Status:</strong> ${getStatusLabel(project.id_status)}</span>
-                  <span><strong>Teacher:</strong> ${teacher ? getUserFullName(teacher) : 'Unassigned'}</span>
+                  <span><strong>Start date:</strong> ${startDate}</span>
+                  <span><strong>Status:</strong> ${status}</span>
+                  <span><strong>Teacher:</strong> ${teacherName}</span>
                 </div>
               </div>
             </div>
+
             <div class="project-card__right">
-              <span class="neutral-badge">Gestión coordinador</span>
+              <span class="neutral-badge">Coordinator management</span>
             </div>
           </div>
         `

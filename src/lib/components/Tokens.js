@@ -1,17 +1,10 @@
 export const API_BASE_URL = "https://academic-project-management-api.onrender.com/api";
 
-/*
-  Reemplaza estos 3 tokens cada vez que expiren.
-  Como ahora todo sale de este archivo, ya no tendrás que ir archivo por archivo.
-*/
-export const token_coordinator = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3Nzg1OTk2NDR9.qFyoVZQ3c1TDsWsItpQNn74_hNvemNVRq_1LoH8nT7E";
-export const token_student = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozNywicm9sZSI6IlN0dWRlbnQiLCJleHAiOjE3Nzg1OTk2OTZ9.vlhyh9bMcsW9jJxwo93AZdze866rpTBW-BojF1mFwKc";
-export const token_teacher = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozOSwicm9sZSI6IlByb2Zlc3NvciIsImV4cCI6MTc3ODU5OTU5Nn0.n04LZl_NC6C50LGsoYBFghQVR9IYXmYV7EpIMCwwg4A";
+export const token_coordinator = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjo1LCJyb2xlIjoiQ29vcmRpbmF0b3IiLCJleHAiOjE3Nzg2NDQwMzB9.xOGw2cucnQMqAmItdTxMX2SkYUm3gqNnPIgY03RjaD4";
+export const token_student = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozNywicm9sZSI6IlN0dWRlbnQiLCJleHAiOjE3Nzg2NDM4OTN9.CVbZdW--uVeEONf5SDHEfqQPI86oOdkFNULu6O7mXeE";
+export const token_teacher = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c2VyIjozOSwicm9sZSI6IlByb2Zlc3NvciIsImV4cCI6MTc3ODY0Mzg1NX0.3QAHw7oBFGs_L2gaPNxJXs42Gjh735goUw5qzdTOU1o";
 
-/*
-  Estos IDs son temporales para los perfiles.
-  Si luego cambian los usuarios de prueba, solo ajustas aquí.
-*/
+
 export const PROFILE_USER_IDS = {
     students: 37,
     teacher: 39,
