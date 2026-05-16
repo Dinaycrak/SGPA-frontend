@@ -64,7 +64,6 @@ const files = {
     ['Panel principal', 'Main panel'],
     ['Proyectos disponibles', 'Available projects'],
     ['Mis proyectos', 'My projects'],
-    ['Horarios', 'Schedules'],
     ['Perfil', 'Profile'],
     ['Cerrar menú lateral', 'Close side menu'],
     ['Abrir menú lateral', 'Open side menu'],
@@ -75,8 +74,7 @@ const files = {
   'src/lib/components/TeacherSideBar.svelte': [
     ['Panel principal', 'Main panel'],
     ['Proyectos disponibles', 'Available projects'],
-    ['Mis proyectos', 'My projects'],
-    ['Horarios', 'Schedules'],
+    ['Proyectos asignados', 'assigned projects'],
     ['Perfil', 'Profile'],
     ['Cerrar menú lateral', 'Close side menu'],
     ['Abrir menú lateral', 'Open side menu'],
