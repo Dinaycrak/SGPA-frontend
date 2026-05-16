@@ -7,7 +7,6 @@
     { name: 'Main panel', href: '/students' },
     { name: 'Available projects', href: '/students/projects' },
     { name: 'My projects', href: '/students/myprojects' },
-    { name: 'Schedules', href: '/students/schedules' },
     { name: 'Profile', href: '/students/profile' }
   ];
 
