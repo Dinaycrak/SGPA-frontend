@@ -29,7 +29,7 @@
     <header class="main-header">
       <div>
         <span class="eyebrow">Teacher module</span>
-        <h1>assigned projects</h1>
+        <h1>Assigned projects</h1>
         <p>View the academic projects assigned directly to your teacher profile.</p>
       </div>
 
@@ -44,10 +44,10 @@
 
     <ProjectCardsDataTable
       {rows}
-      title="assigned projects"
+      title="Assigned projects"
       badgeColor="var(--sgpa-success)"
       emptyMessage="No assigned projects to display."
-      searchPlaceholders="Search assigned project..."
+      searchPlaceholder="Search assigned project..."
     />
   </div>
 </main>
