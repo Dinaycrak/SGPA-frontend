@@ -153,8 +153,8 @@
 
     <section id="equipo" class="team-section">
       <div class="section-header">
-        <span class="section-eyebrow">Equipo</span>
-        <h3>Coordinator y equipo principal</h3>
+        <span class="section-eyebrow">Team</span>
+        <h3>Coordinator and main team</h3>
         <p>
           This section can be used to introduce the system coordinator and the core team
           responsible for project administration and support.

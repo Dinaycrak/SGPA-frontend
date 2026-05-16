@@ -83,7 +83,7 @@
   <section class="container">
     <header class="title-block">
       <div>
-        <span class="eyebrow">Módulo coordinador</span>
+        <span class="eyebrow">Coordinator Module </span>
         <h1>Student list</h1>
         <p>View and manage the access status of registered students.</p>
       </div>
@@ -102,7 +102,7 @@
     <div class="table-card">
       <div class="table-toolbar">
         <div>
-          <h2>Estudiantes registered</h2>
+          <h2>Students registered</h2>
           <p>Search by name, email, or account status.</p>
         </div>
 
