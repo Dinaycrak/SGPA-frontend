@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
+    "pg": "^8.20.0",
     "simple-datatables": "^9.0.3"
   }
 }
