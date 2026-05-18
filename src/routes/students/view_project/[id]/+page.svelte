@@ -2,6 +2,7 @@
   import Header from '$lib/components/Header_St.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import SideBar from '$lib/components/StudentSideBar.svelte';
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte';
 
   export let data;
   export let form;
@@ -16,10 +17,47 @@
     return String(value).split('T')[0];
   }
 
-  function confirmEnrollment(event) {
-    if (!confirm('Do you want to enroll in this project?')) {
-      event.preventDefault();
-    }
+  let pendingForm = null;
+  let confirmModal = {
+    open: false,
+    eyebrow: 'Enrollment confirmation',
+    title: '',
+    message: '',
+    details: '',
+    confirmText: 'Confirm enrollment',
+    tone: 'success'
+  };
+
+  function openEnrollmentModal(event) {
+    const form = event.currentTarget.closest('form');
+
+    if (!form || !form.reportValidity()) return;
+
+    pendingForm = form;
+    confirmModal = {
+      open: true,
+      eyebrow: 'Enrollment confirmation',
+      title: 'Enroll in this project?',
+      message: 'Your user will be registered as a student participant in this academic project.',
+      details: project?.project_name || 'Unnamed project',
+      confirmText: 'Enroll in project',
+      tone: 'success'
+    };
+  }
+
+  function closeConfirmModal() {
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+  }
+
+  function confirmPendingAction() {
+    const form = pendingForm;
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+
+    setTimeout(() => {
+      form?.requestSubmit();
+    }, 0);
   }
 
   $: project = data?.project;
@@ -105,12 +143,10 @@
             <a href="/students/myprojects" class="secondary-link full-width">Go to my projects</a>
           {:else}
             <p>You can enroll in this project. Confirm the action before registering your enrollment.</p>
-            <form
-              method="POST"
-              action="?/enroll"
-              onsubmit={confirmEnrollment}
-            >
-              <button type="submit" class="primary-btn">Enroll in project</button>
+            <form method="POST" action="?/enroll">
+              <button type="button" class="primary-btn" onclick={openEnrollmentModal}>
+                Enroll in project
+              </button>
             </form>
           {/if}
         </aside>
@@ -168,6 +204,19 @@
     {/if}
   </div>
 </main>
+
+<ConfirmModal
+  open={confirmModal.open}
+  eyebrow={confirmModal.eyebrow}
+  title={confirmModal.title}
+  message={confirmModal.message}
+  details={confirmModal.details}
+  confirmText={confirmModal.confirmText}
+  cancelText="Cancel"
+  tone={confirmModal.tone}
+  onCancel={closeConfirmModal}
+  onConfirm={confirmPendingAction}
+/>
 
 <Footer />
 

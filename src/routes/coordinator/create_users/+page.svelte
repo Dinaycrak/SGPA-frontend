@@ -2,13 +2,78 @@
   import Header from '$lib/components/Header_St.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import SideBar from '$lib/components/CoordinatorSideBar.svelte';
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte';
 
   export let form;
+
+  let pendingForm = null;
+  let confirmedSubmit = false;
+  let confirmModal = {
+    open: false,
+    eyebrow: 'User confirmation',
+    title: '',
+    message: '',
+    details: '',
+    confirmText: 'Confirm',
+    tone: 'primary'
+  };
 
   $: savedValues = form?.values || {};
 
   function getValue(name) {
     return savedValues[name] ?? '';
+  }
+
+  function getRoleLabel(roleId) {
+    if (String(roleId) === '3') return 'Teacher';
+    if (String(roleId) === '1') return 'Student';
+    return 'User';
+  }
+
+  function handleSubmit(event) {
+    if (confirmedSubmit) {
+      confirmedSubmit = false;
+      return;
+    }
+
+    event.preventDefault();
+
+    const formElement = event.currentTarget;
+    if (!formElement.reportValidity()) return;
+
+    const formData = new FormData(formElement);
+    const firstName = String(formData.get('first_name') || '').trim();
+    const lastName = String(formData.get('last_name') || '').trim();
+    const email = String(formData.get('email') || '').trim();
+    const roleLabel = getRoleLabel(formData.get('id_role'));
+
+    pendingForm = formElement;
+    confirmModal = {
+      open: true,
+      eyebrow: 'User confirmation',
+      title: `Create ${roleLabel.toLowerCase()} user?`,
+      message: 'This action will register a new user in the SGPA system.',
+      details: `${firstName} ${lastName} · ${email}`,
+      confirmText: 'Create user',
+      tone: 'primary'
+    };
+  }
+
+  function closeConfirmModal() {
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+    confirmedSubmit = false;
+  }
+
+  function confirmPendingAction() {
+    const formElement = pendingForm;
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+    confirmedSubmit = true;
+
+    setTimeout(() => {
+      formElement?.requestSubmit();
+    }, 0);
   }
 </script>
 
@@ -51,7 +116,7 @@
       </div>
 
       <div class="form-card">
-        <form method="POST" class="user-form">
+        <form method="POST" class="user-form" onsubmit={handleSubmit}>
           <div class="form-grid">
             <div class="field">
               <label for="first_name">First names</label>
@@ -152,6 +217,19 @@
     </section>
   </div>
 </main>
+
+<ConfirmModal
+  open={confirmModal.open}
+  eyebrow={confirmModal.eyebrow}
+  title={confirmModal.title}
+  message={confirmModal.message}
+  details={confirmModal.details}
+  confirmText={confirmModal.confirmText}
+  cancelText="Cancel"
+  tone={confirmModal.tone}
+  onCancel={closeConfirmModal}
+  onConfirm={confirmPendingAction}
+/>
 
 <Footer />
 
@@ -378,6 +456,18 @@
   .clear-btn:hover {
     background: var(--sgpa-blue-soft);
     color: var(--sgpa-blue-dark);
+  }
+
+  .save-btn {
+    border: none;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    box-shadow: 0 14px 30px rgba(11, 45, 105, 0.2);
+  }
+
+  .save-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 34px rgba(11, 45, 105, 0.24);
   }
 
   @media (max-width: 780px) {

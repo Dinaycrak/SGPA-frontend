@@ -2,19 +2,80 @@
   import Header from '$lib/components/Header_St.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import SideBar from '$lib/components/CoordinatorSideBar.svelte';
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte';
 
   export let data;
   export let form;
 
   let submitting = false;
+  let pendingForm = null;
+  let confirmedSubmit = false;
+  let confirmModal = {
+    open: false,
+    eyebrow: 'Project confirmation',
+    title: '',
+    message: '',
+    details: '',
+    confirmText: 'Confirm',
+    tone: 'primary'
+  };
 
   $: teachers = data?.teachers || [];
   $: statuses = data?.statuses || [];
   $: error = form?.error || data?.error;
   $: values = form?.values || {};
 
-  function handleSubmit() {
-    submitting = true;
+  function getTeacherLabel(teacherId) {
+    const teacher = teachers.find((item) => String(item.id_user) === String(teacherId));
+    if (!teacher) return 'No teacher selected';
+
+    const fullName = `${teacher.first_name || ''} ${teacher.last_name || ''}`.trim();
+    return `${fullName || 'Unnamed teacher'} · ${teacher.email || 'No email'}`;
+  }
+
+  function handleSubmit(event) {
+    if (confirmedSubmit) {
+      confirmedSubmit = false;
+      submitting = true;
+      return;
+    }
+
+    event.preventDefault();
+
+    const formElement = event.currentTarget;
+    if (!formElement.reportValidity()) return;
+
+    const formData = new FormData(formElement);
+    const projectName = String(formData.get('project_name') || '').trim();
+    const teacherId = formData.get('teacher_id');
+
+    pendingForm = formElement;
+    confirmModal = {
+      open: true,
+      eyebrow: 'Project confirmation',
+      title: 'Create this project?',
+      message: 'The project will be registered and the selected teacher will be assigned to it.',
+      details: `${projectName || 'Unnamed project'} · ${getTeacherLabel(teacherId)}`,
+      confirmText: 'Create project',
+      tone: 'primary'
+    };
+  }
+
+  function closeConfirmModal() {
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+    confirmedSubmit = false;
+  }
+
+  function confirmPendingAction() {
+    const formElement = pendingForm;
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+    confirmedSubmit = true;
+
+    setTimeout(() => {
+      formElement?.requestSubmit();
+    }, 0);
   }
 </script>
 
@@ -161,6 +222,19 @@
     </section>
   </div>
 </main>
+
+<ConfirmModal
+  open={confirmModal.open}
+  eyebrow={confirmModal.eyebrow}
+  title={confirmModal.title}
+  message={confirmModal.message}
+  details={confirmModal.details}
+  confirmText={confirmModal.confirmText}
+  cancelText="Cancel"
+  tone={confirmModal.tone}
+  onCancel={closeConfirmModal}
+  onConfirm={confirmPendingAction}
+/>
 
 <Footer />
 
@@ -366,6 +440,14 @@
 
   .primary-btn {
     border: none;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    box-shadow: 0 14px 30px rgba(11, 45, 105, 0.2);
+  }
+
+  .primary-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 34px rgba(11, 45, 105, 0.24);
   }
 
   .secondary-btn {
@@ -382,6 +464,7 @@
   .primary-btn:disabled {
     opacity: 0.65;
     cursor: not-allowed;
+    transform: none;
   }
 
   @media (max-width: 780px) {

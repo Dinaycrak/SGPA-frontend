@@ -3,6 +3,7 @@
   import Header from '$lib/components/Header_St.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import SideBar from '$lib/components/CoordinatorSideBar.svelte';
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte';
 
   export let data;
   export let form;
@@ -48,9 +49,51 @@
     currentPage = page;
   }
 
-  function confirmToggle(name, nextIsActive) {
-    const actionText = nextIsActive ? 'HABILITAR' : 'DESHABILITAR';
-    return confirm(`¿Estás seguro of que deseas ${actionText} al estudiante ${name}?`);
+  let pendingForm = null;
+  let confirmModal = {
+    open: false,
+    eyebrow: 'Security confirmation',
+    title: '',
+    message: '',
+    details: '',
+    confirmText: 'Confirm',
+    tone: 'primary'
+  };
+
+  function openToggleModal(event, row) {
+    const form = event.currentTarget.closest('form');
+
+    if (!form || !form.reportValidity()) return;
+
+    const nextIsActive = !row.is_active;
+
+    pendingForm = form;
+    confirmModal = {
+      open: true,
+      eyebrow: 'Security confirmation',
+      title: nextIsActive ? 'Enable student access?' : 'Disable student access?',
+      message: nextIsActive
+        ? 'This student will be able to access the platform again.'
+        : 'This student will temporarily lose access to the platform.',
+      details: row.nombre,
+      confirmText: nextIsActive ? 'Enable access' : 'Disable access',
+      tone: nextIsActive ? 'success' : 'danger'
+    };
+  }
+
+  function closeConfirmModal() {
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+  }
+
+  function confirmPendingAction() {
+    const form = pendingForm;
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+
+    setTimeout(() => {
+      form?.requestSubmit();
+    }, 0);
   }
 
   function updateLocalUser(updatedUser) {
@@ -146,21 +189,17 @@
                       method="POST"
                       action="?/toggleStatus"
                       use:enhance={handleEnhance}
-                      onsubmit={(event) => {
-                        if (!confirmToggle(row.nombre, !row.is_active)) {
-                          event.preventDefault();
-                        }
-                      }}
                     >
                       <input type="hidden" name="id_user" value={row.id_user} />
                       <input type="hidden" name="user_name" value={row.nombre} />
                       <input type="hidden" name="next_is_active" value={(!row.is_active).toString()} />
 
                       <button
-                        type="submit"
+                        type="button"
                         class="action-btn"
                         class:danger-btn={row.is_active}
                         class:enable-btn={!row.is_active}
+                        onclick={(event) => openToggleModal(event, row)}
                       >
                         {row.is_active ? 'Disable access' : 'Enable access'}
                       </button>
@@ -205,6 +244,19 @@
     </div>
   </section>
 </main>
+
+<ConfirmModal
+  open={confirmModal.open}
+  eyebrow={confirmModal.eyebrow}
+  title={confirmModal.title}
+  message={confirmModal.message}
+  details={confirmModal.details}
+  confirmText={confirmModal.confirmText}
+  cancelText="Cancel"
+  tone={confirmModal.tone}
+  onCancel={closeConfirmModal}
+  onConfirm={confirmPendingAction}
+/>
 
 <Footer />
 

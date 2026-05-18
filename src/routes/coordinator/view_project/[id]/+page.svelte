@@ -2,6 +2,7 @@
   import Header from '$lib/components/Header_St.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import SideBar from '$lib/components/CoordinatorSideBar.svelte';
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte';
 
   export let data;
   export let form;
@@ -16,16 +17,47 @@
     return String(value).split('T')[0];
   }
 
-  function confirmStatusChange(event) {
-    if (!confirm('Do you want to update the project status?')) {
-      event.preventDefault();
-    }
+  let pendingForm = null;
+  let confirmModal = {
+    open: false,
+    eyebrow: 'Project confirmation',
+    title: '',
+    message: '',
+    details: '',
+    confirmText: 'Confirm',
+    tone: 'primary'
+  };
+
+  function openSubmitModal(event, options) {
+    const form = event.currentTarget.closest('form');
+
+    if (!form || !form.reportValidity()) return;
+
+    pendingForm = form;
+    confirmModal = {
+      open: true,
+      eyebrow: options.eyebrow || 'Project confirmation',
+      title: options.title,
+      message: options.message,
+      details: options.details || '',
+      confirmText: options.confirmText || 'Confirm',
+      tone: options.tone || 'primary'
+    };
   }
 
-  function confirmTeacherAssign(event) {
-    if (!confirm('Do you want to assign this teacher to the project?')) {
-      event.preventDefault();
-    }
+  function closeConfirmModal() {
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+  }
+
+  function confirmPendingAction() {
+    const form = pendingForm;
+    confirmModal = { ...confirmModal, open: false };
+    pendingForm = null;
+
+    setTimeout(() => {
+      form?.requestSubmit();
+    }, 0);
   }
 
   $: project = data?.project;
@@ -115,7 +147,7 @@
             <h3>Change status</h3>
             <p>Select a new status for this project.</p>
 
-            <form method="POST" action="?/updateStatus" onsubmit={confirmStatusChange}>
+            <form method="POST" action="?/updateStatus">
               <label for="statusId">Project status</label>
               <select id="statusId" name="statusId" required>
                 <option value="">Select status</option>
@@ -129,7 +161,21 @@
                 {/each}
               </select>
 
-              <button type="submit" class="primary-btn">Update status</button>
+              <button
+                type="button"
+                class="primary-btn"
+                onclick={(event) =>
+                  openSubmitModal(event, {
+                    eyebrow: 'Status update',
+                    title: 'Update project status?',
+                    message: 'The selected status will be saved for this academic project.',
+                    details: project.project_name || 'Unnamed project',
+                    confirmText: 'Update status',
+                    tone: 'warning'
+                  })}
+              >
+                Update status
+              </button>
             </form>
           </div>
 
@@ -146,7 +192,7 @@
               <p>This project does not have a teacher assigned yet.</p>
             {/if}
 
-            <form method="POST" action="?/assignTeacher" onsubmit={confirmTeacherAssign}>
+            <form method="POST" action="?/assignTeacher">
               <label for="teacherId">Available teachers</label>
               <select id="teacherId" name="teacherId" required>
                 <option value="">Select teacher</option>
@@ -160,7 +206,21 @@
                 {/each}
               </select>
 
-              <button type="submit" class="primary-btn">
+              <button
+                type="button"
+                class="primary-btn"
+                onclick={(event) =>
+                  openSubmitModal(event, {
+                    eyebrow: assignedTeacher ? 'Teacher change' : 'Teacher assignment',
+                    title: assignedTeacher ? 'Change assigned teacher?' : 'Assign teacher to project?',
+                    message: assignedTeacher
+                      ? 'This action will try to replace the current teacher assigned to the project.'
+                      : 'This teacher will be linked to the selected academic project.',
+                    details: project.project_name || 'Unnamed project',
+                    confirmText: assignedTeacher ? 'Change teacher' : 'Assign teacher',
+                    tone: 'primary'
+                  })}
+              >
                 {assignedTeacher ? 'Change teacher' : 'Assign teacher'}
               </button>
             </form>
@@ -223,6 +283,19 @@
     {/if}
   </div>
 </main>
+
+<ConfirmModal
+  open={confirmModal.open}
+  eyebrow={confirmModal.eyebrow}
+  title={confirmModal.title}
+  message={confirmModal.message}
+  details={confirmModal.details}
+  confirmText={confirmModal.confirmText}
+  cancelText="Cancel"
+  tone={confirmModal.tone}
+  onCancel={closeConfirmModal}
+  onConfirm={confirmPendingAction}
+/>
 
 <Footer />
 
