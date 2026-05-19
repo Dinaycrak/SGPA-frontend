@@ -1,10 +1,21 @@
 <script>
   import Header from '$lib/components/Header_St.svelte';
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import SideBar from '$lib/components/TeacherSideBar.svelte';
 
   export let data;
   export let form;
+
+  let confirmOpen = false;
+  let pendingForm = null;
+  let allowSubmit = false;
+
+  let modalTitle = 'Confirm action';
+  let modalMessage = 'Are you sure you want to continue?';
+  let modalDetails = '';
+  let modalConfirmText = 'Confirm';
+  let modalVariant = 'info';
 
   function fullName(user) {
     if (!user) return 'Unassigned';
@@ -16,10 +27,57 @@
     return String(value).split('T')[0];
   }
 
-  function confirmStatusChange(event) {
-    if (!confirm('Do you want to update the project status?')) {
-      event.preventDefault();
+  function openConfirmModal(event, config) {
+    if (allowSubmit) {
+      allowSubmit = false;
+      return;
     }
+
+    event.preventDefault();
+
+    pendingForm = event.currentTarget;
+    modalTitle = config.title;
+    modalMessage = config.message;
+    modalDetails = config.details || '';
+    modalConfirmText = config.confirmText || 'Confirm';
+    modalVariant = config.variant || 'info';
+    confirmOpen = true;
+  }
+
+  function closeConfirm() {
+    confirmOpen = false;
+    pendingForm = null;
+  }
+
+  function confirmAction() {
+    if (!pendingForm) {
+      closeConfirm();
+      return;
+    }
+
+    const formToSubmit = pendingForm;
+
+    confirmOpen = false;
+    pendingForm = null;
+    allowSubmit = true;
+
+    formToSubmit.requestSubmit();
+  }
+
+  function handleStatusSubmit(event) {
+    const formElement = event.currentTarget;
+    const select = formElement.querySelector('select[name="statusId"]');
+    const selectedStatus = select?.selectedOptions?.[0]?.textContent?.trim() || 'Selected status';
+
+    openConfirmModal(event, {
+      title: 'Update project status?',
+      message: 'This action will update the status of the assigned academic project.',
+      details: project
+        ? `Project: ${project.project_name || 'Unnamed project'} | New status: ${selectedStatus}`
+        : `New status: ${selectedStatus}`,
+      confirmText: 'Update status',
+      variant: 'warning'
+    });
   }
 
   $: project = data?.project;
@@ -64,7 +122,9 @@
             <div>
               <span class="eyebrow small">Project information</span>
               <h2>{project.project_name || 'Unnamed project'}</h2>
-              <span class="status-pill">{data.statusLabel || 'Unknown'}</span>
+              <span class="status-pill" class:cancelled={isProjectCancelled}>
+                {data.statusLabel || 'Unknown'}
+              </span>
             </div>
           </div>
 
@@ -123,7 +183,7 @@
                 cancellation is reserved for the coordinator.
               </p>
 
-              <form method="POST" action="?/updateStatus" onsubmit={confirmStatusChange}>
+              <form method="POST" action="?/updateStatus" on:submit={handleStatusSubmit}>
                 <label for="statusId">Project status</label>
 
                 <select id="statusId" name="statusId" required>
@@ -233,6 +293,18 @@
 </main>
 
 <Footer />
+
+<ConfirmModal
+  open={confirmOpen}
+  title={modalTitle}
+  message={modalMessage}
+  details={modalDetails}
+  confirmText={modalConfirmText}
+  cancelText="Cancel"
+  variant={modalVariant}
+  onCancel={closeConfirm}
+  onConfirm={confirmAction}
+/>
 
 <style>
   main {
@@ -408,6 +480,12 @@
     border: 1px solid rgba(11, 45, 105, 0.12);
     font-size: 0.82rem;
     font-weight: 950;
+  }
+
+  .status-pill.cancelled {
+    color: #991b1b;
+    background: #fee2e2;
+    border-color: #fecaca;
   }
 
   .description {

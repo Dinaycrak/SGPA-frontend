@@ -1,5 +1,6 @@
 <script>
   import Header from '$lib/components/Header_St.svelte';
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import SideBar from '$lib/components/StudentSideBar.svelte';
 
@@ -16,10 +17,37 @@
     return String(value).split('T')[0];
   }
 
+  let confirmOpen = false;
+  let pendingForm = null;
+  let allowSubmit = false;
+
   function confirmEnrollment(event) {
-    if (!confirm('Do you want to enroll in this project?')) {
-      event.preventDefault();
+    if (allowSubmit) {
+      allowSubmit = false;
+      return;
     }
+
+    event.preventDefault();
+    pendingForm = event.currentTarget;
+    confirmOpen = true;
+  }
+
+  function closeConfirm() {
+    confirmOpen = false;
+    pendingForm = null;
+  }
+
+  function confirmAction() {
+    if (!pendingForm) {
+      closeConfirm();
+      return;
+    }
+
+    const formToSubmit = pendingForm;
+    confirmOpen = false;
+    pendingForm = null;
+    allowSubmit = true;
+    formToSubmit.requestSubmit();
   }
 
   $: project = data?.project;
@@ -73,22 +101,27 @@
               <span>Start date</span>
               <strong>{formatDate(project.start_date)}</strong>
             </div>
+
             <div class="info-item">
               <span>End date</span>
               <strong>{formatDate(project.end_date)}</strong>
             </div>
+
             <div class="info-item">
               <span>Teacher</span>
               <strong>{fullName(assignedTeacher)}</strong>
             </div>
+
             <div class="info-item">
               <span>Enrolled students</span>
               <strong>{enrolledStudents.length}</strong>
             </div>
+
             <div class="info-item">
               <span>Project ID</span>
               <strong>{project.id_project}</strong>
             </div>
+
             <div class="info-item">
               <span>Research group</span>
               <strong>{project.id_research_group || 'N/A'}</strong>
@@ -105,11 +138,8 @@
             <a href="/students/myprojects" class="secondary-link full-width">Go to my projects</a>
           {:else}
             <p>You can enroll in this project. Confirm the action before registering your enrollment.</p>
-            <form
-              method="POST"
-              action="?/enroll"
-              onsubmit={confirmEnrollment}
-            >
+
+            <form method="POST" action="?/enroll" onsubmit={confirmEnrollment}>
               <button type="submit" class="primary-btn">Enroll in project</button>
             </form>
           {/if}
@@ -122,11 +152,13 @@
             <span class="eyebrow small">Participants</span>
             <h2>Project team</h2>
           </div>
+
           <span class="count-badge">{enrolledStudents.length + (assignedTeacher ? 1 : 0)} people</span>
         </div>
 
         <div class="participant-block">
           <h3>Assigned teacher</h3>
+
           {#if assignedTeacher}
             <article class="participant-card teacher">
               <div class="avatar">T</div>
@@ -142,6 +174,7 @@
 
         <div class="participant-block">
           <h3>Enrolled students</h3>
+
           {#if enrolledStudents.length > 0}
             <div class="students-list">
               {#each enrolledStudents as student}
@@ -170,6 +203,18 @@
 </main>
 
 <Footer />
+
+<ConfirmModal
+  open={confirmOpen}
+  title="Enroll in this project?"
+  message="Your user will be registered as a student participant in this academic project."
+  details={project ? `Project: ${project.project_name || 'Unnamed project'}` : ''}
+  confirmText="Enroll in project"
+  cancelText="Cancel"
+  variant="success"
+  onCancel={closeConfirm}
+  onConfirm={confirmAction}
+/>
 
 <style>
   main {

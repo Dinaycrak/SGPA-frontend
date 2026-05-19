@@ -1,10 +1,21 @@
 <script>
   import Header from '$lib/components/Header_St.svelte';
+  import ConfirmModal from '$lib/components/ConfirmModal.svelte';
   import Footer from '$lib/components/Footer.svelte';
   import SideBar from '$lib/components/CoordinatorSideBar.svelte';
 
   export let data;
   export let form;
+
+  let confirmOpen = false;
+  let pendingForm = null;
+  let allowSubmit = false;
+
+  let modalTitle = 'Confirm action';
+  let modalMessage = 'Are you sure you want to continue?';
+  let modalDetails = '';
+  let modalConfirmText = 'Confirm';
+  let modalVariant = 'info';
 
   function fullName(user) {
     if (!user) return 'Unassigned';
@@ -16,28 +27,95 @@
     return String(value).split('T')[0];
   }
 
-  function confirmStatusChange(event) {
-    if (!confirm('Do you want to update the project status?')) {
-      event.preventDefault();
+  function openConfirmModal(event, config) {
+    if (allowSubmit) {
+      allowSubmit = false;
+      return;
     }
+
+    event.preventDefault();
+
+    pendingForm = event.currentTarget;
+    modalTitle = config.title;
+    modalMessage = config.message;
+    modalDetails = config.details || '';
+    modalConfirmText = config.confirmText || 'Confirm';
+    modalVariant = config.variant || 'info';
+    confirmOpen = true;
   }
 
-  function confirmTeacherAssign(event) {
-    if (!confirm('Do you want to assign this teacher to the project?')) {
-      event.preventDefault();
-    }
+  function closeConfirm() {
+    confirmOpen = false;
+    pendingForm = null;
   }
 
-  function confirmCancelProject(event) {
-    if (!confirm('This action will cancel the project. Do you want to continue?')) {
-      event.preventDefault();
+  function confirmAction() {
+    if (!pendingForm) {
+      closeConfirm();
+      return;
     }
+
+    const formToSubmit = pendingForm;
+
+    confirmOpen = false;
+    pendingForm = null;
+    allowSubmit = true;
+
+    formToSubmit.requestSubmit();
   }
 
-  function confirmReactivateProject(event) {
-    if (!confirm('This action will reactivate the project as Active. Do you want to continue?')) {
-      event.preventDefault();
-    }
+  function handleStatusSubmit(event) {
+    const formElement = event.currentTarget;
+    const select = formElement.querySelector('select[name="statusId"]');
+    const selectedStatus = select?.selectedOptions?.[0]?.textContent?.trim() || 'Selected status';
+
+    openConfirmModal(event, {
+      title: 'Update project status?',
+      message: 'This action will update the current status of the academic project.',
+      details: project
+        ? `Project: ${project.project_name || 'Unnamed project'} | New status: ${selectedStatus}`
+        : `New status: ${selectedStatus}`,
+      confirmText: 'Update status',
+      variant: 'warning'
+    });
+  }
+
+  function handleTeacherSubmit(event) {
+    const formElement = event.currentTarget;
+    const select = formElement.querySelector('select[name="teacherId"]');
+    const selectedTeacher = select?.selectedOptions?.[0]?.textContent?.trim() || 'Selected teacher';
+
+    openConfirmModal(event, {
+      title: assignedTeacher ? 'Change assigned teacher?' : 'Assign teacher?',
+      message: assignedTeacher
+        ? 'This action will try to replace the teacher assigned to this project.'
+        : 'This action will assign a teacher to this project.',
+      details: project
+        ? `Project: ${project.project_name || 'Unnamed project'} | Teacher: ${selectedTeacher}`
+        : `Teacher: ${selectedTeacher}`,
+      confirmText: assignedTeacher ? 'Change teacher' : 'Assign teacher',
+      variant: 'info'
+    });
+  }
+
+  function handleCancelSubmit(event) {
+    openConfirmModal(event, {
+      title: 'Cancel this project?',
+      message: 'This action will mark the project as cancelled. Only the coordinator should perform this action.',
+      details: project ? `Project: ${project.project_name || 'Unnamed project'}` : '',
+      confirmText: 'Cancel project',
+      variant: 'danger'
+    });
+  }
+
+  function handleReactivateSubmit(event) {
+    openConfirmModal(event, {
+      title: 'Reactivate this project?',
+      message: 'This action will reactivate the project and set its status back to Active.',
+      details: project ? `Project: ${project.project_name || 'Unnamed project'}` : '',
+      confirmText: 'Reactivate project',
+      variant: 'success'
+    });
   }
 
   $: project = data?.project;
@@ -134,7 +212,7 @@
                 will return to Active.
               </p>
 
-              <form method="POST" action="?/reactivateProject" onsubmit={confirmReactivateProject}>
+              <form method="POST" action="?/reactivateProject" on:submit={handleReactivateSubmit}>
                 <button type="submit" class="reactivate-btn">Reactivate project</button>
               </form>
             </div>
@@ -146,7 +224,7 @@
                 with the red cancel button.
               </p>
 
-              <form method="POST" action="?/updateStatus" onsubmit={confirmStatusChange}>
+              <form method="POST" action="?/updateStatus" on:submit={handleStatusSubmit}>
                 <label for="statusId">Project status</label>
 
                 <select id="statusId" name="statusId" required>
@@ -172,7 +250,7 @@
                 This option is reserved for the coordinator.
               </p>
 
-              <form method="POST" action="?/cancelProject" onsubmit={confirmCancelProject}>
+              <form method="POST" action="?/cancelProject" on:submit={handleCancelSubmit}>
                 <button type="submit" class="danger-btn">Cancel project</button>
               </form>
             </div>
@@ -191,7 +269,7 @@
               <p>This project does not have a teacher assigned yet.</p>
             {/if}
 
-            <form method="POST" action="?/assignTeacher" onsubmit={confirmTeacherAssign}>
+            <form method="POST" action="?/assignTeacher" on:submit={handleTeacherSubmit}>
               <label for="teacherId">Available teachers</label>
 
               <select id="teacherId" name="teacherId" required>
@@ -271,6 +349,18 @@
 </main>
 
 <Footer />
+
+<ConfirmModal
+  open={confirmOpen}
+  title={modalTitle}
+  message={modalMessage}
+  details={modalDetails}
+  confirmText={modalConfirmText}
+  cancelText="Cancel"
+  variant={modalVariant}
+  onCancel={closeConfirm}
+  onConfirm={confirmAction}
+/>
 
 <style>
   main {
