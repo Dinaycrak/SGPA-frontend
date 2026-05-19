@@ -1,10 +1,13 @@
+import { fail } from '@sveltejs/kit';
 import { PROFILE_USER_IDS } from '$lib/components/Tokens.js';
 import {
   getProjects,
   getUsers,
   getProjectUsers,
+  getStatuses,
   ROLE_IDS,
-  getStatusLabel
+  getStatusLabel,
+  updateProjectStatus
 } from '$lib/server/project-helpers.js';
 
 const CURRENT_TEACHER_ID = Number(PROFILE_USER_IDS.teacher || 39);
@@ -35,6 +38,25 @@ function getTeacherAssignedToProject(relations = [], users = [], projectId) {
   return users.find((user) => Number(user.id_user) === Number(relation.id_user)) ?? null;
 }
 
+function isCancelledStatus(statusId, statuses = []) {
+  const selectedStatus = statuses.find(
+    (status) => Number(status.id_status) === Number(statusId)
+  );
+
+  const name = String(selectedStatus?.status_name || '').trim().toLowerCase();
+
+  return (
+    Number(statusId) === 4 ||
+    name === 'cancelled' ||
+    name === 'canceled' ||
+    name === 'cancelado'
+  );
+}
+
+function filterStatusesForTeacher(statuses = []) {
+  return statuses.filter((status) => !isCancelledStatus(status.id_status, statuses));
+}
+
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch, params }) {
   const projectId = Number(params.id);
@@ -43,15 +65,19 @@ export async function load({ fetch, params }) {
     return {
       projectId: params.id,
       currentTeacherId: CURRENT_TEACHER_ID,
+      statuses: [],
+      teacherStatuses: [],
+      isProjectCancelled: false,
       error: 'Invalid project ID.'
     };
   }
 
   try {
-    const [projects, users, relations] = await Promise.all([
+    const [projects, users, relations, statuses] = await Promise.all([
       getProjects(fetch, 'teacher'),
       getUsers(fetch, 'teacher'),
-      getProjectUsers(fetch, 'teacher').catch(() => [])
+      getProjectUsers(fetch, 'teacher').catch(() => []),
+      getStatuses(fetch, 'teacher')
     ]);
 
     const project = projects.find((item) => Number(item.id_project) === projectId) ?? null;
@@ -60,6 +86,9 @@ export async function load({ fetch, params }) {
       return {
         projectId,
         currentTeacherId: CURRENT_TEACHER_ID,
+        statuses,
+        teacherStatuses: filterStatusesForTeacher(statuses),
+        isProjectCancelled: false,
         error: 'Project not found.'
       };
     }
@@ -74,20 +103,103 @@ export async function load({ fetch, params }) {
         Number(relation.id_role) === ROLE_IDS.teacher
     );
 
+    const isProjectCancelled = isCancelledStatus(project.id_status, statuses);
+
     return {
       projectId,
       project,
       currentTeacherId: CURRENT_TEACHER_ID,
       assignedTeacher,
       enrolledStudents,
-      statusLabel: getStatusLabel(project.id_status),
-      isAssignedToCurrentTeacher
+      statuses,
+      teacherStatuses: filterStatusesForTeacher(statuses),
+      statusLabel: getStatusLabel(project.id_status, statuses),
+      isAssignedToCurrentTeacher,
+      isProjectCancelled
     };
   } catch (error) {
     return {
       projectId,
       currentTeacherId: CURRENT_TEACHER_ID,
+      statuses: [],
+      teacherStatuses: [],
+      isProjectCancelled: false,
       error: error.message || 'Could not load project details.'
     };
   }
 }
+
+/** @type {import('./$types').Actions} */
+export const actions = {
+  updateStatus: async ({ request, fetch, params }) => {
+    const projectId = Number(params.id);
+    const formData = await request.formData();
+    const statusId = Number(formData.get('statusId'));
+
+    if (!projectId) {
+      return fail(400, {
+        error: 'Invalid project.'
+      });
+    }
+
+    if (!statusId) {
+      return fail(400, {
+        error: 'Select a valid status.'
+      });
+    }
+
+    try {
+      const [projects, relations, statuses] = await Promise.all([
+        getProjects(fetch, 'teacher'),
+        getProjectUsers(fetch, 'teacher').catch(() => []),
+        getStatuses(fetch, 'teacher')
+      ]);
+
+      const project = projects.find((item) => Number(item.id_project) === projectId) ?? null;
+
+      if (!project) {
+        return fail(404, {
+          error: 'Project not found.'
+        });
+      }
+
+      const isAssignedToCurrentTeacher = relations.some(
+        (relation) =>
+          Number(relation.id_project) === projectId &&
+          Number(relation.id_user) === CURRENT_TEACHER_ID &&
+          Number(relation.id_role) === ROLE_IDS.teacher
+      );
+
+      if (!isAssignedToCurrentTeacher) {
+        return fail(403, {
+          error: 'You can only update the status of projects assigned to your teacher profile.'
+        });
+      }
+
+      if (isCancelledStatus(project.id_status, statuses)) {
+        return fail(403, {
+          error: 'This project is cancelled. Only the coordinator can reactivate or manage cancelled projects.'
+        });
+      }
+
+      if (isCancelledStatus(statusId, statuses)) {
+        return fail(403, {
+          error: 'Teachers cannot cancel projects. Only the coordinator can cancel a project.'
+        });
+      }
+
+      await updateProjectStatus(fetch, projectId, statusId);
+
+      return {
+        success: true,
+        message: 'Project status updated successfully.'
+      };
+    } catch (error) {
+      return fail(500, {
+        error:
+          error.message ||
+          'Could not update project status. The backend may only allow coordinators to perform this action.'
+      });
+    }
+  }
+};

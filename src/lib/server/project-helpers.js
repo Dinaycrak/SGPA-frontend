@@ -252,8 +252,10 @@ export function getStatusLabel(idStatus, statuses = []) {
 
   const map = {
     1: 'Active',
-    2: 'Completed',
-    3: 'Pending'
+    2: 'In Review',
+    3: 'Completed',
+    4: 'Cancelled',
+    5: 'Pending'
   };
 
   return map[Number(idStatus)] ?? 'Unknown';

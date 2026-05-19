@@ -4,6 +4,7 @@
   import SideBar from '$lib/components/TeacherSideBar.svelte';
 
   export let data;
+  export let form;
 
   function fullName(user) {
     if (!user) return 'Unassigned';
@@ -15,11 +16,21 @@
     return String(value).split('T')[0];
   }
 
+  function confirmStatusChange(event) {
+    if (!confirm('Do you want to update the project status?')) {
+      event.preventDefault();
+    }
+  }
+
   $: project = data?.project;
   $: assignedTeacher = data?.assignedTeacher || null;
   $: enrolledStudents = data?.enrolledStudents || [];
-  $: error = data?.error || '';
-  $: backHref = data?.isAssignedToCurrentTeacher ? '/teacher/myprojects' : '/teacher/projects';
+  $: teacherStatuses = data?.teacherStatuses || [];
+  $: error = form?.error || data?.error || '';
+  $: successMessage = form?.message || '';
+  $: isAssignedToCurrentTeacher = Boolean(data?.isAssignedToCurrentTeacher);
+  $: isProjectCancelled = Boolean(data?.isProjectCancelled);
+  $: backHref = isAssignedToCurrentTeacher ? '/teacher/myprojects' : '/teacher/projects';
 </script>
 
 <Header />
@@ -31,11 +42,15 @@
       <div>
         <span class="eyebrow">Teacher module</span>
         <h1>Project details</h1>
-        <p>Review the academic project information and the enrolled students.</p>
+        <p>Review the academic project information, enrolled students, and project status.</p>
       </div>
 
       <a href={backHref} class="secondary-link">Back</a>
     </header>
+
+    {#if successMessage}
+      <div class="success-box">✅ {successMessage}</div>
+    {/if}
 
     {#if error}
       <div class="error-msg">⚠️ {error}</div>
@@ -60,22 +75,27 @@
               <span>Start date</span>
               <strong>{formatDate(project.start_date)}</strong>
             </div>
+
             <div class="info-item">
               <span>End date</span>
               <strong>{formatDate(project.end_date)}</strong>
             </div>
+
             <div class="info-item">
               <span>Assigned teacher</span>
               <strong>{fullName(assignedTeacher)}</strong>
             </div>
+
             <div class="info-item">
               <span>Enrolled students</span>
               <strong>{enrolledStudents.length}</strong>
             </div>
+
             <div class="info-item">
               <span>Project ID</span>
               <strong>{project.id_project}</strong>
             </div>
+
             <div class="info-item">
               <span>Research group</span>
               <strong>{project.id_research_group || 'N/A'}</strong>
@@ -84,16 +104,75 @@
         </section>
 
         <aside class="actions-panel">
-          <span class="eyebrow small">Teacher access</span>
-          <h2>{data.isAssignedToCurrentTeacher ? 'Assigned to you' : 'Read-only view'}</h2>
+          <span class="eyebrow small">Teacher actions</span>
+          <h2>Project controls</h2>
 
-          {#if data.isAssignedToCurrentTeacher}
-            <p>This project is assigned to your teacher profile. You can review the participants and project status.</p>
+          {#if isProjectCancelled}
+            <div class="action-block">
+              <h3>Cancelled project</h3>
+              <p>
+                This project is currently cancelled. Teachers cannot change the status
+                of cancelled projects. Only the coordinator can reactivate it.
+              </p>
+            </div>
+          {:else if isAssignedToCurrentTeacher}
+            <div class="action-block">
+              <h3>Change status</h3>
+              <p>
+                Select a new status for this project. Teachers cannot cancel projects;
+                cancellation is reserved for the coordinator.
+              </p>
+
+              <form method="POST" action="?/updateStatus" onsubmit={confirmStatusChange}>
+                <label for="statusId">Project status</label>
+
+                <select id="statusId" name="statusId" required>
+                  <option value="">Select status</option>
+                  {#each teacherStatuses as status}
+                    <option
+                      value={status.id_status}
+                      selected={Number(status.id_status) === Number(project.id_status)}
+                    >
+                      {status.status_name}
+                    </option>
+                  {/each}
+                </select>
+
+                <button type="submit" class="primary-btn">Update status</button>
+              </form>
+            </div>
           {:else}
-            <p>This project is visible from the teacher module, but it is not assigned to your teacher profile.</p>
+            <div class="action-block">
+              <h3>Read-only project</h3>
+              <p>
+                This project is visible from the teacher module, but it is not assigned
+                to your teacher profile. You can review its information, but you cannot
+                update its status.
+              </p>
+            </div>
           {/if}
 
-          <a href="/teacher/myprojects" class="secondary-link full-width">Go to my projects</a>
+          <div class="action-block">
+            <h3>Teacher access</h3>
+
+            {#if isProjectCancelled}
+              <p>
+                This project is cancelled. Status recovery must be handled by the coordinator.
+              </p>
+            {:else if isAssignedToCurrentTeacher}
+              <p>
+                This project is assigned to your teacher profile. You can review
+                participants and update the project status.
+              </p>
+            {:else}
+              <p>
+                This project is not assigned to your teacher profile. To manage status,
+                open a project listed in My Projects.
+              </p>
+            {/if}
+
+            <a href="/teacher/myprojects" class="secondary-link full-width">Go to my projects</a>
+          </div>
         </aside>
       </div>
 
@@ -103,11 +182,13 @@
             <span class="eyebrow small">Participants</span>
             <h2>Project team</h2>
           </div>
+
           <span class="count-badge">{enrolledStudents.length + (assignedTeacher ? 1 : 0)} people</span>
         </div>
 
         <div class="participant-block">
           <h3>Assigned teacher</h3>
+
           {#if assignedTeacher}
             <article class="participant-card teacher">
               <div class="avatar">T</div>
@@ -123,6 +204,7 @@
 
         <div class="participant-block">
           <h3>Enrolled students</h3>
+
           {#if enrolledStudents.length > 0}
             <div class="students-list">
               {#each enrolledStudents as student}
@@ -237,7 +319,8 @@
     margin: 0.7rem 0 0;
   }
 
-  .secondary-link {
+  .secondary-link,
+  .primary-btn {
     min-height: 44px;
     padding: 0.75rem 1rem;
     border-radius: 999px;
@@ -246,10 +329,27 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .secondary-link {
     color: var(--sgpa-blue);
     background: #ffffff;
     border: 1px solid var(--sgpa-border);
     box-shadow: var(--sgpa-shadow-sm);
+  }
+
+  .primary-btn {
+    width: 100%;
+    margin-top: 1rem;
+    border: none;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    cursor: pointer;
+  }
+
+  .primary-btn:hover,
+  .secondary-link:hover {
+    transform: translateY(-1px);
   }
 
   .full-width {
@@ -259,7 +359,7 @@
 
   .detail-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+    grid-template-columns: minmax(0, 1fr) minmax(310px, 400px);
     gap: 1.2rem;
     align-items: start;
   }
@@ -352,6 +452,50 @@
     top: 1rem;
   }
 
+  .action-block {
+    margin-top: 1.15rem;
+    padding-top: 1.15rem;
+    border-top: 1px solid var(--sgpa-border);
+  }
+
+  .action-block:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .action-block h3 {
+    margin: 0;
+    color: var(--sgpa-blue-dark);
+    font-size: 1rem;
+    font-weight: 950;
+  }
+
+  label {
+    display: block;
+    margin: 0.85rem 0 0.4rem;
+    color: var(--sgpa-blue-dark);
+    font-weight: 950;
+    font-size: 0.88rem;
+  }
+
+  select {
+    width: 100%;
+    min-height: 44px;
+    border-radius: 14px;
+    border: 1px solid var(--sgpa-border);
+    background: #ffffff;
+    color: var(--sgpa-blue-dark);
+    padding: 0.7rem 0.85rem;
+    outline: none;
+    font-weight: 750;
+  }
+
+  select:focus {
+    border-color: var(--sgpa-blue);
+    box-shadow: 0 0 0 4px rgba(11, 45, 105, 0.1);
+  }
+
   .participants-panel {
     margin-top: 1.2rem;
   }
@@ -425,6 +569,11 @@
     font-weight: 750;
   }
 
+  .success-box,
+  .error-msg {
+    margin-bottom: 1rem;
+  }
+
   .empty-state {
     text-align: center;
   }
@@ -434,7 +583,7 @@
     margin-bottom: 0.75rem;
   }
 
-  @media (max-width: 920px) {
+  @media (max-width: 980px) {
     .detail-layout {
       grid-template-columns: 1fr;
     }
