@@ -1,19 +1,21 @@
 <script>
   import Header from '$lib/components/Header_L.svelte';
   import Footer from '$lib/components/Footer.svelte';
-  import { goto } from '$app/navigation';
 
-  let selectedRole = $state('student');
+  let { data, form } = $props();
 
-  function handleLogin() {
-    if (selectedRole === 'student') {
-      goto('/students');
-    } else if (selectedRole === 'teacher') {
-      goto('/teacher');
-    } else if (selectedRole === 'coordinator') {
-      goto('/coordinator');
+  let selectedRole = $state('students');
+  let email = $state('');
+
+  $effect(() => {
+    if (form?.selectedRole) {
+      selectedRole = form.selectedRole;
     }
-  }
+
+    if (form?.email !== undefined) {
+      email = form.email;
+    }
+  });
 </script>
 
 <svelte:head>
@@ -36,24 +38,24 @@
           <h2 class="title">System login</h2>
 
           <p class="description">
-            Welcome to the Academic Project Management System. Select your role
-            to access the corresponding module within the platform.
+            Welcome to the Academic Project Management System. Select your role,
+            enter your credentials, and access the correct SGPA module.
           </p>
 
           <div class="info-boxes">
             <article class="info-card">
-              <h3>Academic control</h3>
+              <h3>Secure access</h3>
               <p>
-                Manage processes, review information, and keep academic project activity
-                organized.
+                Your session is validated with the API token and expires automatically
+                according to the JWT expiration time.
               </p>
             </article>
 
             <article class="info-card">
-              <h3>Role-based access</h3>
+              <h3>Role-based modules</h3>
               <p>
-                Each user type has a module designed according to its functions
-                within the system.
+                Students, teachers, and coordinators can only access the module
+                assigned to their authenticated role.
               </p>
             </article>
           </div>
@@ -75,24 +77,34 @@
           <h2 class="login-card-title">Access your account</h2>
 
           <p class="login-card-subtitle">
-            Enter your information and select the access type that matches your role.
+            Enter your credentials and choose the role that matches your account.
           </p>
         </div>
 
-        <div class="temporary-alert">
-          Temporary testing access. The system currently redirects by role,
-          but it does not validate username and password against the backend yet.
-        </div>
+        {#if data?.notice}
+          <div class="notice-alert">
+            {data.notice}
+          </div>
+        {/if}
 
-        <div class="login-form">
+        {#if form?.error}
+          <div class="error-msg">
+            ⚠️ {form.error}
+          </div>
+        {/if}
+
+        <form method="POST" class="login-form">
           <div class="input-group-custom">
-            <label for="usuario">User</label>
+            <label for="email">Email</label>
             <input
-              id="usuario"
+              id="email"
+              name="email"
+              bind:value={email}
               class="login-formulary"
-              type="text"
-              placeholder="Enter your username"
+              type="email"
+              placeholder="Enter your email"
               autocomplete="username"
+              required
             />
           </div>
 
@@ -100,10 +112,12 @@
             <label for="password">Password</label>
             <input
               id="password"
+              name="password"
               class="login-formulary"
               type="password"
               placeholder="Enter your password"
               autocomplete="current-password"
+              required
             />
           </div>
 
@@ -111,27 +125,27 @@
             <p class="role-title">Select your role</p>
 
             <div class="radio-group-horizontal">
-              <label class:selected={selectedRole === 'student'} class="radio-option-vertical">
-                <input type="radio" bind:group={selectedRole} value="student" />
+              <label class:selected={selectedRole === 'students'} class="radio-option-vertical">
+                <input type="radio" bind:group={selectedRole} name="role" value="students" />
                 <span class="role-pill">Student</span>
               </label>
 
               <label class:selected={selectedRole === 'teacher'} class="radio-option-vertical">
-                <input type="radio" bind:group={selectedRole} value="teacher" />
+                <input type="radio" bind:group={selectedRole} name="role" value="teacher" />
                 <span class="role-pill">Teacher</span>
               </label>
 
               <label class:selected={selectedRole === 'coordinator'} class="radio-option-vertical">
-                <input type="radio" bind:group={selectedRole} value="coordinator" />
+                <input type="radio" bind:group={selectedRole} name="role" value="coordinator" />
                 <span class="role-pill">Coordinator</span>
               </label>
             </div>
           </div>
 
-          <button class="btn-primary" type="button" onclick={handleLogin}>
+          <button class="btn-primary" type="submit">
             Log in
           </button>
-        </div>
+        </form>
       </div>
     </section>
   </main>
@@ -277,15 +291,19 @@
     line-height: 1.6;
   }
 
-  .temporary-alert {
+  .notice-alert {
     margin-bottom: 1.2rem;
     padding: 0.95rem 1rem;
     border-radius: 16px;
-    background: var(--sgpa-warning-bg);
-    border: 1px solid rgba(183, 121, 31, 0.22);
-    color: var(--sgpa-warning);
+    background: var(--sgpa-blue-soft);
+    border: 1px solid rgba(11, 45, 105, 0.16);
+    color: var(--sgpa-blue);
     font-weight: 800;
     line-height: 1.55;
+  }
+
+  .error-msg {
+    margin-bottom: 1.2rem;
   }
 
   .login-form {

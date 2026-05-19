@@ -1,4 +1,3 @@
-import { PROFILE_USER_IDS } from '$lib/components/Tokens.js';
 import {
   getProjects,
   getUsers,
@@ -9,7 +8,9 @@ import {
   getUserFullName
 } from '$lib/server/project-helpers.js';
 
-const CURRENT_TEACHER_ID = Number(PROFILE_USER_IDS.teacher || 39);
+function getCurrentTeacherId(locals) {
+  return Number(locals?.session?.user?.id_user || 0);
+}
 
 function escapeHtml(value = '') {
   return String(value)
@@ -65,7 +66,18 @@ function buildProjectCardHtml({
 }
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch }) {
+export async function load({ fetch, locals }) {
+  const currentTeacherId = getCurrentTeacherId(locals);
+
+  if (!currentTeacherId) {
+    return {
+      rows: [],
+      totalProjects: 0,
+      currentTeacherId,
+      error: 'Could not identify the logged-in teacher.'
+    };
+  }
+
   try {
     const [projects, users, relations, statuses] = await Promise.all([
       getProjects(fetch, 'teacher'),
@@ -81,7 +93,7 @@ export async function load({ fetch }) {
         .filter(
           (relation) =>
             Number(relation.id_role) === ROLE_IDS.teacher &&
-            Number(relation.id_user) === CURRENT_TEACHER_ID
+            Number(relation.id_user) === currentTeacherId
         )
         .map((relation) => Number(relation.id_project))
     );
@@ -90,7 +102,7 @@ export async function load({ fetch }) {
       assignedProjectIds.has(Number(project.id_project))
     );
 
-    const currentTeacher = usersMap.get(CURRENT_TEACHER_ID);
+    const currentTeacher = usersMap.get(currentTeacherId);
 
     const rows = teacherProjects.map((project) => ({
       proyecto_card: buildProjectCardHtml({
@@ -106,13 +118,13 @@ export async function load({ fetch }) {
     return {
       rows,
       totalProjects: teacherProjects.length,
-      currentTeacherId: CURRENT_TEACHER_ID
+      currentTeacherId
     };
   } catch (error) {
     return {
       rows: [],
       totalProjects: 0,
-      currentTeacherId: CURRENT_TEACHER_ID,
+      currentTeacherId,
       error: error.message || 'Could not load assigned projects.'
     };
   }

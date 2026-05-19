@@ -1,33 +1,45 @@
 import { fail } from '@sveltejs/kit';
-import { PROFILE_USER_IDS } from '$lib/components/Tokens.js';
 import {
   getProjectDetails,
   enrollStudentInProject,
   ROLE_IDS
 } from '$lib/server/project-helpers.js';
 
-const CURRENT_STUDENT_ID = Number(PROFILE_USER_IDS.students || PROFILE_USER_IDS.student || 37);
+function getCurrentStudentId(locals) {
+  return Number(locals?.session?.user?.id_user || 0);
+}
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch, params, url }) {
+export async function load({ fetch, params, url, locals }) {
   const projectId = Number(params.id);
   const source = url.searchParams.get('source') || 'available';
+  const currentStudentId = getCurrentStudentId(locals);
+
+  if (!currentStudentId) {
+    return {
+      error: 'Could not identify the logged-in student.',
+      projectId: params.id,
+      currentStudentId,
+      source
+    };
+  }
 
   if (!projectId) {
     return {
       error: 'Invalid project ID.',
       projectId: params.id,
-      currentStudentId: CURRENT_STUDENT_ID,
+      currentStudentId,
       source
     };
   }
 
   try {
     const details = await getProjectDetails(fetch, 'students', projectId);
+
     const isEnrolled = details.relations.some(
       (relation) =>
         Number(relation.id_project) === projectId &&
-        Number(relation.id_user) === CURRENT_STUDENT_ID &&
+        Number(relation.id_user) === currentStudentId &&
         Number(relation.id_role) === ROLE_IDS.student
     );
 
@@ -35,14 +47,14 @@ export async function load({ fetch, params, url }) {
       ...details,
       projectId,
       source,
-      currentStudentId: CURRENT_STUDENT_ID,
+      currentStudentId,
       isEnrolled
     };
   } catch (error) {
     return {
       projectId,
       source,
-      currentStudentId: CURRENT_STUDENT_ID,
+      currentStudentId,
       error: error.message || 'Could not load project details.'
     };
   }
@@ -50,19 +62,24 @@ export async function load({ fetch, params, url }) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-  enroll: async ({ fetch, params }) => {
+  enroll: async ({ fetch, params, locals }) => {
     const projectId = Number(params.id);
+    const currentStudentId = getCurrentStudentId(locals);
 
     if (!projectId) {
-      return fail(400, { error: 'Invalid project.' });
+      return fail(400, {
+        error: 'Invalid project.'
+      });
     }
 
-    if (!CURRENT_STUDENT_ID) {
-      return fail(400, { error: 'Invalid student.' });
+    if (!currentStudentId) {
+      return fail(400, {
+        error: 'Could not identify the logged-in student.'
+      });
     }
 
     try {
-      const result = await enrollStudentInProject(fetch, projectId, CURRENT_STUDENT_ID);
+      const result = await enrollStudentInProject(fetch, projectId, currentStudentId);
 
       return {
         success: true,

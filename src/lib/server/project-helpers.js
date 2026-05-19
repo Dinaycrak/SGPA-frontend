@@ -1,4 +1,4 @@
-import { API_BASE_URL, getAuthHeaders, PROFILE_USER_IDS } from '$lib/components/Tokens.js';
+import { API_BASE_URL, getAuthHeaders } from '$lib/components/Tokens.js';
 
 export const ROLE_IDS = {
   student: 1,
@@ -383,9 +383,6 @@ export function findLatestMatchingProject(projects, payload) {
   );
 }
 
-export function getModuleUserId(moduleName) {
-  return PROFILE_USER_IDS[moduleName];
-}
 
 export function getTeachers(users = []) {
   return users.filter((user) => Number(user.id_role) === ROLE_IDS.teacher);

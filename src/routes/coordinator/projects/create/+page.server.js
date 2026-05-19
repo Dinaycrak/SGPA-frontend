@@ -1,16 +1,19 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { API_BASE_URL, getAuthHeaders, PROFILE_USER_IDS } from '$lib/components/Tokens.js';
+import { API_BASE_URL, getAuthHeaders } from '$lib/components/Tokens.js';
 
 const PROJECT_USER_TEACHER_ROLE_ID = 3;
-const COORDINATOR_USER_ID = 5;
-const DEFAULT_TEACHER_ID = Number(PROFILE_USER_IDS.teacher || 39);
 const DEFAULT_RESEARCH_GROUP_ID = 1;
 
 const DEFAULT_STATUSES = [
   { id: 1, name: 'Active' },
-  { id: 2, name: 'Completed' },
-  { id: 3, name: 'Pending' }
+  { id: 2, name: 'In Review' },
+  { id: 3, name: 'Completed' },
+  { id: 4, name: 'Cancelled' }
 ];
+
+function getCurrentCoordinatorId(locals) {
+  return Number(locals?.session?.user?.id_user || 0);
+}
 
 function parseJsonSafe(text) {
   if (!text) return null;
@@ -82,9 +85,7 @@ function normalizeProjectUser(item) {
       assigned_date: thirdPositionLooksLikeDate
         ? normalizeDate(item[3])
         : normalizeDate(item[4]),
-      id_role: thirdPositionLooksLikeDate
-        ? item[4] ?? null
-        : item[3] ?? null
+      id_role: thirdPositionLooksLikeDate ? item[4] ?? null : item[3] ?? null
     };
   }
 
@@ -95,6 +96,34 @@ function normalizeProjectUser(item) {
     id_role: item?.id_role ?? null,
     assigned_date: normalizeDate(item?.assigned_date ?? '')
   };
+}
+
+function normalizeUser(user) {
+  if (Array.isArray(user)) {
+    return {
+      id_user: user[0] ?? null,
+      first_name: user[1] ?? '',
+      last_name: user[2] ?? '',
+      email: user[3] ?? '',
+      phone: user[4] ?? '',
+      id_role: user[6] ?? user[5] ?? null,
+      is_active: user[7] ?? true
+    };
+  }
+
+  return {
+    id_user: user?.id_user ?? user?.id ?? null,
+    first_name: user?.first_name ?? '',
+    last_name: user?.last_name ?? '',
+    email: user?.email ?? '',
+    phone: user?.phone ?? user?.phone_number ?? '',
+    id_role: user?.id_role ?? user?.role_id ?? null,
+    is_active: user?.is_active ?? true
+  };
+}
+
+function getUserFullName(user) {
+  return `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || user?.email || 'Unnamed user';
 }
 
 function extractCreatedProjectId(responseData) {
@@ -119,77 +148,99 @@ function extractCreatedProjectId(responseData) {
   return normalizeProject(responseData?.data ?? responseData ?? {}).id_project;
 }
 
-/** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch }) {
-  try {
-    const usersResponse = await fetch(`${API_BASE_URL}/users`, {
-      headers: getAuthHeaders('coordinator')
-    });
-
-    const usersText = await usersResponse.text();
-    const usersData = parseJsonSafe(usersText) ?? [];
-
-    if (!usersResponse.ok) {
-      throw new Error(`Could not load users. Status ${usersResponse.status}. ${usersText}`);
+async function apiFetch(fetch, path, options = {}) {
+  const response = await fetch(`${API_BASE_URL}/${String(path).replace(/^\/+/, '')}`, {
+    ...options,
+    headers: {
+      ...getAuthHeaders('coordinator'),
+      ...(options.headers || {})
     }
+  });
 
-    const teachers = Array.isArray(usersData)
-      ? usersData
-          .map((user) => ({
-            id_user: user?.id_user ?? user?.id ?? user?.[0] ?? null,
-            first_name: user?.first_name ?? user?.[1] ?? '',
-            last_name: user?.last_name ?? user?.[2] ?? '',
-            email: user?.email ?? user?.[3] ?? '',
-            id_role: user?.id_role ?? user?.role_id ?? user?.[6] ?? null
-          }))
-          .filter((user) => Number(user.id_role) === PROJECT_USER_TEACHER_ROLE_ID)
-      : [];
+  const text = await response.text().catch(() => '');
+  const data = parseJsonSafe(text);
 
-    return {
-      teachers,
-      defaultTeacherId: DEFAULT_TEACHER_ID,
-      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
-      statuses: DEFAULT_STATUSES
-    };
-  } catch (error) {
-    return {
-      teachers: [],
-      defaultTeacherId: DEFAULT_TEACHER_ID,
-      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
-      statuses: DEFAULT_STATUSES,
-      error: error.message || 'Could not load form information'
-    };
+  if (!response.ok) {
+    const backendMessage =
+      data?.detail ||
+      data?.message ||
+      data?.error ||
+      text ||
+      `API returned status ${response.status}.`;
+
+    throw new Error(backendMessage);
   }
+
+  return data;
+}
+
+async function getAllUsers(fetch) {
+  const data = await apiFetch(fetch, 'users');
+
+  if (Array.isArray(data)) {
+    return data.map(normalizeUser);
+  }
+
+  if (Array.isArray(data?.users)) {
+    return data.users.map(normalizeUser);
+  }
+
+  if (Array.isArray(data?.data)) {
+    return data.data.map(normalizeUser);
+  }
+
+  return [];
 }
 
 async function getAllProjects(fetch) {
-  const response = await fetch(`${API_BASE_URL}/projects`, {
-    headers: getAuthHeaders('coordinator')
-  });
+  const data = await apiFetch(fetch, 'projects');
 
-  const text = await response.text();
-  const data = parseJsonSafe(text) ?? [];
-
-  if (!response.ok) {
-    throw new Error(`Could not query projects. Status ${response.status}. ${text}`);
+  if (Array.isArray(data)) {
+    return data.map(normalizeProject);
   }
 
-  return Array.isArray(data) ? data.map(normalizeProject) : [];
+  if (Array.isArray(data?.projects)) {
+    return data.projects.map(normalizeProject);
+  }
+
+  if (Array.isArray(data?.data)) {
+    return data.data.map(normalizeProject);
+  }
+
+  return [];
 }
 
 async function getAllProjectUsers(fetch) {
-  const response = await fetch(`${API_BASE_URL}/project-users`, {
-    headers: getAuthHeaders('coordinator')
-  });
+  const possibleEndpoints = ['project-users', 'project_users'];
+  let lastError = null;
 
-  const text = await response.text();
-  const data = parseJsonSafe(text) ?? [];
+  for (const endpoint of possibleEndpoints) {
+    try {
+      const data = await apiFetch(fetch, endpoint);
 
-  if (!response.ok) {
-    throw new Error(`Could not query project-users. Status ${response.status}. ${text}`);
+      if (Array.isArray(data)) {
+        return data.map(normalizeProjectUser);
+      }
+
+      if (Array.isArray(data?.project_users)) {
+        return data.project_users.map(normalizeProjectUser);
+      }
+
+      if (Array.isArray(data?.projectUsers)) {
+        return data.projectUsers.map(normalizeProjectUser);
+      }
+
+      if (Array.isArray(data?.data)) {
+        return data.data.map(normalizeProjectUser);
+      }
+
+      return [];
+    } catch (error) {
+      lastError = error;
+    }
   }
 
-  return Array.isArray(data) ? data.map(normalizeProjectUser) : [];
+  throw lastError || new Error('Could not load project-user relations.');
 }
 
 function findExistingExactProject(projects, payload) {
@@ -238,31 +289,85 @@ async function assignTeacherToProject(fetch, { id_project, id_user, assigned_dat
     return true;
   }
 
-  const createResponse = await fetch(`${API_BASE_URL}/project-users`, {
-    method: 'POST',
-    headers: getAuthHeaders('coordinator'),
-    body: JSON.stringify(payload)
-  });
+  const possibleEndpoints = ['project-users', 'project_users'];
+  let lastError = null;
 
-  const createText = await createResponse.text();
+  for (const endpoint of possibleEndpoints) {
+    try {
+      await apiFetch(fetch, endpoint, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
 
-  if (!createResponse.ok) {
-    const existsAfterError = await relationAlreadyExists(fetch, payload);
-
-    if (existsAfterError) {
       return true;
-    }
+    } catch (error) {
+      lastError = error;
 
-    throw new Error(
-      `Could not register the teacher in project-users. Status ${createResponse.status}. Response: ${createText}`
-    );
+      const existsAfterError = await relationAlreadyExists(fetch, payload);
+
+      if (existsAfterError) {
+        return true;
+      }
+    }
   }
 
-  return true;
+  throw lastError || new Error('Could not register the teacher in project-users.');
 }
 
+/** @type {import('./$types').PageServerLoad} */
+export async function load({ fetch, locals }) {
+  const currentCoordinatorId = getCurrentCoordinatorId(locals);
+
+  if (!currentCoordinatorId) {
+    return {
+      teachers: [],
+      defaultTeacherId: null,
+      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
+      statuses: DEFAULT_STATUSES,
+      error: 'Could not identify the logged-in coordinator.'
+    };
+  }
+
+  try {
+    const users = await getAllUsers(fetch);
+
+    const teachers = users
+      .filter((user) => Number(user.id_role) === PROJECT_USER_TEACHER_ROLE_ID)
+      .map((teacher) => ({
+        ...teacher,
+        full_name: getUserFullName(teacher)
+      }));
+
+    return {
+      teachers,
+      defaultTeacherId: teachers[0]?.id_user ?? null,
+      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
+      statuses: DEFAULT_STATUSES,
+      currentCoordinatorId
+    };
+  } catch (error) {
+    return {
+      teachers: [],
+      defaultTeacherId: null,
+      defaultResearchGroupId: DEFAULT_RESEARCH_GROUP_ID,
+      statuses: DEFAULT_STATUSES,
+      currentCoordinatorId,
+      error: error.message || 'Could not load form information.'
+    };
+  }
+}
+
+/** @type {import('./$types').Actions} */
 export const actions = {
-  default: async ({ request, fetch }) => {
+  default: async ({ request, fetch, locals }) => {
+    const currentCoordinatorId = getCurrentCoordinatorId(locals);
+
+    if (!currentCoordinatorId) {
+      return fail(401, {
+        error: 'Could not identify the logged-in coordinator.'
+      });
+    }
+
     const formData = await request.formData();
 
     const teacherRaw = formData.get('teacher_id');
@@ -277,7 +382,7 @@ export const actions = {
       id_research_group: researchGroupRaw
         ? Number(researchGroupRaw)
         : DEFAULT_RESEARCH_GROUP_ID,
-      teacher_id: teacherRaw ? Number(teacherRaw) : DEFAULT_TEACHER_ID
+      teacher_id: teacherRaw ? Number(teacherRaw) : null
     };
 
     if (!values.project_name || !values.start_date || !values.teacher_id) {
@@ -294,34 +399,15 @@ export const actions = {
       end_date: values.end_date || null,
       id_status: Number(values.id_status),
       id_research_group: Number(values.id_research_group),
-      created_by: COORDINATOR_USER_ID
+      created_by: currentCoordinatorId
     };
 
     try {
-      const createResponse = await fetch(`${API_BASE_URL}/projects`, {
+      const createdProjectResponse = await apiFetch(fetch, 'projects', {
         method: 'POST',
-        headers: getAuthHeaders('coordinator'),
         body: JSON.stringify(projectPayload)
       });
 
-      const createText = await createResponse.text();
-
-      if (!createResponse.ok) {
-        const parsedError = parseJsonSafe(createText);
-
-        const backendMessage =
-          parsedError?.detail ||
-          parsedError?.message ||
-          parsedError?.error ||
-          createText;
-
-        return fail(400, {
-          error: `Could not create the project. Status ${createResponse.status}. ${backendMessage}`,
-          values
-        });
-      }
-
-      const createdProjectResponse = parseJsonSafe(createText);
       let createdProjectId = extractCreatedProjectId(createdProjectResponse);
 
       if (!createdProjectId) {

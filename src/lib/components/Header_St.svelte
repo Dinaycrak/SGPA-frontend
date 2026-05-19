@@ -1,3 +1,7 @@
+<script>
+  import SessionStatus from '$lib/components/SessionStatus.svelte';
+</script>
+
 <svelte:head>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 </svelte:head>
@@ -7,7 +11,7 @@
 
   <div class="header-container">
     <div class="brand">
-      <div class="logo-slot" aria-label="Logo universitario">
+      <div class="logo-slot" aria-label="University logo">
         <img src="/images/logo-cul.png" alt="CUL university logo" />
       </div>
 
@@ -27,7 +31,7 @@
 
     <nav class="main-nav" aria-label="Main navigation">
       <a href="/" class="nav-btn">Home</a>
-      <a href="/login" class="nav-btn">Login</a>
+      <SessionStatus />
     </nav>
   </div>
 </header>
@@ -61,6 +65,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    min-width: 0;
   }
 
   .logo-slot {
@@ -111,6 +116,7 @@
   .main-nav {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 12px;
     flex-wrap: wrap;
   }
@@ -141,8 +147,6 @@
     border-radius: 999px;
   }
 
-  .login-btn,
-  .home-btn,
   .nav-btn {
     display: inline-flex;
     align-items: center;
@@ -156,16 +160,19 @@
     box-shadow: 0 10px 22px rgba(11, 45, 105, 0.16);
   }
 
-  .login-btn:hover,
-  .home-btn:hover,
   .nav-btn:hover {
     transform: translateY(-1px);
   }
 
-  @media (max-width: 720px) {
+  @media (max-width: 820px) {
     .header-container {
       flex-direction: column;
       align-items: flex-start;
+    }
+
+    .main-nav {
+      width: 100%;
+      justify-content: flex-start;
     }
 
     .brand-title {

@@ -1,5 +1,4 @@
 import { fail } from '@sveltejs/kit';
-import { PROFILE_USER_IDS } from '$lib/components/Tokens.js';
 import {
   getProjects,
   getUsers,
@@ -10,7 +9,9 @@ import {
   updateProjectStatus
 } from '$lib/server/project-helpers.js';
 
-const CURRENT_TEACHER_ID = Number(PROFILE_USER_IDS.teacher || 39);
+function getCurrentTeacherId(locals) {
+  return Number(locals?.session?.user?.id_user || 0);
+}
 
 function getStudentsAssignedToProject(relations = [], users = [], projectId) {
   const studentIds = new Set(
@@ -58,13 +59,25 @@ function filterStatusesForTeacher(statuses = []) {
 }
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch, params }) {
+export async function load({ fetch, params, locals }) {
   const projectId = Number(params.id);
+  const currentTeacherId = getCurrentTeacherId(locals);
+
+  if (!currentTeacherId) {
+    return {
+      projectId: params.id,
+      currentTeacherId,
+      statuses: [],
+      teacherStatuses: [],
+      isProjectCancelled: false,
+      error: 'Could not identify the logged-in teacher.'
+    };
+  }
 
   if (!projectId) {
     return {
       projectId: params.id,
-      currentTeacherId: CURRENT_TEACHER_ID,
+      currentTeacherId,
       statuses: [],
       teacherStatuses: [],
       isProjectCancelled: false,
@@ -85,7 +98,7 @@ export async function load({ fetch, params }) {
     if (!project) {
       return {
         projectId,
-        currentTeacherId: CURRENT_TEACHER_ID,
+        currentTeacherId,
         statuses,
         teacherStatuses: filterStatusesForTeacher(statuses),
         isProjectCancelled: false,
@@ -99,7 +112,7 @@ export async function load({ fetch, params }) {
     const isAssignedToCurrentTeacher = relations.some(
       (relation) =>
         Number(relation.id_project) === projectId &&
-        Number(relation.id_user) === CURRENT_TEACHER_ID &&
+        Number(relation.id_user) === currentTeacherId &&
         Number(relation.id_role) === ROLE_IDS.teacher
     );
 
@@ -108,7 +121,7 @@ export async function load({ fetch, params }) {
     return {
       projectId,
       project,
-      currentTeacherId: CURRENT_TEACHER_ID,
+      currentTeacherId,
       assignedTeacher,
       enrolledStudents,
       statuses,
@@ -120,7 +133,7 @@ export async function load({ fetch, params }) {
   } catch (error) {
     return {
       projectId,
-      currentTeacherId: CURRENT_TEACHER_ID,
+      currentTeacherId,
       statuses: [],
       teacherStatuses: [],
       isProjectCancelled: false,
@@ -131,10 +144,17 @@ export async function load({ fetch, params }) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-  updateStatus: async ({ request, fetch, params }) => {
+  updateStatus: async ({ request, fetch, params, locals }) => {
     const projectId = Number(params.id);
+    const currentTeacherId = getCurrentTeacherId(locals);
     const formData = await request.formData();
     const statusId = Number(formData.get('statusId'));
+
+    if (!currentTeacherId) {
+      return fail(400, {
+        error: 'Could not identify the logged-in teacher.'
+      });
+    }
 
     if (!projectId) {
       return fail(400, {
@@ -166,7 +186,7 @@ export const actions = {
       const isAssignedToCurrentTeacher = relations.some(
         (relation) =>
           Number(relation.id_project) === projectId &&
-          Number(relation.id_user) === CURRENT_TEACHER_ID &&
+          Number(relation.id_user) === currentTeacherId &&
           Number(relation.id_role) === ROLE_IDS.teacher
       );
 

@@ -1,4 +1,3 @@
-import { PROFILE_USER_IDS } from '$lib/components/Tokens.js';
 import {
   getProjects,
   getUsers,
@@ -10,10 +9,23 @@ import {
   buildProjectCardHtml
 } from '$lib/server/project-helpers.js';
 
-const CURRENT_STUDENT_ID = Number(PROFILE_USER_IDS.students || PROFILE_USER_IDS.student || 37);
+function getCurrentStudentId(locals) {
+  return Number(locals?.session?.user?.id_user || 0);
+}
 
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch }) {
+export async function load({ fetch, locals }) {
+  const currentStudentId = getCurrentStudentId(locals);
+
+  if (!currentStudentId) {
+    return {
+      rows: [],
+      totalProjects: 0,
+      currentStudentId,
+      error: 'Could not identify the logged-in student.'
+    };
+  }
+
   try {
     const [projects, users, relations, statuses] = await Promise.all([
       getProjects(fetch, 'students'),
@@ -23,12 +35,13 @@ export async function load({ fetch }) {
     ]);
 
     const usersMap = new Map(users.map((user) => [Number(user.id_user), user]));
+
     const enrolledProjectIds = new Set(
       relations
         .filter(
           (relation) =>
             Number(relation.id_role) === ROLE_IDS.student &&
-            Number(relation.id_user) === CURRENT_STUDENT_ID
+            Number(relation.id_user) === currentStudentId
         )
         .map((relation) => Number(relation.id_project))
     );
@@ -62,13 +75,13 @@ export async function load({ fetch }) {
     return {
       rows,
       totalProjects: projects.length,
-      currentStudentId: CURRENT_STUDENT_ID
+      currentStudentId
     };
   } catch (error) {
     return {
       rows: [],
       totalProjects: 0,
-      currentStudentId: CURRENT_STUDENT_ID,
+      currentStudentId,
       error: error.message || 'Error loading available projects.'
     };
   }
