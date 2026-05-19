@@ -2,8 +2,53 @@ import { fail } from '@sveltejs/kit';
 import {
   getProjectDetails,
   assignTeacherToProject,
-  updateProjectStatus
+  updateProjectStatus,
+  getStatuses
 } from '$lib/server/project-helpers.js';
+
+function isCancelledStatus(statusId, statuses = []) {
+  const selectedStatus = statuses.find(
+    (status) => Number(status.id_status) === Number(statusId)
+  );
+
+  const name = String(selectedStatus?.status_name || '').trim().toLowerCase();
+
+  return (
+    Number(statusId) === 4 ||
+    name === 'cancelled' ||
+    name === 'canceled' ||
+    name === 'cancelado'
+  );
+}
+
+function getCancelledStatusId(statuses = []) {
+  const status = statuses.find((item) => {
+    const name = String(item.status_name || '').trim().toLowerCase();
+
+    return (
+      Number(item.id_status) === 4 ||
+      name === 'cancelled' ||
+      name === 'canceled' ||
+      name === 'cancelado'
+    );
+  });
+
+  return Number(status?.id_status || 4);
+}
+
+function getActiveStatusId(statuses = []) {
+  const status = statuses.find((item) => {
+    const name = String(item.status_name || '').trim().toLowerCase();
+
+    return Number(item.id_status) === 1 || name === 'active' || name === 'activo';
+  });
+
+  return Number(status?.id_status || 1);
+}
+
+function filterStatusesForCoordinatorSelector(statuses = []) {
+  return statuses.filter((status) => !isCancelledStatus(status.id_status, statuses));
+}
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch, params }) {
@@ -12,20 +57,27 @@ export async function load({ fetch, params }) {
   if (!projectId) {
     return {
       projectId: params.id,
+      actionStatuses: [],
+      isProjectCancelled: false,
       error: 'Invalid project ID.'
     };
   }
 
   try {
     const details = await getProjectDetails(fetch, 'coordinator', projectId);
+    const isProjectCancelled = isCancelledStatus(details.project?.id_status, details.statuses);
 
     return {
       ...details,
-      projectId
+      projectId,
+      actionStatuses: filterStatusesForCoordinatorSelector(details.statuses),
+      isProjectCancelled
     };
   } catch (error) {
     return {
       projectId,
+      actionStatuses: [],
+      isProjectCancelled: false,
       error: error.message || 'Could not load project details.'
     };
   }
@@ -51,6 +103,14 @@ export const actions = {
     }
 
     try {
+      const statuses = await getStatuses(fetch, 'coordinator');
+
+      if (isCancelledStatus(statusId, statuses)) {
+        return fail(403, {
+          error: 'Use the Cancel project button to cancel a project.'
+        });
+      }
+
       await updateProjectStatus(fetch, projectId, statusId);
 
       return {
@@ -60,6 +120,58 @@ export const actions = {
     } catch (error) {
       return fail(500, {
         error: error.message || 'Could not update project status.'
+      });
+    }
+  },
+
+  cancelProject: async ({ fetch, params }) => {
+    const projectId = Number(params.id);
+
+    if (!projectId) {
+      return fail(400, {
+        error: 'Invalid project.'
+      });
+    }
+
+    try {
+      const statuses = await getStatuses(fetch, 'coordinator');
+      const cancelledStatusId = getCancelledStatusId(statuses);
+
+      await updateProjectStatus(fetch, projectId, cancelledStatusId);
+
+      return {
+        success: true,
+        message: 'Project cancelled successfully.'
+      };
+    } catch (error) {
+      return fail(500, {
+        error: error.message || 'Could not cancel project.'
+      });
+    }
+  },
+
+  reactivateProject: async ({ fetch, params }) => {
+    const projectId = Number(params.id);
+
+    if (!projectId) {
+      return fail(400, {
+        error: 'Invalid project.'
+      });
+    }
+
+    try {
+      const statuses = await getStatuses(fetch, 'coordinator');
+      const activeStatusId = getActiveStatusId(statuses);
+
+      await updateProjectStatus(fetch, projectId, activeStatusId);
+
+      return {
+        success: true,
+        message: 'Project reactivated successfully.'
+      };
+    } catch (error) {
+      return fail(500, {
+        error: error.message || 'Could not reactivate project.'
       });
     }
   },

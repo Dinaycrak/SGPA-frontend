@@ -28,11 +28,24 @@
     }
   }
 
+  function confirmCancelProject(event) {
+    if (!confirm('This action will cancel the project. Do you want to continue?')) {
+      event.preventDefault();
+    }
+  }
+
+  function confirmReactivateProject(event) {
+    if (!confirm('This action will reactivate the project as Active. Do you want to continue?')) {
+      event.preventDefault();
+    }
+  }
+
   $: project = data?.project;
   $: assignedTeacher = data?.assignedTeacher || null;
   $: enrolledStudents = data?.enrolledStudents || [];
   $: teachers = data?.teachers || [];
-  $: statuses = data?.statuses || [];
+  $: actionStatuses = data?.actionStatuses || [];
+  $: isProjectCancelled = Boolean(data?.isProjectCancelled);
   $: error = form?.error || data?.error || '';
   $: successMessage = form?.message || '';
 </script>
@@ -68,7 +81,9 @@
             <div>
               <span class="eyebrow small">Project information</span>
               <h2>{project.project_name || 'Unnamed project'}</h2>
-              <span class="status-pill">{data.statusLabel || 'Unknown'}</span>
+              <span class="status-pill" class:cancelled={isProjectCancelled}>
+                {data.statusLabel || 'Unknown'}
+              </span>
             </div>
           </div>
 
@@ -111,27 +126,57 @@
           <span class="eyebrow small">Coordinator actions</span>
           <h2>Project controls</h2>
 
-          <div class="action-block">
-            <h3>Change status</h3>
-            <p>Select a new status for this project.</p>
+          {#if isProjectCancelled}
+            <div class="action-block">
+              <h3>Reactivate project</h3>
+              <p>
+                This project is currently cancelled. You can reactivate it and its status
+                will return to Active.
+              </p>
 
-            <form method="POST" action="?/updateStatus" onsubmit={confirmStatusChange}>
-              <label for="statusId">Project status</label>
-              <select id="statusId" name="statusId" required>
-                <option value="">Select status</option>
-                {#each statuses as status}
-                  <option
-                    value={status.id_status}
-                    selected={Number(status.id_status) === Number(project.id_status)}
-                  >
-                    {status.status_name}
-                  </option>
-                {/each}
-              </select>
+              <form method="POST" action="?/reactivateProject" onsubmit={confirmReactivateProject}>
+                <button type="submit" class="reactivate-btn">Reactivate project</button>
+              </form>
+            </div>
+          {:else}
+            <div class="action-block">
+              <h3>Change status</h3>
+              <p>
+                Select a new status for this project. Cancellation is handled separately
+                with the red cancel button.
+              </p>
 
-              <button type="submit" class="primary-btn">Update status</button>
-            </form>
-          </div>
+              <form method="POST" action="?/updateStatus" onsubmit={confirmStatusChange}>
+                <label for="statusId">Project status</label>
+
+                <select id="statusId" name="statusId" required>
+                  <option value="">Select status</option>
+                  {#each actionStatuses as status}
+                    <option
+                      value={status.id_status}
+                      selected={Number(status.id_status) === Number(project.id_status)}
+                    >
+                      {status.status_name}
+                    </option>
+                  {/each}
+                </select>
+
+                <button type="submit" class="primary-btn">Update status</button>
+              </form>
+            </div>
+
+            <div class="action-block danger-zone">
+              <h3>Cancel project</h3>
+              <p>
+                Cancelling a project should only be done when it must stop being active.
+                This option is reserved for the coordinator.
+              </p>
+
+              <form method="POST" action="?/cancelProject" onsubmit={confirmCancelProject}>
+                <button type="submit" class="danger-btn">Cancel project</button>
+              </form>
+            </div>
+          {/if}
 
           <div class="action-block">
             <h3>{assignedTeacher ? 'Change teacher' : 'Assign teacher'}</h3>
@@ -148,6 +193,7 @@
 
             <form method="POST" action="?/assignTeacher" onsubmit={confirmTeacherAssign}>
               <label for="teacherId">Available teachers</label>
+
               <select id="teacherId" name="teacherId" required>
                 <option value="">Select teacher</option>
                 {#each teachers as teacher}
@@ -312,7 +358,9 @@
   }
 
   .secondary-link,
-  .primary-btn {
+  .primary-btn,
+  .danger-btn,
+  .reactivate-btn {
     min-height: 44px;
     padding: 0.75rem 1rem;
     border-radius: 999px;
@@ -339,7 +387,27 @@
     cursor: pointer;
   }
 
+  .danger-btn {
+    width: 100%;
+    margin-top: 1rem;
+    border: none;
+    color: #ffffff;
+    background: linear-gradient(135deg, #b91c1c, #ef4444);
+    cursor: pointer;
+  }
+
+  .reactivate-btn {
+    width: 100%;
+    margin-top: 1rem;
+    border: none;
+    color: #ffffff;
+    background: linear-gradient(135deg, #15803d, #22c55e);
+    cursor: pointer;
+  }
+
   .primary-btn:hover,
+  .danger-btn:hover,
+  .reactivate-btn:hover,
   .secondary-link:hover {
     transform: translateY(-1px);
   }
@@ -397,6 +465,12 @@
     font-weight: 950;
   }
 
+  .status-pill.cancelled {
+    color: #991b1b;
+    background: #fee2e2;
+    border-color: #fecaca;
+  }
+
   .description {
     margin: 0 0 1.25rem;
   }
@@ -443,6 +517,16 @@
     margin-top: 1.15rem;
     padding-top: 1.15rem;
     border-top: 1px solid var(--sgpa-border);
+  }
+
+  .action-block:first-of-type {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .danger-zone {
+    border-top-color: #fecaca;
   }
 
   .action-block h3 {

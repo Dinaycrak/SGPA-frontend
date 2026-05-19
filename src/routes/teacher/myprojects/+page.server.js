@@ -3,6 +3,7 @@ import {
   getProjects,
   getUsers,
   getProjectUsers,
+  getStatuses,
   ROLE_IDS,
   getStatusLabel,
   getUserFullName
@@ -66,10 +67,11 @@ function buildProjectCardHtml({
 /** @type {import('./$types').PageServerLoad} */
 export async function load({ fetch }) {
   try {
-    const [projects, users, relations] = await Promise.all([
+    const [projects, users, relations, statuses] = await Promise.all([
       getProjects(fetch, 'teacher'),
       getUsers(fetch, 'teacher'),
-      getProjectUsers(fetch, 'teacher')
+      getProjectUsers(fetch, 'teacher'),
+      getStatuses(fetch, 'teacher')
     ]);
 
     const usersMap = new Map(users.map((user) => [Number(user.id_user), user]));
@@ -93,7 +95,7 @@ export async function load({ fetch }) {
     const rows = teacherProjects.map((project) => ({
       proyecto_card: buildProjectCardHtml({
         project,
-        statusLabel: getStatusLabel(project.id_status),
+        statusLabel: getStatusLabel(project.id_status, statuses),
         teacherName: currentTeacher ? getUserFullName(currentTeacher) : 'Current teacher',
         actionHref: `/teacher/view_project/${project.id_project}`,
         actionLabel: 'View project',
