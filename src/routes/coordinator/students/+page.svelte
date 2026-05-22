@@ -17,6 +17,22 @@
 
 <main>
   <div class="content-wrapper">
+    <section class="report-action-card">
+      <div>
+        <span class="eyebrow">Coordinator module</span>
+        <h2>Student report</h2>
+        <p>Generate a PDF report with students, account status, semester, and enrolled projects.</p>
+      </div>
+
+      <div class="header-actions">
+        <a class="report-btn" href="/coordinator/students/report" target="_blank">
+          PDF report
+        </a>
+
+        <span class="header-label">Students</span>
+      </div>
+    </section>
+
     {#if successMessage}
       <div class="success-box">✅ {successMessage}</div>
     {/if}
@@ -53,9 +69,113 @@
     margin: 0 auto;
   }
 
+  .report-action-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.2rem;
+    padding: 1.5rem;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at top right, rgba(242, 183, 5, 0.16), transparent 18rem),
+      linear-gradient(135deg, #ffffff 0%, var(--sgpa-blue-soft) 100%);
+    border: 1px solid var(--sgpa-border);
+    box-shadow: var(--sgpa-shadow-md);
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    width: fit-content;
+    margin-bottom: 0.7rem;
+    padding: 0.4rem 0.78rem;
+    border-radius: 999px;
+    background: var(--sgpa-yellow-soft);
+    color: var(--sgpa-blue);
+    font-size: 0.76rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(242, 183, 5, 0.28);
+  }
+
+  .report-action-card h2 {
+    margin: 0;
+    color: var(--sgpa-blue-dark);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 950;
+    letter-spacing: -0.045em;
+  }
+
+  .report-action-card p {
+    max-width: 720px;
+    margin: 0.6rem 0 0;
+    color: var(--sgpa-text-soft);
+    line-height: 1.65;
+  }
+
+  .header-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .report-btn {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    background: #00d5ff;
+    color: var(--sgpa-blue);
+    border: 1px solid var(--sgpa-border);
+    font-weight: 950;
+    box-shadow: var(--sgpa-shadow-sm);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .header-label {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0.7rem 1rem;
+    background: #edff50;
+    border-radius: 4px;
+    color: var(--sgpa-blue);
+    font-weight: 950;
+    box-shadow: var(--sgpa-shadow-sm);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .report-btn:hover {
+    transform: translateY(-1px);
+    background: var(--sgpa-blue-soft);
+  }
+
   .success-box,
   .error-msg {
     max-width: 1180px;
     margin: 0 auto 1rem;
+  }
+
+  @media (max-width: 760px) {
+    .report-action-card {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .header-actions,
+    .report-btn,
+    .header-label {
+      width: 100%;
+    }
   }
 </style>
