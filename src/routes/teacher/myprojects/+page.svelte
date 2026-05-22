@@ -30,10 +30,16 @@
       <div>
         <span class="eyebrow">Teacher module</span>
         <h1>Assigned projects</h1>
-        <p>View the academic projects assigned directly to your teacher profile.</p>
+        <p>View the academic projects assigned to your teacher profile and generate a report.</p>
       </div>
 
-      <span class="header-badge">Assignments</span>
+      <div class="header-actions">
+        <a class="report-btn" href="/teacher/myprojects/report" target="_blank">
+          PDF report
+        </a>
+
+        <span class="header-label">Assignments</span>
+      </div>
     </header>
 
     {#if error}
@@ -83,6 +89,15 @@
     box-shadow: var(--sgpa-shadow-md);
   }
 
+  .header-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
   .eyebrow {
     display: inline-flex;
     width: fit-content;
@@ -113,15 +128,39 @@
     line-height: 1.7;
   }
 
-  .header-badge {
+  .header-badge,
+  .report-btn {
     flex: 0 0 auto;
-    padding: 0.55rem 1rem;
+    min-height: 44px;
+    padding: 0.7rem 1rem;
     border-radius: 999px;
-    background: #ffffff;
+    background: #00d5ff;
     color: var(--sgpa-blue);
     border: 1px solid var(--sgpa-border);
     font-weight: 950;
     box-shadow: var(--sgpa-shadow-sm);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .header-label{
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0.7rem 1rem;
+    background: #edff50;
+    border-radius: 4px;
+    color: var(--sgpa-blue);
+    font-weight: 950;
+    box-shadow: var(--sgpa-shadow-sm);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .report-btn:hover {
+    transform: translateY(-1px);
+    background: var(--sgpa-blue-soft);
   }
 
   .error-msg {
@@ -132,6 +171,12 @@
     .main-header {
       align-items: flex-start;
       flex-direction: column;
+    }
+
+    .header-actions,
+    .header-badge,
+    .report-btn {
+      width: 100%;
     }
   }
 </style>
