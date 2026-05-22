@@ -48,7 +48,7 @@
         </a>
 
         <a class="add-btn" href="/coordinator/projects/create">
-          + Add project
+          Add project
         </a>
       </div>
     </header>
@@ -62,6 +62,7 @@
     <section class="list-section">
       <div class="section-title">
         <div>
+          <span class="section-kicker">List</span>
           <h2>Project list</h2>
           <p>Review registered projects, their status, and assigned teacher.</p>
         </div>
@@ -150,42 +151,83 @@
     line-height: 1.7;
   }
 
-  .add-btn,
-  .report-btn {
+  .report-btn,
+  .add-btn {
     flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0.72rem 1.12rem;
+    border-radius: 999px;
+    font-weight: 950;
+    text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 46px;
-    padding: 0.85rem 1.15rem;
-    border-radius: 999px;
-    text-decoration: none;
-    font-weight: 950;
-    box-shadow: 0 12px 24px rgba(11, 45, 105, 0.16);
-  }
-
-  .add-btn {
-    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
-    color: #ffffff;
+    gap: 0.45rem;
+    letter-spacing: 0.01em;
+    transition:
+      transform 0.22s ease,
+      box-shadow 0.22s ease,
+      background 0.22s ease,
+      border-color 0.22s ease;
   }
 
   .report-btn {
-    background: #00d5ff;
-    color: var(--sgpa-blue);
-    border: 1px solid var(--sgpa-border-strong);
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    color: #ffffff;
+    border: 1px solid rgba(11, 45, 105, 0.22);
+    box-shadow: 0 14px 28px rgba(11, 45, 105, 0.18);
   }
 
-  .add-btn:hover,
+  .report-btn::before {
+    content: 'PDF';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 24px;
+    padding: 0 0.38rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.04em;
+  }
+
   .report-btn:hover {
     transform: translateY(-1px);
+    background: linear-gradient(135deg, var(--sgpa-blue-dark), var(--sgpa-blue));
+    border-color: rgba(11, 45, 105, 0.34);
+    box-shadow: 0 18px 34px rgba(11, 45, 105, 0.24);
+  }
+
+  .add-btn {
+    background: linear-gradient(135deg, #fff7d6, #ffffff);
+    color: var(--sgpa-blue);
+    border: 1px solid rgba(242, 183, 5, 0.38);
+    box-shadow: 0 10px 22px rgba(11, 45, 105, 0.08);
+  }
+
+  .add-btn::before {
+    content: '+';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background: var(--sgpa-blue);
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 950;
+    line-height: 1;
   }
 
   .add-btn:hover {
-    background: linear-gradient(135deg, var(--sgpa-blue-dark), var(--sgpa-blue));
-  }
-
-  .report-btn:hover {
-    background: var(--sgpa-blue-soft);
+    transform: translateY(-1px);
+    background: var(--sgpa-yellow-soft);
+    border-color: rgba(242, 183, 5, 0.55);
+    box-shadow: 0 14px 28px rgba(11, 45, 105, 0.12);
   }
 
   .list-section {
@@ -199,6 +241,16 @@
     gap: 1rem;
     flex-wrap: wrap;
     margin-bottom: 1rem;
+  }
+
+  .section-kicker {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--sgpa-blue);
+    font-size: 0.78rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
   .section-title h2 {
@@ -325,8 +377,8 @@
     }
 
     .header-actions,
-    .add-btn,
-    .report-btn {
+    .report-btn,
+    .add-btn {
       width: 100%;
     }
 

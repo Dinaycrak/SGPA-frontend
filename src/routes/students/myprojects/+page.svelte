@@ -38,7 +38,7 @@
           PDF report
         </a>
 
-        <span class="header-label">Enrolled Projects</span>
+        <span class="header-label">Enrolled projects</span>
       </div>
     </header>
 
@@ -128,40 +128,67 @@
     line-height: 1.7;
   }
 
-  .header-badge,
   .report-btn {
     flex: 0 0 auto;
     min-height: 44px;
-    padding: 0.7rem 1rem;
+    padding: 0.72rem 1.12rem;
     border-radius: 999px;
-    background: #00d5ff;
-    color: var(--sgpa-blue);
-    border: 1px solid var(--sgpa-border);
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    color: #ffffff;
+    border: 1px solid rgba(11, 45, 105, 0.22);
     font-weight: 950;
-    box-shadow: var(--sgpa-shadow-sm);
+    box-shadow: 0 14px 28px rgba(11, 45, 105, 0.18);
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.45rem;
+    letter-spacing: 0.01em;
+    transition:
+      transform 0.22s ease,
+      box-shadow 0.22s ease,
+      background 0.22s ease,
+      border-color 0.22s ease;
   }
-  .header-label{
-    flex: 0 0 auto;
-    min-height: 44px;
-    padding: 0.7rem 1rem;
-    background: #edff50;
-    border-radius: 4px;
-    color: var(--sgpa-blue);
-    font-weight: 950;
-    box-shadow: var(--sgpa-shadow-sm);
-    text-decoration: none;
+
+  .report-btn::before {
+    content: 'PDF';
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-width: 32px;
+    height: 24px;
+    padding: 0 0.38rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.04em;
   }
 
   .report-btn:hover {
     transform: translateY(-1px);
-    background: var(--sgpa-blue-soft);
+    background: linear-gradient(135deg, var(--sgpa-blue-dark), var(--sgpa-blue));
+    border-color: rgba(11, 45, 105, 0.34);
+    box-shadow: 0 18px 34px rgba(11, 45, 105, 0.24);
+  }
+
+  .header-label {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0.72rem 1.08rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #fff7d6, #ffffff);
+    color: var(--sgpa-blue);
+    border: 1px solid rgba(242, 183, 5, 0.38);
+    font-weight: 950;
+    box-shadow: 0 10px 22px rgba(11, 45, 105, 0.08);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0.01em;
   }
 
   .error-msg {
@@ -175,8 +202,8 @@
     }
 
     .header-actions,
-    .header-badge,
-    .report-btn {
+    .report-btn,
+    .header-label {
       width: 100%;
     }
   }
