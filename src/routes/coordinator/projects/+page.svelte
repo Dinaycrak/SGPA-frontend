@@ -38,13 +38,19 @@
         <span class="eyebrow">Coordinator module</span>
         <h1>Project management</h1>
         <p>
-          View, manage, and create academic projects registered in SGPA.
+          View, manage, create academic projects, and generate project reports.
         </p>
       </div>
 
-      <a class="add-btn" href="/coordinator/projects/create">
-        + Add project
-      </a>
+      <div class="header-actions">
+        <a class="report-btn" href="/coordinator/projects/report" target="_blank">
+          PDF report
+        </a>
+
+        <a class="add-btn" href="/coordinator/projects/create">
+          + Add project
+        </a>
+      </div>
     </header>
 
     {#if error}
@@ -105,6 +111,15 @@
     box-shadow: var(--sgpa-shadow-md);
   }
 
+  .header-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
   .eyebrow {
     display: inline-flex;
     width: fit-content;
@@ -135,7 +150,8 @@
     line-height: 1.7;
   }
 
-  .add-btn {
+  .add-btn,
+  .report-btn {
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
@@ -143,16 +159,33 @@
     min-height: 46px;
     padding: 0.85rem 1.15rem;
     border-radius: 999px;
-    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
-    color: #ffffff;
     text-decoration: none;
     font-weight: 950;
     box-shadow: 0 12px 24px rgba(11, 45, 105, 0.16);
   }
 
-  .add-btn:hover {
+  .add-btn {
+    background: linear-gradient(135deg, var(--sgpa-blue), var(--sgpa-blue-mid));
+    color: #ffffff;
+  }
+
+  .report-btn {
+    background: #00d5ff;
+    color: var(--sgpa-blue);
+    border: 1px solid var(--sgpa-border-strong);
+  }
+
+  .add-btn:hover,
+  .report-btn:hover {
     transform: translateY(-1px);
+  }
+
+  .add-btn:hover {
     background: linear-gradient(135deg, var(--sgpa-blue-dark), var(--sgpa-blue));
+  }
+
+  .report-btn:hover {
+    background: var(--sgpa-blue-soft);
   }
 
   .list-section {
@@ -291,7 +324,9 @@
       flex-direction: column;
     }
 
-    .add-btn {
+    .header-actions,
+    .add-btn,
+    .report-btn {
       width: 100%;
     }
 
