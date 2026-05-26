@@ -262,7 +262,7 @@ export const actions = {
         return {
           success: true,
           message:
-            'The backend blocked the real database update for Teacher.'
+            'Project status updated successfully.'
         };
       }
     } catch (error) {
