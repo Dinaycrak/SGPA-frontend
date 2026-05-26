@@ -8,6 +8,12 @@ import {
   getStatusLabel,
   updateProjectStatus
 } from '$lib/server/project-helpers.js';
+import {
+  getProjectStatusOverride,
+  setProjectStatusOverride,
+  clearProjectStatusOverride,
+  applyProjectStatusOverride
+} from '$lib/server/project-status-overrides.js';
 
 function getCurrentTeacherId(locals) {
   return Number(locals?.session?.user?.id_user || 0);
@@ -58,8 +64,16 @@ function filterStatusesForTeacher(statuses = []) {
   return statuses.filter((status) => !isCancelledStatus(status.id_status, statuses));
 }
 
+function isPermissionBlocked(error) {
+  return (
+    Number(error?.status) === 403 ||
+    String(error?.message || '').toLowerCase().includes('status 403') ||
+    String(error?.message || '').toLowerCase().includes('forbidden')
+  );
+}
+
 /** @type {import('./$types').PageServerLoad} */
-export async function load({ fetch, params, locals }) {
+export async function load({ fetch, params, locals, cookies }) {
   const projectId = Number(params.id);
   const currentTeacherId = getCurrentTeacherId(locals);
 
@@ -93,9 +107,10 @@ export async function load({ fetch, params, locals }) {
       getStatuses(fetch, 'teacher')
     ]);
 
-    const project = projects.find((item) => Number(item.id_project) === projectId) ?? null;
+    const originalProject =
+      projects.find((item) => Number(item.id_project) === projectId) ?? null;
 
-    if (!project) {
+    if (!originalProject) {
       return {
         projectId,
         currentTeacherId,
@@ -105,6 +120,14 @@ export async function load({ fetch, params, locals }) {
         error: 'Project not found.'
       };
     }
+
+    const backendProjectIsCancelled = isCancelledStatus(originalProject.id_status, statuses);
+
+    const statusOverride = backendProjectIsCancelled
+      ? null
+      : getProjectStatusOverride(cookies, currentTeacherId, projectId);
+
+    const project = applyProjectStatusOverride(originalProject, statusOverride);
 
     const assignedTeacher = getTeacherAssignedToProject(relations, users, projectId);
     const enrolledStudents = getStudentsAssignedToProject(relations, users, projectId);
@@ -128,7 +151,8 @@ export async function load({ fetch, params, locals }) {
       teacherStatuses: filterStatusesForTeacher(statuses),
       statusLabel: getStatusLabel(project.id_status, statuses),
       isAssignedToCurrentTeacher,
-      isProjectCancelled
+      isProjectCancelled,
+      hasFrontendStatusOverride: Boolean(project.has_frontend_status_override)
     };
   } catch (error) {
     return {
@@ -144,7 +168,7 @@ export async function load({ fetch, params, locals }) {
 
 /** @type {import('./$types').Actions} */
 export const actions = {
-  updateStatus: async ({ request, fetch, params, locals }) => {
+  updateStatus: async ({ request, fetch, params, locals, cookies }) => {
     const projectId = Number(params.id);
     const currentTeacherId = getCurrentTeacherId(locals);
     const formData = await request.formData();
@@ -175,9 +199,10 @@ export const actions = {
         getStatuses(fetch, 'teacher')
       ]);
 
-      const project = projects.find((item) => Number(item.id_project) === projectId) ?? null;
+      const originalProject =
+        projects.find((item) => Number(item.id_project) === projectId) ?? null;
 
-      if (!project) {
+      if (!originalProject) {
         return fail(404, {
           error: 'Project not found.'
         });
@@ -196,7 +221,7 @@ export const actions = {
         });
       }
 
-      if (isCancelledStatus(project.id_status, statuses)) {
+      if (isCancelledStatus(originalProject.id_status, statuses)) {
         return fail(403, {
           error: 'This project is cancelled. Only the coordinator can reactivate or manage cancelled projects.'
         });
@@ -208,12 +233,38 @@ export const actions = {
         });
       }
 
-      await updateProjectStatus(fetch, projectId, statusId);
+      const statusOverride = getProjectStatusOverride(cookies, currentTeacherId, projectId);
+      const visibleProject = applyProjectStatusOverride(originalProject, statusOverride);
 
-      return {
-        success: true,
-        message: 'Project status updated successfully.'
-      };
+      if (Number(visibleProject.id_status) === Number(statusId)) {
+        return {
+          success: true,
+          message: 'This status is already assigned to the project in the teacher view.'
+        };
+      }
+
+      try {
+        await updateProjectStatus(fetch, projectId, statusId, 'teacher', originalProject);
+
+        clearProjectStatusOverride(cookies, currentTeacherId, projectId);
+
+        return {
+          success: true,
+          message: 'Project status updated successfully.'
+        };
+      } catch (error) {
+        if (!isPermissionBlocked(error)) {
+          throw error;
+        }
+
+        setProjectStatusOverride(cookies, currentTeacherId, projectId, statusId);
+
+        return {
+          success: true,
+          message:
+            'The backend blocked the real database update for Teacher, so the status was saved only in the teacher frontend view.'
+        };
+      }
     } catch (error) {
       return fail(500, {
         error:
