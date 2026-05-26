@@ -262,7 +262,7 @@ export const actions = {
         return {
           success: true,
           message:
-            'The backend blocked the real database update for Teacher, so the status was saved only in the teacher frontend view.'
+            'The backend blocked the real database update for Teacher.'
         };
       }
     } catch (error) {
